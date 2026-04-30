@@ -1,0 +1,1060 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://swf2020.github.io/AI-Agent-in-Practice/AI%20Agent%20%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
+      
+      
+        <link rel="prev" href="../../..">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>快速开始 - 我的文档网站</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#11-llm-tokentemperature" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="我的文档网站" class="md-header__button md-logo" aria-label="我的文档网站" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            我的文档网站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              快速开始
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="我的文档网站" class="md-nav__button md-logo" aria-label="我的文档网站" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    我的文档网站
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、核心概念
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、原理深讲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、原理深讲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-tokenization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Tokenization：模型看到的不是字符，也不是单词
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Tokenization：模型看到的不是字符，也不是单词">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bpe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BPE 核心机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 采样策略：控制模型的"随机性"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 采样策略：控制模型的&#34;随机性&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temperature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temperature
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-p" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-p（核采样）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-k" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-k
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 上下文窗口：模型的"工作记忆"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 上下文窗口：模型的&#34;工作记忆&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主流模型上下文长度与价格对比（2026）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        滑动窗口策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        摘要压缩策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、工程视角：常见误区与最佳实践
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、延伸思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、核心概念
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、原理深讲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、原理深讲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-tokenization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Tokenization：模型看到的不是字符，也不是单词
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Tokenization：模型看到的不是字符，也不是单词">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bpe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BPE 核心机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 采样策略：控制模型的"随机性"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 采样策略：控制模型的&#34;随机性&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temperature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temperature
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-p" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-p（核采样）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-k" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-k
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 上下文窗口：模型的"工作记忆"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 上下文窗口：模型的&#34;工作记忆&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工程动机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主流模型上下文长度与价格对比（2026）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        滑动窗口策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        摘要压缩策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、工程视角：常见误区与最佳实践
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、延伸思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="11-llm-tokentemperature">1.1 LLM 核心概念（Token、Temperature、上下文窗口）</h1>
+<hr />
+<h2 id="_1">一、核心概念</h2>
+<p>调用一次 LLM API，本质上是在做什么？你把一段文字发出去，模型返回一段文字——看起来像 HTTP 请求，但计费方式、延迟表现、输出行为，和传统 API 完全不同。理解这一切的起点，是搞清楚三个基础概念：<strong>Token 是模型看到的最小单元</strong>，<strong>采样参数决定模型的"创造力"</strong>，<strong>上下文窗口是模型的工作记忆上限</strong>。</p>
+<p>这三个概念不是纯理论，它们直接影响你的工程决策：一个提示词写得太冗余，成本可能翻倍；Temperature 设错，客服机器人开始胡说八道；上下文窗口管理不当，长对话系统会在关键时刻"失忆"。</p>
+<hr />
+<h2 id="_2">二、原理深讲</h2>
+<h3 id="21-tokenization">2.1 Tokenization：模型看到的不是字符，也不是单词</h3>
+<h4 id="_3">工程动机</h4>
+<p>神经网络只处理数字。要让模型处理文字，必须先把文字映射成整数序列。最朴素的做法是"一个字符一个 ID"——但这会让序列太长、词汇表太小，模型难以学到语义关联。另一个极端是"一个单词一个 ID"——词汇表会爆炸，罕见词直接 OOV。<strong>BPE（Byte Pair Encoding）</strong> 是在这两个极端之间找到的工程平衡点。</p>
+<h4 id="bpe">BPE 核心机制</h4>
+<p>BPE 是一种<strong>数据驱动的子词切分算法</strong>，训练过程如下：</p>
+<ol>
+<li>初始词汇表：所有单字节字符（UTF-8 编码下约 256 个）</li>
+<li>统计语料中所有相邻 Token 对的出现频次</li>
+<li>把频次最高的 Token 对合并为一个新 Token</li>
+<li>重复步骤 2–3，直到词汇表达到目标大小（GPT-4 约 10 万）</li>
+</ol>
+<p>结果是高频词（"the"、"is"）会被保留为单个 Token，低频词被拆成子词（"unbelievable" → "un" + "believ" + "able"），中文通常 1.5–2 个 Token 对应一个汉字。</p>
+<pre><code class="language-mermaid">graph LR
+    A[&quot;原始文本\n'Running costs'&quot;] --&gt; B[&quot;初始字节序列\nR-u-n-n-i-n-g-空格-c-o-s-t-s&quot;]
+    B --&gt; C[&quot;BPE合并迭代\n高频对优先合并&quot;]
+    C --&gt; D[&quot;Token序列\n'Run' 'ning' ' costs'&quot;]
+    D --&gt; E[&quot;Token ID序列\n[6289, 2785, 7194]&quot;]
+    E --&gt; F[&quot;送入Transformer&quot;]
+</code></pre>
+<p><strong>工程关键点</strong>：</p>
+<ul>
+<li><strong>Token ≠ 字符 ≠ 单词</strong>。"Hello" 是 1 个 Token，"你好" 是 2 个 Token，一段 1000 字的中文大约消耗 700–900 个 Token。</li>
+<li>不同模型用不同的 Tokenizer，<strong>Token 数不可跨模型直接对比</strong>。GPT-4 和 Claude 对同一段文字的 Token 计数可能相差 10–20%。</li>
+<li>用 <code>tiktoken</code>（OpenAI）或 <code>transformers</code>（HuggingFace）做成本预估时，<strong>务必使用对应模型的 Tokenizer</strong>。</li>
+</ul>
+<pre><code class="language-python">import tiktoken
+
+enc = tiktoken.encoding_for_model(&quot;gpt-4o&quot;)
+text = &quot;Tokenization 是理解 LLM 成本的第一步。&quot;
+tokens = enc.encode(text)
+print(f&quot;Token 数: {len(tokens)}&quot;)   # 约 18-22
+print(f&quot;Token IDs: {tokens[:5]}…&quot;)
+</code></pre>
+<hr />
+<h3 id="22">2.2 采样策略：控制模型的"随机性"</h3>
+<h4 id="_4">工程动机</h4>
+<p>LLM 的输出本质上是一个<strong>概率分布</strong>：给定当前上下文，模型对词汇表中每个 Token 计算一个 logit 分数，再转化为概率。问题是：每次都选概率最高的词（贪心解码），输出会僵硬且重复；完全随机采样，输出会胡言乱语。采样参数就是在这两个极端之间的调节旋钮。</p>
+<h4 id="temperature">Temperature</h4>
+<p>Temperature $T$ 在 softmax 前对 logits 做缩放：</p>
+<p>$$P(x_i) = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}$$</p>
+<ul>
+<li>$T \to 0$：等价于贪心解码，每次选最高概率 Token，输出确定性强</li>
+<li>$T = 1$：保持模型原始概率分布</li>
+<li>$T &gt; 1$：分布变平坦，低概率词获得更多机会，输出更"发散"</li>
+</ul>
+<p><strong>工程建议</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐 Temperature</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码生成 / SQL / 结构化提取</td>
+<td>0–0.2</td>
+<td>要确定性输出，不要"创意"</td>
+</tr>
+<tr>
+<td>摘要 / 翻译</td>
+<td>0.3–0.6</td>
+<td>准确为主，允许少量语言变体</td>
+</tr>
+<tr>
+<td>对话 / 客服</td>
+<td>0.5–0.8</td>
+<td>自然流畅，不能太机械</td>
+</tr>
+<tr>
+<td>创意写作 / 头脑风暴</td>
+<td>0.8–1.2</td>
+<td>需要多样性</td>
+</tr>
+<tr>
+<td>超过 1.5</td>
+<td>❌ 慎用</td>
+<td>大多数场景下输出质量下降明显</td>
+</tr>
+</tbody>
+</table>
+<h4 id="top-p">Top-p（核采样）</h4>
+<p>不直接限制 Temperature，而是<strong>动态限制候选词集合</strong>：按概率从高到低累加，直到累计概率达到 $p$，只在这个集合里采样。</p>
+<ul>
+<li><code>top_p=0.9</code>：始终从覆盖 90% 概率质量的最小词集中采样</li>
+<li>优势：自适应地处理概率分布的"形状"——分布尖锐时词集小，分布扁平时词集大</li>
+</ul>
+<h4 id="top-k">Top-k</h4>
+<p>直接限制候选词数量为 $k$ 个，只考虑概率最高的 $k$ 个 Token。相比 Top-p，Top-k 是硬截断，在某些场景下过于粗暴。</p>
+<pre><code class="language-mermaid">graph TD
+    A[&quot;模型输出 Logits\n[2.1, 1.8, 0.5, -0.3, ...]&quot;] --&gt; B[&quot;÷ Temperature\n调整分布峭度&quot;]
+    B --&gt; C[&quot;Softmax → 概率分布&quot;]
+    C --&gt; D{采样策略}
+    D --&gt; E[&quot;贪心\nargmax&quot;]
+    D --&gt; F[&quot;Top-k\n取前k个候选&quot;]
+    D --&gt; G[&quot;Top-p\n累积概率≥p的最小集合&quot;]
+    F --&gt; H[&quot;从候选集随机采样&quot;]
+    G --&gt; H
+    E --&gt; I[&quot;确定性输出&quot;]
+    H --&gt; I
+</code></pre>
+<p><strong>工程建议</strong>：大多数生产场景，<strong>只调 Temperature 就够了</strong>。同时调节 Temperature + Top-p + Top-k 会让行为变得难以预测，调试成本高。如果 API 支持，优先用 Temperature；需要更精细控制时再引入 Top-p。</p>
+<hr />
+<h3 id="23">2.3 上下文窗口：模型的"工作记忆"</h3>
+<h4 id="_5">工程动机</h4>
+<p>Transformer 的注意力机制需要对输入序列中的所有 Token 两两计算关注度，这决定了<strong>模型能"看到"的文本长度是有上限的</strong>。超过这个上限，旧内容被截断，模型就"忘了"它。</p>
+<p>这在单次问答中问题不大，但在以下场景会造成严重工程问题：</p>
+<ul>
+<li>多轮对话积累到一定长度后，早期的用户信息丢失</li>
+<li>RAG 场景下塞入过多检索片段，超出窗口</li>
+<li>Agent 执行长任务，中间过程记录撑爆上下文</li>
+</ul>
+<h4 id="2026">主流模型上下文长度与价格对比（2026）</h4>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>上下文窗口</th>
+<th>输入价格</th>
+<th>输出价格</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-4o</td>
+<td>128K</td>
+<td>$2.5 / 1M tokens</td>
+<td>$10 / 1M tokens</td>
+<td>支持 Prompt Cache</td>
+</tr>
+<tr>
+<td>GPT-4o mini</td>
+<td>128K</td>
+<td>$0.15 / 1M tokens</td>
+<td>$0.6 / 1M tokens</td>
+<td>性价比首选</td>
+</tr>
+<tr>
+<td>Claude Sonnet 4.5</td>
+<td>200K</td>
+<td>$3 / 1M tokens</td>
+<td>$15 / 1M tokens</td>
+<td>长文档强</td>
+</tr>
+<tr>
+<td>Claude Haiku 4.5</td>
+<td>200K</td>
+<td>$0.8 / 1M tokens</td>
+<td>$4 / 1M tokens</td>
+<td>低成本长上下文</td>
+</tr>
+<tr>
+<td>Gemini 2.5 Pro</td>
+<td>1M</td>
+<td>$1.25 / 1M tokens（&lt;200K）</td>
+<td>$10 / 1M tokens</td>
+<td>超长上下文</td>
+</tr>
+<tr>
+<td>DeepSeek V3</td>
+<td>128K</td>
+<td>$0.27 / 1M tokens</td>
+<td>$1.1 / 1M tokens</td>
+<td>成本极低</td>
+</tr>
+<tr>
+<td>Qwen3-235B</td>
+<td>128K</td>
+<td>$0.6 / 1M tokens</td>
+<td>$2.4 / 1M tokens</td>
+<td>国内首选</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ 以上价格为参考基准，以各厂商官网为准，且长上下文通常有阶梯定价。</p>
+</blockquote>
+<h4 id="_6">滑动窗口策略</h4>
+<p>最简单的截断策略：始终保留最新的 $N$ 个 Token，丢弃最早的内容。</p>
+<pre><code>[系统提示] + [最近 K 轮对话] + [当前问题]
+              ↑
+         滑动保留这部分
+</code></pre>
+<p><strong>优点</strong>：实现简单，延迟稳定<br />
+<strong>缺点</strong>：早期关键信息（如用户偏好、任务目标）被丢弃</p>
+<h4 id="_7">摘要压缩策略</h4>
+<p>当对话积累到阈值时，用 LLM 对历史对话生成摘要，用摘要替代原始内容继续携带。</p>
+<pre><code>原始对话（2000 tokens）
+      ↓ LLM 摘要
+摘要（300 tokens）+ 最近 3 轮对话（600 tokens）
+</code></pre>
+<p><strong>优点</strong>：信息损失少，可保留关键语义<br />
+<strong>缺点</strong>：额外 LLM 调用增加延迟和成本；摘要本身可能丢失细节</p>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant App
+    participant ContextManager
+    participant LLM
+
+    App-&gt;&gt;ContextManager: 新增一轮对话
+    ContextManager-&gt;&gt;ContextManager: 检查 token 总数
+    alt 未超阈值
+        ContextManager-&gt;&gt;LLM: 完整历史 + 新消息
+    else 超过阈值
+        ContextManager-&gt;&gt;LLM: 请求摘要旧对话
+        LLM--&gt;&gt;ContextManager: 返回摘要
+        ContextManager-&gt;&gt;ContextManager: 替换旧对话为摘要
+        ContextManager-&gt;&gt;LLM: 摘要 + 近期历史 + 新消息
+    end
+    LLM--&gt;&gt;App: 生成回复
+</code></pre>
+<p><strong>工程建议</strong>：两种策略可以组合使用——先用滑动窗口处理短期内容，定期触发摘要压缩保留长期信息。实际上，大多数生产系统不需要极长上下文，<strong>合理的 RAG + 短窗口对话</strong> 往往比无脑堆上下文更可靠、更便宜。</p>
+<hr />
+<h2 id="_8">三、工程视角：常见误区与最佳实践</h2>
+<p><strong>误区 1：用字数估算 Token 数，导致成本计算偏差</strong><br />
+→ <strong>正确做法</strong>：中文约 1 字 = 1.5–2 Token，英文约 1 词 = 1.3 Token，但这只是粗估。成本敏感的系统必须在发送前用对应模型的 Tokenizer 精确计算，并在监控层按实际账单 Token 数校验估算误差。</p>
+<p><strong>误区 2：所有场景用同一个 Temperature（通常是默认的 1.0）</strong><br />
+→ <strong>正确做法</strong>：按任务类型分配 Temperature。尤其是结构化提取（JSON 输出、实体识别）务必设为 0–0.2，否则输出格式随机漂移，下游解析会持续报错。建议在配置文件中按任务类型维护一张 Temperature 映射表。</p>
+<p><strong>误区 3：上下文窗口很大，所以把所有信息都塞进去</strong><br />
+→ <strong>正确做法</strong>：注意力机制对长距离信息有"Lost in the Middle"问题——中间位置的内容注意力权重会衰减，模型可能忽略关键信息。重要内容应放在<strong>提示词开头或结尾</strong>。此外，超长 Prompt 在首次请求时延迟显著上升，影响用户体验。</p>
+<p><strong>误区 4：以为 Prompt Cache 是自动生效的</strong><br />
+→ <strong>正确做法</strong>：OpenAI 的 Prompt Cache 要求相同前缀超过 1024 Token 才触发，且 Cache 有 TTL。Claude 需要显式标记 <code>cache_control</code>。需要在架构层刻意设计"稳定前缀"（系统提示 + 固定上下文），把变化部分放在后面，才能有效命中缓存、降低成本。</p>
+<p><strong>误区 5：忽视 Tokenizer 对特殊字符的处理</strong><br />
+→ <strong>正确做法</strong>：代码、表格、JSON 这类结构化文本 Token 效率低——一个 <code>{</code> 就是一个 Token。做 RAG 或 Function Calling 时，如果检索片段包含大量代码，Token 消耗会远超预期。可以在入库阶段对代码块做精简压缩，或换用对代码更友好的 Tokenizer 模型（如 DeepSeek Coder 系列）。</p>
+<hr />
+<h2 id="_9">四、延伸思考</h2>
+<blockquote>
+<p>🤔 <strong>思考题 1</strong>：上下文窗口已经从 4K 扩展到 1M Token，理论上 RAG 的价值会被削弱——直接把所有文档塞进 Prompt 不就够了？这个判断在什么条件下成立，在什么条件下依然需要 RAG？（提示：考虑成本、延迟、知识更新频率三个维度）</p>
+<p>🤔 <strong>思考题 2</strong>：BPE 算法在多语言场景下有天然的"不公平性"——英文 Token 效率远高于中文和阿拉伯语，同样的语义内容，中文消耗的 Token 数是英文的 1.5–3 倍。这对全球化 AI 产品的成本结构和公平性有什么影响？有哪些已知的解决方向？</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

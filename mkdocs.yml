@@ -1,0 +1,12 @@
+site_name: 我的文档网站
+site_url: https://swf2020.github.io/AI-Agent-in-Practice/
+
+theme:
+  name: material
+  language: zh
+  palette:
+    primary: indigo
+
+nav:
+  - 首页: index.md
+  - 快速开始: AI Agent 与大模型应用开发/第一章 大模型基础与 API 实战/LLM核心概念.md
