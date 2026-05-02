@@ -1,21 +1,26 @@
 """
 三模式对比实验：直接回答 / CoT Prompt / Extended Thinking
 运行方式：python experiment.py
+支持 DeepSeek、Qwen 或 OpenAI 模型。
 """
 
 import time
-from dataclasses import dataclass, field
-from typing import Generator
+from dataclasses import dataclass
 
-from openai import OpenAI
-from anthropic import Anthropic
 from rich.console import Console
 from rich.table import Table
 
-from core import ChunkType, stream_cot_prompt, stream_extended_thinking
+from core import (
+    ChunkType,
+    get_default_model,
+    get_openai_client,
+    stream_cot_prompt,
+    stream_extended_thinking,
+)
 
 console = Console()
-openai_client = OpenAI()
+client = get_openai_client()
+default_model = get_default_model()
 
 
 @dataclass
@@ -33,9 +38,9 @@ class ExperimentResult:
         return self.token_count / self.total_time if self.total_time > 0 else 0
 
 
-def run_direct_answer(prompt: str, model: str = "gpt-4o") -> ExperimentResult:
+def run_direct_answer(prompt: str, model: str = None) -> ExperimentResult:
     """无 CoT 的直接回答，作为 baseline。"""
-    client = OpenAI()
+    model = model or default_model
     start = time.perf_counter()
     ttft = None
     full_text = ""
@@ -45,7 +50,7 @@ def run_direct_answer(prompt: str, model: str = "gpt-4o") -> ExperimentResult:
         model=model,
         messages=[{"role": "user", "content": prompt}],
         stream=True,
-        temperature=0.0,  # greedy，保证结果可复现
+        temperature=0.0,
     )
 
     for chunk in stream:
@@ -67,8 +72,9 @@ def run_direct_answer(prompt: str, model: str = "gpt-4o") -> ExperimentResult:
     )
 
 
-def run_cot_prompt(prompt: str, model: str = "gpt-4o") -> ExperimentResult:
+def run_cot_prompt(prompt: str, model: str = None) -> ExperimentResult:
     """CoT Prompt 模式。"""
+    model = model or default_model
     start = time.perf_counter()
     ttft = None
     think_text = ""
@@ -98,7 +104,7 @@ def run_cot_prompt(prompt: str, model: str = "gpt-4o") -> ExperimentResult:
 
 
 def run_extended_thinking(prompt: str, budget: int = 4000) -> ExperimentResult:
-    """Claude Extended Thinking 模式。"""
+    """DeepSeek 思考模式（通过系统提示词开启思考）。"""
     start = time.perf_counter()
     ttft = None
     think_text = ""
@@ -117,7 +123,7 @@ def run_extended_thinking(prompt: str, budget: int = 4000) -> ExperimentResult:
             answer_text += chunk.content
 
     return ExperimentResult(
-        mode="Claude Extended Thinking",
+        mode="DeepSeek 思考模式（<thinking> 标签）",
         answer=answer_text.strip(),
         ttft=ttft or 0,
         total_time=time.perf_counter() - start,
@@ -133,13 +139,11 @@ def print_comparison(results: list[ExperimentResult], question: str) -> None:
     console.rule(f"[bold]对比实验报告[/bold]")
     console.print(f"[dim]问题：{question}[/dim]\n")
 
-    # 答案对比
     for r in results:
         console.print(f"[bold]{r.mode}[/bold]")
         console.print(f"  答案：[green]{r.answer[:200]}[/green]")
         console.print()
 
-    # 指标横向对比表
     table = Table(title="📊 性能指标对比", show_header=True, header_style="bold magenta")
     table.add_column("指标", style="dim", width=20)
     for r in results:
@@ -161,14 +165,14 @@ def print_comparison(results: list[ExperimentResult], question: str) -> None:
 
 
 def main() -> None:
-    # 使用 GSM8K 风格的多步推理题，适合观察 CoT 效果
     questions = [
         "小张每天能生产120个零件，小李每天能生产80个。工厂需要1200个零件，两人一起工作几天能完成？如果小张请假2天，总共需要几天？",
         "一个水池有进水管和出水管。进水管单独开8小时注满，出水管单独开12小时排完。如果同时打开两管，几小时能注满？",
     ]
 
     question = questions[0]
-    console.print(f"\n[bold]实验题目：[/bold]{question}\n")
+    console.print(f"\n[bold]实验题目：[/bold]{question}")
+    console.print(f"[dim]使用模型：{default_model}[/dim]\n")
     console.print("[dim]正在运行三种模式（每次约 10-30 秒）...[/dim]\n")
 
     results = []

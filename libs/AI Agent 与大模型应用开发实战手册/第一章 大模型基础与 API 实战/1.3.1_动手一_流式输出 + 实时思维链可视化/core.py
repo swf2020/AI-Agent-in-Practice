@@ -1,21 +1,24 @@
 """
 流式 CoT 解析核心模块。
-支持两种模式：
-  1. CoT Prompt 模式（OpenAI/任意模型）：通过 <think>...</think> 标签区分思考与回答
-  2. Claude Extended Thinking 模式：通过原生 thinking_delta / text_delta 事件区分
+支持多种模型和推理模式：
+  1. CoT Prompt 模式（通用）：通过 <think>...</think> 标签区分思考与回答
+  2. DeepSeek 推理模型：使用 deepseek-reasoner 原生推理能力
 """
 
 import os
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Generator, Literal
+from typing import Generator
 
-from anthropic import Anthropic
 from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
+
+# 模型配置
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+QWEN_API_KEY = os.getenv("QWEN_API_KEY")
 
 
 class ChunkType(str, Enum):
@@ -30,6 +33,26 @@ class StreamChunk:
     content: str
     chunk_type: ChunkType
     timestamp: float = field(default_factory=time.perf_counter)
+
+
+def get_openai_client():
+    """根据环境变量返回正确配置的 OpenAI 客户端。"""
+    if DEEPSEEK_API_KEY:
+        return OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
+    elif QWEN_API_KEY:
+        return OpenAI(api_key=QWEN_API_KEY, base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
+    else:
+        return OpenAI()
+
+
+def get_default_model():
+    """根据环境变量返回默认模型名称。"""
+    if DEEPSEEK_API_KEY:
+        return "deepseek-chat"
+    elif QWEN_API_KEY:
+        return "qwen-plus"
+    else:
+        return "gpt-4o"
 
 
 # ─────────────────────────────────────────────
@@ -58,7 +81,7 @@ COT_SYSTEM_PROMPT = """\
 
 def stream_cot_prompt(
     prompt: str,
-    model: str = "gpt-4o",
+    model: str = None,
     temperature: float = 0.6,
 ) -> Generator[StreamChunk, None, None]:
     """
@@ -66,19 +89,17 @@ def stream_cot_prompt(
 
     Args:
         prompt: 用户问题
-        model:  任何 OpenAI 兼容模型名称
+        model:  任何 OpenAI 兼容模型名称，默认根据环境变量自动选择
         temperature: 采样温度，推理任务建议 0.3-0.7
 
     Yields:
         StreamChunk，chunk_type 区分 thinking 和 answer
     """
-    client = OpenAI()
+    client = get_openai_client()
+    model = model or get_default_model()
 
-    # 缓冲区：累积已接收的全部文本，用于标签边界检测
     accumulated = ""
-    # 状态机：当前是否在 <think> 块内
     in_thinking = False
-    # 已处理到的缓冲区位置，避免重复 yield
     processed_up_to = 0
 
     stream = client.chat.completions.create(
@@ -98,34 +119,25 @@ def stream_cot_prompt(
 
         accumulated += delta
 
-        # ── 标签检测与状态切换 ──────────────────────────────
-        # 检测 <think> 开始标签
         if not in_thinking and "<think>" in accumulated:
             think_start = accumulated.index("<think>") + len("<think>")
-            # 跳过标签本身，从标签后的内容开始
             processed_up_to = think_start
             in_thinking = True
 
-        # 检测 </think> 结束标签
         if in_thinking and "</think>" in accumulated:
             think_end = accumulated.index("</think>")
-            # yield 标签前的剩余 thinking 内容
             remaining_think = accumulated[processed_up_to:think_end]
             if remaining_think:
                 yield StreamChunk(content=remaining_think, chunk_type=ChunkType.THINKING)
             processed_up_to = think_end + len("</think>")
             in_thinking = False
 
-        # 检测 <answer> 开始标签
         if not in_thinking and "<answer>" in accumulated[processed_up_to:]:
             answer_tag_pos = accumulated.index("<answer>", processed_up_to) + len("<answer>")
             processed_up_to = answer_tag_pos
 
-        # ── yield 当前有效内容 ──────────────────────────────
-        # 只 yield 尚未处理的、且不包含标签的内容
         new_content = accumulated[processed_up_to:]
 
-        # 过滤掉结束标签
         for tag in ["</think>", "</answer>", "<answer>", "<think>"]:
             if tag in new_content:
                 new_content = new_content[:new_content.index(tag)]
@@ -138,59 +150,127 @@ def stream_cot_prompt(
 
 
 # ─────────────────────────────────────────────
-#  模式二：Claude Extended Thinking（原生推理流）
+#  模式二：DeepSeek 推理模型
 # ─────────────────────────────────────────────
+
+DEEPSEEK_THINKING_PROMPT = """\
+你现在进入了深度推理模式。请按照以下严格的格式输出：
+
+**思考阶段**：在 <thinking> 和 </thinking> 标签之间详细记录你的推理过程，包括：
+- 问题分析和理解
+- 关键假设和前提条件
+- 逐步推理步骤
+- 可能的验证方法
+
+**回答阶段**：在 <answer> 和 </answer> 标签之间给出最终答案，确保：
+- 答案简洁明了
+- 直接回应用户问题
+- 使用自然友好的语言
+
+例如：
+<thinking>
+用户问的是一个数学问题...
+首先我需要理解题目...
+然后应用相关公式...
+验证计算结果...
+</thinking>
+<answer>
+最终答案是：XXX
+</answer>
+
+严格按照此格式输出，不要省略任何标签！"""
+
 
 def stream_extended_thinking(
     prompt: str,
-    budget_tokens: int = 5000,
+    budget_tokens: int = 8000,
+    use_reasoner: bool = False,
 ) -> Generator[StreamChunk, None, None]:
     """
-    使用 Claude claude-3-7-sonnet 的 Extended Thinking，
-    原生区分模型"内部思考"与"最终回复"。
+    DeepSeek 思考链推理。
 
     Args:
         prompt:       用户问题
-        budget_tokens: 分配给思考过程的最大 token 数（越大推理越充分，但越慢越贵）
+        budget_tokens: 分配给思考过程的最大 token 数（越大推理越充分）
+        use_reasoner:  True 时使用 deepseek-reasoner 推理模型，
+                      False 时使用普通 chat 模型 + 系统提示词开启思考模式
 
     Yields:
-        StreamChunk，chunk_type=thinking 对应模型原始思考，answer 对应最终回复
-
-    ⚠️ 注意：Extended Thinking 目前要求 temperature=1（固定值），
-       且计费按 thinking token + output token 合计计算。
+        StreamChunk，chunk_type=thinking 对应思考过程，answer 对应最终回复
     """
-    client = Anthropic()
+    client = get_openai_client()
 
-    # Extended Thinking 需要通过 betas 参数启用交错思考流
-    with client.messages.stream(
-        model="claude-3-7-sonnet-20250219",
-        max_tokens=16000,
-        thinking={
-            "type": "enabled",
-            "budget_tokens": budget_tokens,
-        },
-        messages=[{"role": "user", "content": prompt}],
-        betas=["interleaved-thinking-2025-05-14"],
-    ) as stream:
-        # Extended Thinking 的流事件类型比 OpenAI 更丰富
-        # 需要监听 raw_stream_event 来区分 block 类型
-        for event in stream:
-            event_type = type(event).__name__
+    if use_reasoner:
+        # 使用 DeepSeek 推理模型（deepseek-reasoner）
+        stream = client.chat.completions.create(
+            model="deepseek-reasoner",
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+            max_tokens=16000,
+        )
 
-            # thinking block 中的增量内容
-            if event_type == "RawContentBlockDeltaEvent":
-                delta = event.delta
-                if hasattr(delta, "thinking"):
-                    # ThinkingDelta：模型原始思考内容
-                    if delta.thinking:
-                        yield StreamChunk(
-                            content=delta.thinking,
-                            chunk_type=ChunkType.THINKING,
-                        )
-                elif hasattr(delta, "text"):
-                    # TextDelta：最终回复内容
-                    if delta.text:
-                        yield StreamChunk(
-                            content=delta.text,
-                            chunk_type=ChunkType.ANSWER,
-                        )
+        for chunk in stream:
+            delta = chunk.choices[0].delta
+            if hasattr(delta, 'reasoning_content') and delta.reasoning_content:
+                yield StreamChunk(
+                    content=delta.reasoning_content,
+                    chunk_type=ChunkType.THINKING,
+                )
+            if hasattr(delta, 'content') and delta.content:
+                yield StreamChunk(
+                    content=delta.content,
+                    chunk_type=ChunkType.ANSWER,
+                )
+    else:
+        # 使用普通 chat 模型，通过系统提示词开启思考模式
+        model = get_default_model()
+
+        accumulated = ""
+        in_thinking = False
+        processed_up_to = 0
+
+        stream = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            stream=True,
+            temperature=0.4,
+            max_tokens=16000,
+        )
+
+        for chunk in stream:
+            delta = chunk.choices[0].delta.content
+            if not delta:
+                continue
+
+            accumulated += delta
+
+            if not in_thinking and "<thinking>" in accumulated:
+                think_start = accumulated.index("<thinking>") + len("<thinking>")
+                processed_up_to = think_start
+                in_thinking = True
+
+            if in_thinking and "</thinking>" in accumulated:
+                think_end = accumulated.index("</thinking>")
+                remaining_think = accumulated[processed_up_to:think_end]
+                if remaining_think:
+                    yield StreamChunk(content=remaining_think, chunk_type=ChunkType.THINKING)
+                processed_up_to = think_end + len("</thinking>")
+                in_thinking = False
+
+            if not in_thinking and "<answer>" in accumulated[processed_up_to:]:
+                answer_tag_pos = accumulated.index("<answer>", processed_up_to) + len("<answer>")
+                processed_up_to = answer_tag_pos
+
+            new_content = accumulated[processed_up_to:]
+
+            for tag in ["</thinking>", "</answer>", "<answer>", "<thinking>"]:
+                if tag in new_content:
+                    new_content = new_content[:new_content.index(tag)]
+                    break
+
+            if new_content:
+                chunk_type = ChunkType.THINKING if in_thinking else ChunkType.ANSWER
+                yield StreamChunk(content=new_content, chunk_type=chunk_type)
+                processed_up_to += len(new_content)

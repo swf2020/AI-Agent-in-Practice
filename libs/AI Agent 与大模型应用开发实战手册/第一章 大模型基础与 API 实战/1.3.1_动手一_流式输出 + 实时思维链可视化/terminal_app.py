@@ -1,6 +1,7 @@
 """
 终端版思维链可视化。
 运行方式：python terminal_app.py
+支持 DeepSeek、Qwen 或 OpenAI 模型。
 """
 
 import time
@@ -26,7 +27,7 @@ def run_terminal(
 
     Args:
         prompt:                用户问题
-        use_extended_thinking: True 时使用 Claude Extended Thinking
+        use_extended_thinking: True 时使用 DeepSeek 推理模型
 
     Returns:
         统计字典：ttft / total_time / token_count / tokens_per_sec
@@ -49,7 +50,6 @@ def run_terminal(
         elapsed = time.perf_counter() - start_time
         tps = stats["token_count"] / elapsed if elapsed > 0 else 0
 
-        # 底部统计行
         stat_text = (
             f"⏱ {elapsed:.1f}s  "
             f"⚡ TTFT: {stats['ttft']:.3f}s  " if stats["ttft"] else f"⏱ {elapsed:.1f}s  "
@@ -75,18 +75,15 @@ def run_terminal(
         )
 
     stream_fn = (
-        stream_extended_thinking(prompt)
+        stream_extended_thinking(prompt, use_reasoner=True)
         if use_extended_thinking
         else stream_cot_prompt(prompt)
     )
 
-    # refresh_per_second=20 意味着每 50ms 重绘一次
-    # 过高（>30）会消耗大量 CPU，过低（<10）会感觉卡顿
     with Live(console=console, refresh_per_second=20, transient=False) as live:
         for chunk in stream_fn:
             now = time.perf_counter()
 
-            # 记录首 token 时间
             if stats["ttft"] is None:
                 stats["ttft"] = now - start_time
 
@@ -108,7 +105,6 @@ def run_terminal(
 def main() -> None:
     console.rule("[bold]实时思维链可视化 · 终端版[/bold]")
 
-    # 内置测试题（GSM8K 数学推理题）
     prompts = {
         "1": "一个农夫有17只羊，除了9只其余都死了，还剩几只？",
         "2": "小明有72块糖，要平均分给9个朋友，每人能分到几块？如果又来了3个朋友，重新分配后每人能分到几块？",
@@ -122,12 +118,11 @@ def main() -> None:
     user_input = console.input("\n> ").strip()
     prompt = prompts.get(user_input, user_input)
 
-    use_et = console.input("\n使用 Claude Extended Thinking？(y/N): ").strip().lower() == "y"
+    use_et = console.input("\n使用 DeepSeek 推理模型？(y/N): ").strip().lower() == "y"
 
     console.print()
     stats = run_terminal(prompt, use_extended_thinking=use_et)
 
-    # 打印最终统计
     console.print()
     console.rule("📊 本次统计")
     console.print(f"  TTFT:           {stats['ttft']:.3f}s")

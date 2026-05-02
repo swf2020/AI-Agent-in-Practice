@@ -1,12 +1,10 @@
 # 演示原始 chunk 结构，独立可运行
 
-import os
 import time
-from openai import OpenAI
-from dotenv import load_dotenv
+from core import get_openai_client, get_default_model
 
-load_dotenv()
-client = OpenAI()
+client = get_openai_client()
+model = get_default_model()
 
 
 def inspect_stream(prompt: str) -> None:
@@ -16,6 +14,7 @@ def inspect_stream(prompt: str) -> None:
     """
     print(f"{'='*60}")
     print(f"Prompt: {prompt}")
+    print(f"Model: {model}")
     print(f"{'='*60}\n")
 
     start_time = time.perf_counter()
@@ -24,28 +23,24 @@ def inspect_stream(prompt: str) -> None:
     full_text = ""
 
     stream = client.chat.completions.create(
-        model="gpt-4o",
+        model=model,
         messages=[{"role": "user", "content": prompt}],
         stream=True,
         temperature=0.6,
     )
 
     for chunk in stream:
-        # chunk 是 ChatCompletionChunk 对象
-        # choices[0].delta.content 是当前增量文本（可能为 None）
         delta = chunk.choices[0].delta.content
 
         if delta is None:
-            # 流结束时最后一个 chunk 的 content 为 None
             continue
 
         now = time.perf_counter()
 
-        # 记录首 token 时间
         if first_token_time is None:
             first_token_time = now
             ttft = first_token_time - start_time
-            print(f"⚡ TTFT: {ttft:.3f}s\n")
+            print(f"\n⚡ TTFT: {ttft:.3f}s\n")
 
         token_count += 1
         full_text += delta
