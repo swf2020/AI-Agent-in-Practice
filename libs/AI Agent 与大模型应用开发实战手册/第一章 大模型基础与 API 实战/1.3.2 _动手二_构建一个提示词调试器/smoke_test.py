@@ -10,7 +10,9 @@ import sys
 # 确保能找到 core 模块
 sys.path.insert(0, os.path.dirname(__file__))
 
-import core  # 触发 dotenv 加载
+from dotenv import load_dotenv
+load_dotenv()  # 加载环境变量
+
 from core.caller import call_all
 from core.history import save_run, load_history
 
@@ -20,7 +22,7 @@ async def main():
 
     system = "You are a concise assistant. Answer in one sentence."
     user = "What is the capital of France?"
-    models = ["gpt-4o", "deepseek-v3"]  # 去掉 Claude 节省 Key 消耗
+    models = ["DeepSeek-V3", "Qwen-Max"]
 
     print(f"📤 发送到模型：{models}")
     print(f"📝 User Prompt：{user}\n")

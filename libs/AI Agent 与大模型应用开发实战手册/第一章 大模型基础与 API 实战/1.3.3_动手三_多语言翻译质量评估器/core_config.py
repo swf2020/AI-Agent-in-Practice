@@ -1,4 +1,5 @@
 """全局配置：模型注册表与定价信息"""
+import os
 from typing import TypedDict
 
 
@@ -11,22 +12,16 @@ class ModelConfig(TypedDict):
 
 # 注册表：key 是界面显示名，value 是调用配置
 MODEL_REGISTRY: dict[str, ModelConfig] = {
-    "gpt-4o": {
-        "litellm_id": "openai/gpt-4o",
-        "price_in": 0.0025,
-        "price_out": 0.01,
-        "max_tokens_limit": 4096,
-    },
-    "claude-3.5-sonnet": {
-        "litellm_id": "anthropic/claude-3-5-sonnet-20241022",
-        "price_in": 0.003,
-        "price_out": 0.015,
-        "max_tokens_limit": 8192,
-    },
-    "deepseek-v3": {
+    "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
         "price_in": 0.00027,
         "price_out": 0.0011,
+        "max_tokens_limit": 4096,
+    },
+    "Qwen-Max": {
+        "litellm_id": "qwen/qwen-plus",
+        "price_in": 0.001,
+        "price_out": 0.004,
         "max_tokens_limit": 4096,
     },
 }
@@ -39,3 +34,8 @@ def estimate_cost(model_key: str, input_tokens: int, output_tokens: int) -> floa
         input_tokens / 1000 * cfg["price_in"]
         + output_tokens / 1000 * cfg["price_out"]
     )
+
+
+def get_model_list() -> list[str]:
+    """获取所有可用模型列表"""
+    return list(MODEL_REGISTRY.keys())
