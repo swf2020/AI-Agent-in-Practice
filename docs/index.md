@@ -73,7 +73,7 @@
 
 ## Module 1：大模型基础与 API 实战
 
-### 1.1 LLM 核心概念（Token、Temperature、上下文窗口）
+### [1.1 LLM 核心概念（Token、Temperature、上下文窗口）](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.1 LLM核心概念.md)
 
 - Tokenization 原理：BPE 算法与 tiktoken 实战计数
 - Temperature / Top-p / Top-k 采样策略对比与适用场景
@@ -82,7 +82,7 @@
 
 ### 1.2 大模型微调实战（LoRA / QLoRA）
 
-#### 1.2.1 微调技术全景与选型决策
+#### [1.2.1 微调技术全景与选型决策](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.1 微调技术全景与选型决策.md)
 
 - 为什么需要微调：Prompt Engineering / RAG / 微调 三路线适用边界对比
   - 决策维度：任务数据量 / 更新频率 / 推理成本 / 隐私要求
@@ -91,21 +91,21 @@
   - LoRA → QLoRA → DoRA → LoRA+ 各方法核心差异一览
 - 何时选全参数微调 vs PEFT：显存墙与效果天花板的权衡
 
-#### 1.2.2 LoRA 原理精讲
+#### [1.2.2 LoRA 原理精讲](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.2 LoRA 原理精讲.md)
 
 - 低秩分解数学直觉：为何 ΔW = BA 能近似全量更新（Hu et al., 2021, arXiv:2106.09685）
 - 关键超参解析：rank（r）/ alpha / dropout / target\_modules
   - rank 选择经验：r=8 vs r=64 对不同任务的效果影响实验
 - LoRA 权重合并：训练后如何 merge 回基座模型实现零推理开销
 
-#### 1.2.3 QLoRA 原理精讲
+#### [1.2.3 QLoRA 原理精讲](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.3 QLoRA 原理精讲.md)
 
 - NF4 量化：为何用 Normal Float 4-bit 而非 INT4（Dettmers et al., 2023, arXiv:2305.14314）
 - 双重量化（Double Quantization）与分页优化器
   - 显存节省量化：70B 模型在单张 A100 上可训练的原理
 - QLoRA vs LoRA 效果与速度 Benchmark 对比解读
 
-#### 1.2.4 数据工程：微调数据的准备与质量控制
+#### [1.2.4 数据工程：微调数据的准备与质量控制](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.4 数据工程：微调数据的准备与质量控制.md)
 
 - 数据格式规范：Alpaca / ShareGPT / ChatML 三种主流格式对比
 - 数据量经验法则：百条精标 vs 万条弱标的质量 - 数量权衡
@@ -115,7 +115,7 @@
   - 数据增强：Self-Instruct 范式用 LLM 自动扩充指令数据
 - 合成数据：用 GPT-4 / Claude 生成高质量训练对的最佳实践
 
-#### 1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型
+#### [1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型.md)
 
 - 环境搭建：transformers + peft + bitsandbytes + trl 版本锁定
 - 数据准备：构建 500 条客服对话数据集（含清洗脚本）
@@ -124,14 +124,14 @@
 - 训练监控：Loss 曲线解读 + 过拟合早停策略
 - 模型导出：GGUF / ONNX 格式转换供 Ollama 本地部署
 
-#### 1.2.6 【动手二】微调效果评估与对比实验
+#### [1.2.6 【动手二】微调效果评估与对比实验](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.6 【动手二】微调效果评估与对比实验.md)
 
 - 基线对比：原始基座 vs Prompt Engineering vs 微调后 三方横评
 - 自动评估：ROUGE / BERTScore / LLM-as-Judge 三种指标应用
 - 消融实验：rank 大小 / 训练轮次 / 数据量 对效果的影响曲线
 - 过拟合诊断：训练集 vs 验证集 Loss 分叉点检测与处理
 
-#### 1.2.7 【动手三】基于 Unsloth 的高效微调加速实战
+#### [1.2.7 【动手三】基于 Unsloth 的高效微调加速实战](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.7 【动手三】基于 Unsloth 的高效微调加速实战.md)
 
 - Unsloth 核心优化：手写 Triton Kernel 使训练提速 2x、显存减半
 - 一键启动脚本：Llama-3 / Qwen2.5 / Mistral 通用微调模板
@@ -151,7 +151,7 @@
 - 工程题：生产环境需要同时服务 10 个不同 LoRA 适配器，如何设计？
 - 设计题：为一个法律文书润色场景，设计从数据收集到上线的完整微调方案
 
-### 1.3 Prompt Engineering 实战
+### [1.3 Prompt Engineering 实战](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3 Prompt Engineering 实战.md)
 
 - **零样本 / 少样本**
   - 零样本设计原则：角色设定 + 任务描述 + 输出格式三件套
@@ -166,7 +166,7 @@
   - 【动手三】多语言翻译质量评估器
   - 【动手四】自动化 Prompt 优化器（DSPy 入门）
 
-### 1.4 主流 API 对比接入
+### [1.4 主流 API 对比接入](AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.4 【动手】统一封装多模型调用层.md)
 
 - 对比维度：能力、速率限制、价格、延迟、多模态支持
 - 接入清单：OpenAI / Claude / Gemini / DeepSeek / 通义千问
@@ -183,40 +183,40 @@
 
 ## Module 2：RAG（检索增强生成）
 
-### 2.1 RAG 架构全景
+### [2.1 RAG 架构全景](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.1 RAG 架构全景.md)
 
 - Naive RAG → Advanced RAG → Modular RAG 演进路线
 - 离线阶段：文档解析 → 切块 → 向量化 → 索引
 - 在线阶段：查询理解 → 检索 → 重排 → 生成
 
-### 2.2 Embedding 与向量数据库
+### [2.2 Embedding 与向量数据库](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.2 Embedding 与向量数据库.md)
 
 - Embedding 模型选型：text-embedding-3 / BGE / GTE 对比
 - 向量数据库横向对比：Chroma / Qdrant / Milvus / PGVector
 - 索引类型：HNSW vs IVF-Flat 的原理与选型建议
 - 多租户隔离与权限控制设计模式
 
-### 2.3 检索策略（稠密/稀疏/混合）
+### [2.3 检索策略（稠密/稀疏/混合）](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.3 检索策略（稠密 - 稀疏 - 混合）.md)
 
 - 稠密检索：语义向量相似度（cosine / dot product）
 - 稀疏检索：BM25 关键词匹配原理与 Elasticsearch 实战
 - 混合检索：RRF 融合算法 + 权重调优策略
 
-### 2.4 【动手】从零搭建本地知识库问答系统
+### [2.4 【动手】从零搭建本地知识库问答系统](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.4 【动手】从零搭建本地知识库问答系统.md)
 
 - 文档解析：PDF / Word / 网页的结构化提取（pypdf / markitdown）
 - 智能切块策略：固定大小 vs 语义切块 vs 章节切块对比实验
 - 本地 Embedding + Qdrant 向量库 + LLM 问答链路打通
 - 简单 Web 界面封装（Chainlit 或 Streamlit）
 
-### 2.5 【动手】Advanced RAG：重排序 + 查询改写
+### [2.5 【动手】Advanced RAG：重排序 + 查询改写](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.5 【动手】Advanced RAG：重排序 + 查询改写.md)
 
 - 查询改写：HyDE（假设文档嵌入）与 Multi-Query 策略
 - 重排序：Cross-Encoder（BGE-Reranker）接入实战
 - 上下文压缩：LLMLingua / 摘要压缩减少无关内容
 - 对比实验：改造前后的检索准确率与端到端效果变化
 
-### 2.6 RAG 评估体系（RAGAS 框架）
+### [2.6 RAG 评估体系（RAGAS 框架）](AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.6 RAG 评估体系（RAGAS 框架）.md)
 
 - 四大核心指标：Faithfulness / Answer Relevancy / Context Precision / Context Recall 含义与计算方式
 - 构建黄金评估数据集：人工标注 vs LLM 自动生成 QA 对
@@ -230,13 +230,13 @@
 
 ## Module 3：Function Calling / MCP 与工具使用
 
-### 3.1 Function Calling 原理与协议
+### [3.1 Function Calling 原理与协议](AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.1 Function Calling 原理与协议.md)
 
 - JSON Schema 工具定义规范与参数设计最佳实践
 - 并行工具调用（Parallel Tool Use）与串行调用的选择
 - Structured Output 与 Function Calling 的关系与区别
 
-### 3.2 MCP 协议详解
+### [3.2 MCP 协议详解](AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2 MCP 协议详解.md)
 
 - MCP 架构：Host / Client / Server 三层模型
 - Transport 层：stdio vs HTTP+SSE 两种通信方式
@@ -246,13 +246,13 @@
   - 【动手二】：数据库查询 MCP Server
   - 【动手三】：代码执行沙箱 MCP Server
 
-### 3.3 【动手】给 LLM 接入搜索 / 计算器 / 数据库工具
+### [3.3 【动手】给 LLM 接入搜索 / 计算器 / 数据库工具](AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.3 【动手】给 LLM 接入搜索 - 计算器 - 数据库工具.md)
 
 - 搜索工具：接入 Tavily / Brave Search API
 - 代码执行工具：沙箱环境（E2B / Modal）安全执行
 - 数据库工具：Text-to-SQL 生成 + 执行 + 结果解释链路
 
-### 3.4 工具可靠性与错误处理
+### [3.4 工具可靠性与错误处理](AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.4 工具可靠性与错误处理.md)
 
 - 工具调用失败重试策略（指数退避 + 最大重试次数）
 - 参数验证：Pydantic 强校验 + 错误信息反馈给 LLM
@@ -266,25 +266,25 @@
 
 ## Module 4：AI Agent 核心架构
 
-### 4.1 Agent 定义：感知-规划-行动循环
+### [4.1 Agent 定义：感知-规划-行动循环](AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.1 Agent 定义：感知-规划-行动循环.md)
 
 - 与传统 RPA / 规则引擎的核心区别
 - Agent 的四大核心能力：记忆、工具、规划、行动
 - Agent 可靠性问题现状：任务完成率 benchmark 解读
 
-### 4.2 ReAct 范式实战
+### [4.2 ReAct 范式实战](AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.2 ReAct 范式实战.md)
 
 - Thought → Action → Observation 循环机制详解
 - 从零实现一个 ReAct Agent（不依赖框架）
 - ReAct 常见失败模式：幻觉行动、死循环、过早停止
 
-### 4.3 Planning 策略（ToT / GoT / Plan-and-Execute）
+### [4.3 Planning 策略（ToT / GoT / Plan-and-Execute）](AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.3 Planning 策略（ToT - GoT - Plan-and-Execute）.md)
 
 - Tree of Thought：广度优先搜索与最优路径选择
 - Plan-and-Execute：先规划全局再逐步执行的分离架构
 - 动态重规划：执行结果反馈触发计划调整
 
-### 4.4 记忆系统设计
+### [4.4 记忆系统设计](AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.4 记忆系统设计.md)
 
 - **短期记忆（对话上下文）**
   - 滑动窗口裁剪 vs 摘要压缩 vs 重要性保留策略
@@ -296,7 +296,7 @@
   - 结构化记忆：用户画像 / 任务状态存 PostgreSQL
   - 图记忆：知识图谱存 Neo4j 表达实体关系
 
-### 4.5 【动手】用 LangGraph 构建有状态 Agent
+### [4.5 【动手】用 LangGraph 构建有状态 Agent](AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.5 【动手】用 LangGraph 构建有状态 Agent.md)
 
 - LangGraph 核心概念：State / Node / Edge / Graph
 - 条件边（Conditional Edge）实现动态路由
@@ -311,26 +311,26 @@
 
 ## Module 5：Multi-Agent 系统
 
-### 5.1 多 Agent 协作模式（层级 / 对等 / 流水线）
+### [5.1 多 Agent 协作模式（层级 / 对等 / 流水线）](AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.1 多 Agent 协作模式（层级 - 对等 - 流水线）.md)
 
 - 层级模式：Supervisor Agent 分发与汇总子 Agent 结果
 - 对等模式：Agent 间直接通信与共识机制
 - 流水线模式：有向无环图（DAG）任务依赖编排
 - 模式选型决策树：任务类型 → 推荐架构
 
-### 5.2 AutoGen 框架实战
+### [5.2 AutoGen 框架实战](AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.2 AutoGen 框架实战.md)
 
 - ConversableAgent 与 GroupChat 核心抽象
 - 代码执行沙箱（Docker executor）安全配置
 - Human-in-the-Loop：动态插入人工反馈节点
 
-### 5.3 CrewAI 角色分工实战
+### [5.3 CrewAI 角色分工实战](AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.3 CrewAI 角色分工实战.md)
 
 - Agent / Task / Crew 三层抽象建模
 - 角色设计最佳实践：goal + backstory 对输出质量的影响
 - Process 类型：Sequential vs Hierarchical 对比
 
-### 5.4 【动手】搭建代码生成+审查的双 Agent 系统
+### [5.4 【动手】搭建代码生成+审查的双 Agent 系统](AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.4 【动手】搭建代码生成+审查的双 Agent 系统.md)
 
 - Coder Agent：根据需求生成代码 + 自动运行测试
 - Reviewer Agent：静态分析 + 安全扫描 + 风格检查
@@ -345,37 +345,37 @@
 
 ## Module 6：生产级落地关键技术
 
-### 6.1 流式输出与用户体验
+### [6.1 流式输出与用户体验](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.1 流式输出与用户体验.md)
 
 - SSE（Server-Sent Events）服务端实现（FastAPI）
 - 前端流式渲染：React + ReadableStream 接入
 - 中间过程透出：Tool Call 状态实时展示给用户
 
-### 6.2 成本控制与 Token 优化
+### [6.2 成本控制与 Token 优化](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.2 成本控制与 Token 优化.md)
 
 - 请求层：Prompt 压缩 + 动态截断 + 摘要替换
 - 模型层：任务路由（复杂 → 强模型，简单 → 弱模型）
 - 监控层：按 User / Feature / Session 维度统计成本
 
-### 6.3 缓存策略（Prompt Cache / Semantic Cache）
+### [6.3 缓存策略（Prompt Cache / Semantic Cache）](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.3 缓存策略（Prompt Cache - Semantic Cache）.md)
 
 - Prompt Cache：Claude / OpenAI 官方缓存机制原理与命中率优化
 - Semantic Cache：GPTCache / Zep 语义相似度缓存实战
 - 缓存失效策略：TTL vs 内容变更触发失效
 
-### 6.4 安全与对齐（Prompt Injection 防御）
+### [6.4 安全与对齐（Prompt Injection 防御）](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.4 安全与对齐（Prompt Injection 防御）.md)
 
 - 攻击类型：直接注入 / 间接注入 / 越狱技巧分类
 - 防御策略：输入净化 + 特权提示隔离 + 输出验证
 - 【动手】构建一个 Prompt Injection 检测分类器
 
-### 6.5 可观测性（LangSmith / LangFuse）
+### [6.5 可观测性（LangSmith / LangFuse）](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.5 可观测性（LangSmith - LangFuse）.md)
 
 - Trace 采集：完整 Agent 执行链路的 Span 记录
 - 核心指标：延迟 P99 / Token 消耗 / 工具调用成功率
 - 告警配置：异常延迟与错误率阈值触发告警
 
-### 6.6 【动手】构建带监控的生产级 Agent 服务
+### [6.6 【动手】构建带监控的生产级 Agent 服务](AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.6 【动手】构建带监控的生产级 Agent 服务.md)
 
 - 服务框架：FastAPI + 异步任务队列（Celery / ARQ）
 - 接入 LangFuse：一行代码埋点全链路 Trace
@@ -398,7 +398,7 @@
 - 五类角色分工：基本面/情绪/新闻/技术分析师 + 研究员/交易员/风控经理
 - LangGraph 有状态图在本项目中的应用拆解
 
-#### 7.1.2 环境搭建与数据接入
+#### [7.1.2 环境搭建与数据接入](AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.1.2 环境搭建与数据接入.md)
 
 - 安装配置：pip install tradingagents + API Keys 配置
 - 数据源接入：Yahoo Finance / FinnHub / Reddit API
@@ -411,7 +411,7 @@
 - Risk Management 三种风险偏好（激进/中性/保守）实现
 - Structured Output：Pydantic Schema 约束决策输出
 
-#### 7.1.4 动手实验
+#### [7.1.4 动手实验](AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.1.4 动手实验.md)
 
 - 实验一：分析 NVDA / TSLA 并解读五级评级输出
 - 实验二：接入 A 股数据源（东方财富 / AKShare）
@@ -442,7 +442,7 @@
 - 带段落级引用的回答生成（角注格式）
 - 置信度评估：无答案时主动拒答而非编造
 
-#### 7.2.5 评估与上线
+#### [7.2.5 评估与上线](AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.2.5 评估与上线.md)
 
 - RAGAS 评估 + 人工抽样复核双轨制
 - Chainlit 前端 + FastAPI 后端生产部署
@@ -600,26 +600,26 @@
 
 ### 8.1 大语言模型发展史：从统计模型到涌现智能
 
-#### 8.1.1 前深度学习时代（2000–2017）
+#### [8.1.1 前深度学习时代（2000–2017）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.1 前深度学习时代（2000-2017）.md)
 
 - N-gram 语言模型与 Word2Vec 词向量的奠基意义
 - Seq2Seq + Attention 机制的提出（Bahdanau et al., 2015, arXiv:1409.0473）
 - ELMo 动态词向量：迈向上下文感知表示（Peters et al., 2018, arXiv:1802.05365）
 
-#### 8.1.2 Transformer 革命（2017–2019）
+#### [8.1.2 Transformer 革命（2017–2019）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.2 Transformer 革命（2017-2019）.md)
 
 - "Attention Is All You Need"：架构解析与历史地位（Vaswani et al., 2017, arXiv:1706.03762）
 - BERT：双向预训练范式开创"先预训练后微调"时代（Devlin et al., 2018, arXiv:1810.04805）
 - GPT-1/2：自回归生成路线的确立与"太危险不发布"风波（OpenAI Blog, 2019）
 
-#### 8.1.3 规模定律与涌现能力（2020–2022）
+#### [8.1.3 规模定律与涌现能力（2020–2022）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.3 规模定律与涌现能力（2020-2022）.md)
 
 - Scaling Laws：参数量 / 数据 / 算力的幂律关系（Kaplan et al., 2020, arXiv:2001.08361）
 - GPT-3（175B）：少样本学习能力的震撼亮相（Brown et al., 2020, arXiv:2005.14165）
 - 涌现能力（Emergent Abilities）的发现与争议（Wei et al., 2022, arXiv:2206.07682）
 - Chinchilla 定律：重新校准最优训练算力分配比（Hoffmann et al., 2022, arXiv:2203.15556）
 
-#### 8.1.4 指令对齐与 RLHF 时代（2022–2023）
+#### [8.1.4 指令对齐与 RLHF 时代（2022–2023）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.4 指令对齐与 RLHF 时代（2022-2023）.md)
 
 - InstructGPT：RLHF 使模型"听话"的里程碑（Ouyang et al., 2022, arXiv:2203.02155）
 - ChatGPT 现象级发布：产品形态定义行业标准（2022.11）
@@ -627,14 +627,14 @@
 - Claude 系列：Constitutional AI 与无害性对齐新路线（Anthropic, Bai et al., 2022, arXiv:2212.08073）
 - LLaMA 开源震撼：Meta 释放可本地运行的强力底座（Touvron et al., 2023, arXiv:2302.13971）
 
-#### 8.1.5 开源生态爆发与长上下文竞赛（2023–2024）
+#### [8.1.5 开源生态爆发与长上下文竞赛（2023–2024）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.5 开源生态爆发与长上下文竞赛（2023-2024）.md)
 
 - Llama 2 / Mistral / Gemma / Qwen / DeepSeek：开源模型能力追平闭源的关键节点梳理
 - 长上下文竞赛：8K → 32K → 1M Token 背后的位置编码创新（RoPE / YaRN / ALiBi 对比）
 - MoE 架构复兴：Mixtral / DeepSeek-MoE 高效稀疏激活（Jiang et al., 2024, arXiv:2401.04088）
 - 多模态融合：GPT-4V / Gemini / LLaVA 打通视觉语言
 
-#### 8.1.6 推理模型范式（2024–2025）
+#### [8.1.6 推理模型范式（2024–2025）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.6 推理模型范式（2024-2025）.md)
 
 - OpenAI o1 / o3：慢思考（Slow Thinking）与测试时计算扩展（Test-Time Compute Scaling）
 - DeepSeek-R1：开源推理模型的突破与 GRPO 训练方法（DeepSeek, 2025, arXiv:2501.12948）
@@ -643,20 +643,20 @@
 
 ### 8.2 AI Agent 发展史：从脚本自动化到自主决策系统
 
-#### 8.2.1 前 LLM Agent 时代（–2022）
+#### [8.2.1 前 LLM Agent 时代（–2022）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.1 前 LLM Agent 时代（约 1960s-2022）.md)
 
 - 符号 AI 与专家系统：规则驱动的"硬编码"自动化
 - 强化学习 Agent：AlphaGo / OpenAI Five 的封闭场景巅峰
 - RPA：流程固定时的工业级自动化方案与局限
 
-#### 8.2.2 LLM Agent 萌芽期（2022–2023）
+#### [8.2.2 LLM Agent 萌芽期（2022–2023）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.2 LLM Agent 萌芽期（2022-2023）.md)
 
 - ReAct：思维链与行动结合的 Agent 范式开山之作（Yao et al., 2022, arXiv:2210.03629）
 - Toolformer：模型自学习何时调用工具（Schick et al., 2023, arXiv:2302.04761）
 - AutoGPT（2023.03）：第一个引发大众关注的开源 Agent，GitHub 瞬间破 10 万 Star 与其局限性复盘
 - HuggingGPT / TaskMatrix：工具调度编排的早期探索（Shen et al., 2023, arXiv:2303.04671）
 
-#### 8.2.3 框架与协议的规范化（2023–2024）
+#### [8.2.3 框架与协议的规范化（2023–2024）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.3 框架与协议的规范化（2023-2024）.md)
 
 - LangChain 生态崛起：Chain / Agent / Memory 抽象奠基
 - OpenAI Function Calling 发布（2023.06）：工具调用从 Prompt Hack 走向原生协议
@@ -665,13 +665,13 @@
 - CrewAI / Swarm（OpenAI）：角色分工范式的工程化实践
 - MCP 协议（Anthropic, 2024.11）：统一工具接入接口，结束"各自为战"时代
 
-#### 8.2.4 Computer Use 与 GUI Agent（2024）
+#### [8.2.4 Computer Use 与 GUI Agent（2024）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.4 Computer Use 与 GUI Agent（2024）.md)
 
 - Claude Computer Use（2024.10）：直接操控桌面的开创性 API 发布
 - OS-Copilot / UFO（Microsoft）：操作系统级 Agent 探索（Zhang et al., 2024, arXiv:2402.07939）
 - WebVoyager / SeeAct：纯视觉驱动网页自动化（He et al., 2024, arXiv:2401.13919）
 
-#### 8.2.5 Agentic AI 走向生产（2024–2025）
+#### [8.2.5 Agentic AI 走向生产（2024–2025）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.5 Agentic AI 走向生产（2024-2025）.md)
 
 - OpenAI Operator（2025.01）：官方商业 Agent 产品落地
 - Google Vertex AI Agent Builder / Gemini Agent：企业级 Agent 平台的云厂商卡位战
@@ -680,37 +680,37 @@
 
 ### 8.3 关键技术专题演进：六条技术支线的来世今生
 
-#### 8.3.1 上下文长度：从 512 Token 到无限流式记忆
+#### [8.3.1 上下文长度：从 512 Token 到无限流式记忆](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.1 上下文长度：从 512 Token 到无限流式记忆.md)
 
 - 技术演进：绝对位置编码 → RoPE → ALiBi → 环形注意力
 - Mamba / SSM 架构：线性复杂度挑战 Transformer 权威（Gu & Dao, 2023, arXiv:2312.00752）
 - 大上下文不等于大利用率：Lost in the Middle 问题研究（Liu et al., 2023, arXiv:2307.03172）
 
-#### 8.3.2 RAG 技术演进：关键字检索到知识图谱增强
+#### [8.3.2 RAG 技术演进：关键字检索到知识图谱增强](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.2 RAG 技术演进：关键字检索到知识图谱增强.md)
 
 - Naive RAG → Advanced RAG → Modular RAG 三代架构演进（Gao et al., 2023, arXiv:2312.10997）
 - GraphRAG（Microsoft, 2024）：图结构知识增强推理（Edge et al., 2024, arXiv:2404.16130）
 - RAG vs 长上下文 vs 微调：三种知识注入路线的选型决策框架（成本 / 时效性 / 准确性三角权衡）
 
-#### 8.3.3 多模态：从 CLIP 到全模态统一模型
+#### [8.3.3 多模态：从 CLIP 到全模态统一模型](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.3 多模态：从 CLIP 到全模态统一模型.md)
 
 - CLIP（2021）奠定视觉语言对齐基础（Radford et al., 2021, arXiv:2103.00020）
 - GPT-4o / Gemini 1.5：原生多模态 vs 后融合架构对比
 - 音视频 + 代码 + 结构数据的全模态大一统趋势研判
 
-#### 8.3.4 高效推理：从量化压缩到推理加速芯片生态
+#### [8.3.4 高效推理：从量化压缩到推理加速芯片生态](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.4 高效推理：从量化压缩到推理加速芯片生态.md)
 
 - 量化技术：FP16 → INT8 → GPTQ → AWQ → 1-bit（BitNet）
 - 推测解码：草稿模型加速主模型生成吞吐
 - vLLM / TensorRT-LLM / SGLang：PagedAttention 等关键工程创新梳理
 
-#### 8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI
+#### [8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI.md)
 
 - RLHF → PPO → DPO → GRPO 训练范式演进与工程代价对比（Rafailov et al., 2023, arXiv:2305.18290 \[DPO]）
 - Constitutional AI（Anthropic）：用原则替代人工偏好标注的新路线
 - 超级对齐：GPT-4 监督 GPT-4 的弱对强泛化研究（OpenAI, 2023, arXiv:2312.09390）
 
-#### 8.3.6 微调技术：从全参数到极低成本适配
+#### [8.3.6 微调技术：从全参数到极低成本适配](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.6 微调技术：从全参数到极低成本适配.md)
 
 - Full Fine-Tuning → Adapter → Prefix Tuning → LoRA → QLoRA → DoRA 演进路线（Hu et al., 2021, arXiv:2106.09685 \[LoRA]）
 - 微调 vs RAG vs Prompt Engineering 三路线决策树（数据量 / 更新频率 / 成本 三维度）
@@ -736,34 +736,34 @@
 
 ### 8.5 未来演进路线图（2025–2030）
 
-#### 8.5.1 模型能力演进预判
+#### [8.5.1 模型能力演进预判](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.1 模型能力演进预判（2025-2030）.md)
 
 - 推理能力：Test-Time Compute Scaling 红利是否持续？
 - 世界模型：从文本预测走向因果推理与环境建模
 - 具身智能：LLM 赋能机器人控制的技术融合路径
 - 端侧大模型：1–7B 参数在手机 / 眼镜 / 汽车的部署前景
 
-#### 8.5.2 Agent 架构演进预判
+#### [8.5.2 Agent 架构演进预判](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.2 Agent 架构演进预判.md)
 
 - 长任务持久化 Agent：多天连续执行任务的记忆与状态挑战
 - 自主学习 Agent：从执行任务到从经验中更新权重
 - Agent 互联网：跨组织 Agent 协作的身份认证与信任协议
 - 个人 AI：拥有完整用户上下文的长期陪伴型 Agent 形态
 
-#### 8.5.3 技术瓶颈与开放性挑战
+#### [8.5.3 技术瓶颈与开放性挑战](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.3 技术瓶颈与开放性挑战.md)
 
 - 幻觉根治难题：检索增强 vs 不确定性量化 vs 神经符号融合三条路
 - 可靠性天花板：为何 Agent 任务完成率难以突破 80%？
 - 多模态推理鸿沟：视觉常识与空间推理的系统性缺陷
 - 评估体系缺失：现有 Benchmark 是否真正衡量了智能？
 
-#### 8.5.4 基础设施与生态演进预判
+#### [8.5.4 基础设施与生态演进预判](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.4 基础设施与生态演进预判.md)
 
 - 推理芯片格局：NVIDIA H 系列 vs 谷歌 TPU vs Groq / Cerebras 等新架构的竞争格局
 - 推理经济学：Token 成本曲线（摩尔定律类比）与何时"AI 调用比人工更便宜"成为普遍现实
 - 开源 vs 闭源：能力差距收窄下的生态重塑
 
-#### 8.5.5 社会影响与监管格局
+#### [8.5.5 社会影响与监管格局](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.5 社会影响与监管格局.md)
 
 - 欧盟 AI Act / 美国 EO / 中国《生成式 AI 管理办法》：三大监管框架对开发者的实际影响
 - AI 对劳动力市场的结构性冲击：哪些岗位先受影响？历史类比与差异分析
