@@ -38,7 +38,7 @@ async def judge_single(
     reference: str,
     translator: str,
     prompt_version: str,
-    judge_model: str = "gpt-4o",
+    judge_model: str = "DeepSeek-V3",
     run_index: int = 0,
 ) -> JudgeResult:
     """
@@ -70,6 +70,8 @@ async def judge_single(
 
     if judge_model in MODEL_REGISTRY:
         cfg = MODEL_REGISTRY[judge_model]
+        # 使用 litellm 实际识别的模型 ID
+        kwargs["model"] = cfg["litellm_id"]
         if cfg.get("api_key_env"):
             kwargs["api_key"] = os.environ.get(cfg["api_key_env"])
         if cfg.get("base_url"):
@@ -103,7 +105,7 @@ async def judge_single(
 async def judge_batch(
     items: list[dict],           # [{id, source, translation, reference, translator}]
     prompt_version: str,
-    judge_model: str = "gpt-4o",
+    judge_model: str = "DeepSeek-V3",
     runs: int = 1,
     concurrency: int = 10,       # 并发数，避免触发速率限制
 ) -> list[JudgeResult]:
@@ -117,7 +119,7 @@ async def judge_batch(
         concurrency: 最大并发请求数
 
     性能参考：
-        30条 × 1次 × gpt-4o ≈ 15秒，约 $0.05
+        30条 × 1次 × DeepSeek-V3 ≈ 15秒，约 $0.05
         30条 × 5次（一致性测试） ≈ 60秒，约 $0.25
     """
     semaphore = asyncio.Semaphore(concurrency)

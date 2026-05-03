@@ -14,7 +14,7 @@ async def test_position_bias(
     good_translation: str,    # 人工确认质量较高的译文
     bad_translation: str,     # 人工确认质量较差的译文
     prompt_version: str,
-    judge_model: str = "gpt-4o",
+    judge_model: str = "DeepSeek-V3",
 ) -> dict:
     """
     构造双译文对比 Prompt，交换顺序后观察评分变化
@@ -84,7 +84,7 @@ async def test_verbosity_bias(
     good_translation: str,
     bad_translation: str,
     prompt_version: str,
-    judge_model: str = "gpt-4o",
+    judge_model: str = "DeepSeek-V3",
 ) -> dict:
     """
     将差翻译填充到与好翻译相同长度，观察评分是否上升
@@ -129,7 +129,7 @@ async def test_verbosity_bias(
 async def test_consistency(
     items: list[dict],
     prompt_version: str,
-    judge_model: str = "gpt-4o",
+    judge_model: str = "DeepSeek-V3",
     runs: int = 5,
 ) -> dict:
     """

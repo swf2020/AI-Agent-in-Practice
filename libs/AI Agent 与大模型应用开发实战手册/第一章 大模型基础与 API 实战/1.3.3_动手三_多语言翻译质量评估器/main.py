@@ -3,6 +3,7 @@
 import asyncio
 import json
 import pandas as pd
+from dataclasses import asdict
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,12 +28,14 @@ async def main():
     # ── 1. 单条评估冒烟测试 ──────────────────────────────────
     print("\n[1/4] 单条评估测试...")
     result = await evaluate_translation(
+        item_id="test_001",
         source="The transformer architecture revolutionized natural language processing.",
         translation="Transformer架构彻底改变了自然语言处理领域。",
         reference="Transformer架构彻底革新了自然语言处理领域。",
-        prompt_version="v3_with_reference",
+        translator="test",
+        prompt_version="v4_with_reference",
     )
-    print(f"  评分结果：{json.dumps(result, ensure_ascii=False, indent=2)}")
+    print(f"  评分结果：{json.dumps(asdict(result), ensure_ascii=False, indent=2)}")
 
     # ── 2. 位置偏差测试 ──────────────────────────────────────
     print("\n[2/4] 位置偏差测试...")
@@ -41,7 +44,7 @@ async def main():
         reference=TEST_SET[0].reference,
         good_translation="Transformer架构通过用自注意力机制取代循环神经网络，彻底革新了自然语言处理领域。",
         bad_translation="这个transformer东西让NLP变得不一样了，用了新的机制。",
-        prompt_version="v3_with_reference",
+        prompt_version="v4_with_reference",
     )
     print(f"  位置偏差测试结果：{json.dumps(bias_result, ensure_ascii=False, indent=2)}")
 
@@ -59,7 +62,7 @@ async def main():
     ]
     consistency_results = await judge_batch(
         items=sample_items,
-        prompt_version="v3_with_reference",
+        prompt_version="v4_with_reference",
         runs=3,
         concurrency=5,
     )
@@ -87,7 +90,11 @@ async def main():
 
     if len(llm_overall) == len(human_overall):
         corr = correlation_with_human(llm_overall, human_overall)
-        print(f"  相关系数：{json.dumps(corr, ensure_ascii=False, indent=2)}")
+        print(f"  相关系数：")
+        print(f"    Spearman 相关系数: {corr['spearman_r']}")
+        print(f"    P 值: {corr['p_value']}")
+        print(f"    显著性: {'显著' if corr['significant'] else '不显著'}")
+        print(f"    解释: {corr['interpretation']}")
     else:
         print(f"  ⚠️  数据对齐失败，LLM={len(llm_overall)}，Human={len(human_overall)}")
 
