@@ -96,8 +96,8 @@ def main():
     
     loaded = SentimentClassifier()
     loaded.load("best_sentiment_classifier.json")
-    test_result = loaded(text="收到货后发现是坏的，气死了")
-    print(f"\n🔄 加载验证 - 预测：{test_result.sentiment}（预期：负面）")
+    test_result = loaded(text="这个东西真好")
+    print(f"\n🔄 加载验证 - 预测：{test_result.sentiment}（预期：正面）")
 
 
 if __name__ == "__main__":
