@@ -204,3 +204,7 @@ if __name__ == "__main__":
     print(f"引用来源（{len(result.sources)} 条）：")
     for c in result.sources:
         print(f"  [{c.score:.3f}] {c.source}")
+
+    # 显式关闭 Qdrant 连接，避免程序退出时触发析构函数错误
+    pipeline.qdrant.close()
+    
