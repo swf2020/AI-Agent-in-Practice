@@ -5,7 +5,7 @@ from core_config import MODEL_REGISTRY
 
 load_dotenv()  # 从 .env 读取环境变量
 
-def configure_lm(model_key: str = "Qwen-Max") -> dspy.LM:
+def configure_lm(model_key: str = "DeepSeek-V3") -> dspy.LM:
     """
     初始化 LLM 后端。
     
@@ -21,7 +21,29 @@ def configure_lm(model_key: str = "Qwen-Max") -> dspy.LM:
     
     cfg = MODEL_REGISTRY[model_key]
     
-    # 构建参数字典
+    # 对于 Qwen 模型，使用 OpenAI 兼容模式
+    if model_key == "Qwen-Max":
+        api_key_env = cfg.get("api_key_env")
+        base_url = cfg.get("base_url")
+        
+        api_key = os.getenv(api_key_env) if api_key_env else None
+        
+        # 设置环境变量
+        os.environ["OPENAI_API_KEY"] = api_key or ""
+        os.environ["OPENAI_API_BASE"] = base_url or ""
+        
+        # 使用标准的 gpt-4o-mini 模型名，通过环境变量路由到 Qwen
+        lm = dspy.LM(
+            model="gpt-4o-mini",
+            temperature=0,
+            max_tokens=512,
+            cache=True,
+        )
+        dspy.configure(lm=lm)
+        print(f"✅ LLM 配置完成：{model_key} (通过 OpenAI 兼容模式)")
+        return lm
+    
+    # 对于其他模型（如 DeepSeek）
     kwargs = {
         "model": cfg["litellm_id"],
         "temperature": 0,
@@ -29,9 +51,10 @@ def configure_lm(model_key: str = "Qwen-Max") -> dspy.LM:
         "cache": True,
     }
     
-    # 添加可选参数
     if cfg.get("api_key_env"):
-        kwargs["api_key"] = os.getenv(cfg["api_key_env"])
+        api_key = os.getenv(cfg["api_key_env"])
+        if api_key:
+            kwargs["api_key"] = api_key
     if cfg.get("base_url"):
         kwargs["base_url"] = cfg["base_url"]
     
