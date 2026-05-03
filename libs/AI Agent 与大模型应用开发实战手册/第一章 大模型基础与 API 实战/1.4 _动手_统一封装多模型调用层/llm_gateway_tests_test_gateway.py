@@ -10,10 +10,10 @@ from litellm.utils import Usage
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from gateway import LLMGateway, LLMResponse
-from cost_tracker import CostTracker
+from llm_gateway_gateway import LLMGateway, LLMResponse
+from llm_gateway_cost_tracker import CostTracker
 
 
 def make_mock_response(
