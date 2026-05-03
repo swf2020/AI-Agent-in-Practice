@@ -1,29 +1,43 @@
 import os
 import dspy
 from dotenv import load_dotenv
+from core_config import MODEL_REGISTRY
 
-load_dotenv()  # 从 .env 读取 OPENAI_API_KEY
+load_dotenv()  # 从 .env 读取环境变量
 
-def configure_lm(model: str = "openai/gpt-4o-mini") -> dspy.LM:
+def configure_lm(model_key: str = "Qwen-Max") -> dspy.LM:
     """
     初始化 LLM 后端。
     
-    DSPy 使用 LiteLLM 格式的 model string：
-      - "openai/gpt-4o-mini"     → OpenAI
-      - "anthropic/claude-3-5-haiku-20241022" → Claude（需设置 ANTHROPIC_API_KEY）
-      - "ollama/qwen2.5:7b"      → 本地 Ollama（无需 API Key）
+    支持的模型：
+      - "Qwen-Max"      → Qwen Plus（需设置 DASHSCOPE_API_KEY）
+      - "DeepSeek-V3"   → DeepSeek V3（需设置 DEEPSEEK_API_KEY）
     
     temperature=0 在优化阶段保证确定性，便于对比实验。
     """
-    lm = dspy.LM(
-        model=model,
-        api_key=os.getenv("OPENAI_API_KEY"),
-        temperature=0,        # 优化阶段固定为0，推理阶段可调
-        max_tokens=512,
-        cache=True,           # 开启本地缓存，重跑时不重复花钱
-    )
+    # 获取模型配置
+    if model_key not in MODEL_REGISTRY:
+        raise ValueError(f"未知模型: {model_key}。可用模型: {list(MODEL_REGISTRY.keys())}")
+    
+    cfg = MODEL_REGISTRY[model_key]
+    
+    # 构建参数字典
+    kwargs = {
+        "model": cfg["litellm_id"],
+        "temperature": 0,
+        "max_tokens": 512,
+        "cache": True,
+    }
+    
+    # 添加可选参数
+    if cfg.get("api_key_env"):
+        kwargs["api_key"] = os.getenv(cfg["api_key_env"])
+    if cfg.get("base_url"):
+        kwargs["base_url"] = cfg["base_url"]
+    
+    lm = dspy.LM(**kwargs)
     dspy.configure(lm=lm)
-    print(f"✅ LLM 配置完成：{model}")
+    print(f"✅ LLM 配置完成：{model_key} ({cfg['litellm_id']})")
     return lm
 
 if __name__ == "__main__":
