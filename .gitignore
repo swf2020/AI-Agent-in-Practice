@@ -51,3 +51,4 @@ history.jsonl
 .DS_Store
 Thumbs.db
 workspace/
+qdrant_storage/

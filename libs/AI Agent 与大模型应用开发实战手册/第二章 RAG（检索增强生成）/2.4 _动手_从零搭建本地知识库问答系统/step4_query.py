@@ -7,15 +7,14 @@ import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
-from openai import OpenAI
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
 from step3_index import COLLECTION_NAME, EMBED_MODEL_NAME, QDRANT_PATH
+from core_config import MODEL_REGISTRY, get_model_list
 
 load_dotenv()
 
-# BGE 查询专用前缀（文档向量化时不加，查询时必须加）
 BGE_QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
 
 
@@ -34,39 +33,49 @@ class RAGAnswer:
     sources: list[RetrievedChunk]
 
 
-class RAGPipeline:
-    """完整的 RAG 问答流水线"""
+def get_llm_client(model_key: str = "DeepSeek-V3"):
+    """获取 LLM 客户端（支持 DeepSeek 和 Qwen）"""
+    import litellm
 
-    def __init__(self, top_k: int = 5, score_threshold: float = 0.5):
-        """
-        Args:
-            top_k: 检索返回的最多 Chunk 数
-            score_threshold: 相似度阈值，低于此分数的结果丢弃，
-                             防止将不相关内容注入 Prompt 产生幻觉
-        """
+    if model_key not in MODEL_REGISTRY:
+        model_key = "DeepSeek-V3"
+
+    cfg = MODEL_REGISTRY[model_key]
+    api_key_env = cfg.get("api_key_env")
+    base_url = cfg.get("base_url")
+
+    api_key = os.environ.get(api_key_env) if api_key_env else None
+
+    if model_key.startswith("Qwen") and base_url:
+        os.environ["OPENAI_API_KEY"] = api_key or ""
+        os.environ["OPENAI_API_BASE"] = base_url
+        return litellm, "openai/qwen-plus"
+    else:
+        return litellm, cfg["litellm_id"]
+
+
+class RAGPipeline:
+    def __init__(self, top_k: int = 5, score_threshold: float = 0.5, model_key: str = "DeepSeek-V3"):
         self.top_k = top_k
         self.score_threshold = score_threshold
 
         self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
         self.qdrant = QdrantClient(path=QDRANT_PATH)
-        self.llm = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY", "ollama"),  # Ollama 不需要真实 key
-            base_url=os.getenv("OPENAI_BASE_URL") or None,
-        )
-        self.model_name = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+        self.llm_client, self.model_name = get_llm_client(model_key)
+        print(f"✅ LLM 模型：{model_key} ({self.model_name})")
 
     def retrieve(self, question: str) -> list[RetrievedChunk]:
         """向量化问题并检索最相关的 Chunk"""
-        # 加 BGE 查询前缀后向量化
         query_with_prefix = f"{BGE_QUERY_PREFIX}{question}"
         query_vector = self.embed_model.encode(
             query_with_prefix,
             normalize_embeddings=True,
         ).tolist()
 
-        results = self.qdrant.search(
+        results = self.qdrant.query_points(
             collection_name=COLLECTION_NAME,
-            query_vector=query_vector,
+            query=query_vector,
             limit=self.top_k,
             score_threshold=self.score_threshold,
             with_payload=True,
@@ -79,18 +88,11 @@ class RAGPipeline:
                 score=r.score,
                 metadata={k: v for k, v in r.payload.items() if k not in {"text", "source"}},
             )
-            for r in results
+            for r in results.points
         ]
 
     def build_prompt(self, question: str, chunks: list[RetrievedChunk]) -> str:
-        """
-        构建 RAG Prompt。
-
-        设计原则：
-        1. 明确告诉模型只能基于提供的上下文作答
-        2. 无答案时主动说"不知道"，而非编造
-        3. 每段上下文标注来源，方便生成带引用的回答
-        """
+        """构建 RAG Prompt"""
         if not chunks:
             return f"""你是一个知识库问答助手。
 
@@ -100,7 +102,7 @@ class RAGPipeline:
 
         context_parts = []
         for i, chunk in enumerate(chunks, 1):
-            source_name = chunk.source.split("/")[-1]  # 取文件名
+            source_name = chunk.source.split("/")[-1]
             context_parts.append(f"【参考资料 {i}】来源：{source_name}\n{chunk.text}")
 
         context = "\n\n---\n\n".join(context_parts)
@@ -124,10 +126,10 @@ class RAGPipeline:
         chunks = self.retrieve(question)
         prompt = self.build_prompt(question, chunks)
 
-        response = self.llm.chat.completions.create(
+        response = self.llm_client.completion(
             model=self.model_name,
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,   # 问答场景用低温度，减少随机性
+            temperature=0.1,
             max_tokens=1024,
         )
 
@@ -139,7 +141,13 @@ class RAGPipeline:
 
 
 if __name__ == "__main__":
-    pipeline = RAGPipeline(top_k=5, score_threshold=0.5)
+    import sys
+
+    model_key = os.getenv("RAG_MODEL", "DeepSeek-V3")
+    if len(sys.argv) > 1:
+        model_key = sys.argv[1]
+
+    pipeline = RAGPipeline(top_k=5, score_threshold=0.5, model_key=model_key)
     question = "pathlib 如何读取文件内容？"
     result = pipeline.ask(question)
 
