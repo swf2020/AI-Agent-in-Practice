@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 DSPy 自动化 Prompt 优化器 - 端到端完整示例
-运行：python sentiment_optimizer.py
+运行：python unknown.py
 """
 import os
 import dspy
@@ -15,13 +15,15 @@ import json
 load_dotenv()
 
 # ── 1. 配置 LLM ─────────────────────────────────────────────
+# 使用 DeepSeek-V3 模型（用户已配置 DEEPSEEK_API_KEY）
 lm = dspy.LM(
-    model="openai/gpt-4o-mini",
-    api_key=os.getenv("OPENAI_API_KEY"),
+    model="deepseek/deepseek-chat",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
     temperature=0,
     cache=True,
 )
 dspy.configure(lm=lm)
+print("✅ LLM 配置完成：DeepSeek-V3")
 
 # ── 2. Signature ─────────────────────────────────────────────
 class SentimentSignature(dspy.Signature):
@@ -78,7 +80,7 @@ print(f"  预测：{result.sentiment}")
 
 evaluator = Evaluate(devset=devset, metric=accuracy_metric, num_threads=2, display_progress=False)
 baseline_score = evaluator(baseline)
-print(f"\n📊 Baseline 准确率: {baseline_score:.1f}%")
+print(f"\n📊 Baseline 准确率: {float(baseline_score):.1f}%")
 
 # ── 7. BootstrapFewShot 优化 ─────────────────────────────────
 print("\n" + "=" * 50)
@@ -86,8 +88,8 @@ print("Step 2: BootstrapFewShot 优化")
 optimizer = BootstrapFewShot(metric=accuracy_metric, max_bootstrapped_demos=2)
 optimized = optimizer.compile(SentimentClassifier(), trainset=trainset)
 optimized_score = evaluator(optimized)
-print(f"📊 优化后准确率: {optimized_score:.1f}%")
-print(f"📈 提升: +{optimized_score - baseline_score:.1f}%")
+print(f"📊 优化后准确率: {float(optimized_score):.1f}%")
+print(f"📈 提升: +{float(optimized_score) - float(baseline_score):.1f}%")
 
 # ── 8. 保存 ──────────────────────────────────────────────────
 optimized.save("best_sentiment_classifier.json")

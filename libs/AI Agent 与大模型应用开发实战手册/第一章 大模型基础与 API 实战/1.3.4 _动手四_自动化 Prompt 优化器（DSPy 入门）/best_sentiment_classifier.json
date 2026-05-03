@@ -1,0 +1,71 @@
+{
+  "classify.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "text": "功能就那样，没什么特别的",
+        "reasoning": "用户评论“功能就那样，没什么特别的”表达了对产品功能的中性评价，既没有明显的赞扬也没有批评，语气平淡。",
+        "reason": "评论中未出现正面或负面的情感词汇，仅客观描述功能普通，无明显情绪倾向。",
+        "sentiment": "中性"
+      },
+      {
+        "augmented": true,
+        "text": "价格一般，质量也一般",
+        "reasoning": "用户评论“价格一般，质量也一般”没有表现出强烈的正面或负面情绪，而是对产品持中立、平淡的评价态度。",
+        "reason": "评论中使用了两次“一般”，既没有赞扬也没有批评，属于客观描述，无明显情感倾向。",
+        "sentiment": "中性"
+      },
+      {
+        "text": "质量太差了，买了就坏",
+        "sentiment": "负面"
+      },
+      {
+        "text": "包装很好，物流超快！",
+        "sentiment": "正面"
+      },
+      {
+        "text": "和描述严重不符，申请退款",
+        "sentiment": "负面"
+      },
+      {
+        "text": "第一次买，超级好用，会回购",
+        "sentiment": "正面"
+      },
+      {
+        "text": "客服态度很好，五星好评",
+        "sentiment": "正面"
+      }
+    ],
+    "signature": {
+      "instructions": "分析中文用户评论的情感倾向",
+      "fields": [
+        {
+          "prefix": "Text:",
+          "description": "用户评论原文"
+        },
+        {
+          "prefix": "Reasoning:",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Reason:",
+          "description": "判断情感的核心依据，1-2句话"
+        },
+        {
+          "prefix": "Sentiment:",
+          "description": "${sentiment}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.13",
+      "dspy": "3.2.0",
+      "cloudpickle": "3.1"
+    }
+  }
+}
