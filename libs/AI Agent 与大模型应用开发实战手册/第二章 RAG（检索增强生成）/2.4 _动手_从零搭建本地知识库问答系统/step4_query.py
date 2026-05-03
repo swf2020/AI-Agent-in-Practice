@@ -73,6 +73,7 @@ class RAGPipeline:
             normalize_embeddings=True,
         ).tolist()
 
+        # 首先尝试使用索引查询
         results = self.qdrant.query_points(
             collection_name=COLLECTION_NAME,
             query=query_vector,
@@ -80,6 +81,11 @@ class RAGPipeline:
             score_threshold=self.score_threshold,
             with_payload=True,
         )
+
+        # 如果索引查询没有返回结果，使用全量扫描作为备选
+        if len(results.points) == 0:
+            print("⚠️ 索引查询无结果，尝试全量扫描...")
+            return self._retrieve_full_scan(query_vector)
 
         return [
             RetrievedChunk(
@@ -89,6 +95,47 @@ class RAGPipeline:
                 metadata={k: v for k, v in r.payload.items() if k not in {"text", "source"}},
             )
             for r in results.points
+        ]
+
+    def _retrieve_full_scan(self, query_vector: list[float]) -> list[RetrievedChunk]:
+        """全量扫描检索（当索引未就绪时使用）"""
+        import numpy as np
+
+        # 获取所有数据
+        scroll_result = self.qdrant.scroll(
+            collection_name=COLLECTION_NAME,
+            limit=1000,
+            with_vectors=True,
+        )
+
+        points = scroll_result[0]
+        if not points:
+            return []
+
+        # 计算余弦相似度
+        query_np = np.array(query_vector)
+        scores = []
+        for point in points:
+            if point.vector:
+                vector_np = np.array(point.vector)
+                # 余弦相似度
+                score = float(np.dot(query_np, vector_np) / 
+                            (np.linalg.norm(query_np) * np.linalg.norm(vector_np)))
+                if score >= self.score_threshold:
+                    scores.append((score, point))
+
+        # 按相似度排序并取top_k
+        scores.sort(key=lambda x: x[0], reverse=True)
+        top_results = scores[:self.top_k]
+
+        return [
+            RetrievedChunk(
+                text=r[1].payload["text"],
+                source=r[1].payload["source"],
+                score=r[0],
+                metadata={k: v for k, v in r[1].payload.items() if k not in {"text", "source"}},
+            )
+            for r in top_results
         ]
 
     def build_prompt(self, question: str, chunks: list[RetrievedChunk]) -> str:
@@ -147,8 +194,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         model_key = sys.argv[1]
 
-    pipeline = RAGPipeline(top_k=5, score_threshold=0.5, model_key=model_key)
-    question = "pathlib 如何读取文件内容？"
+    # 降低阈值以获取更多结果
+    pipeline = RAGPipeline(top_k=5, score_threshold=0.4, model_key=model_key)
+    question = "pathlib 的层次结构是什么样的？"
     result = pipeline.ask(question)
 
     print(f"问题：{result.question}\n")

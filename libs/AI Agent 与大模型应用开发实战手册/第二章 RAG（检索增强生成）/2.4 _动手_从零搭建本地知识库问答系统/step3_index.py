@@ -55,6 +55,12 @@ def ensure_collection(client: QdrantClient) -> None:
             vectors_config=VectorParams(size=VECTOR_DIM, distance=Distance.COSINE),
         )
         print(f"已创建 Collection：{COLLECTION_NAME}")
+        # 创建后立即优化索引
+        client.update_collection(
+            collection_name=COLLECTION_NAME,
+            optimizer_config={"indexing_threshold": 1},
+        )
+        print(f"已设置索引阈值")
     else:
         print(f"Collection 已存在：{COLLECTION_NAME}")
 
