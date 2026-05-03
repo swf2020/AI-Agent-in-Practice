@@ -33,7 +33,7 @@ async def main():
         translation="Transformer架构彻底改变了自然语言处理领域。",
         reference="Transformer架构彻底革新了自然语言处理领域。",
         translator="test",
-        prompt_version="v4_with_reference",
+        prompt_version="v3_with_reference",
     )
     print(f"  评分结果：{json.dumps(asdict(result), ensure_ascii=False, indent=2)}")
 
@@ -44,7 +44,7 @@ async def main():
         reference=TEST_SET[0].reference,
         good_translation="Transformer架构通过用自注意力机制取代循环神经网络，彻底革新了自然语言处理领域。",
         bad_translation="这个transformer东西让NLP变得不一样了，用了新的机制。",
-        prompt_version="v4_with_reference",
+        prompt_version="v3_with_reference",
     )
     print(f"  位置偏差测试结果：{json.dumps(bias_result, ensure_ascii=False, indent=2)}")
 
@@ -62,7 +62,7 @@ async def main():
     ]
     consistency_results = await judge_batch(
         items=sample_items,
-        prompt_version="v4_with_reference",
+        prompt_version="v4_with_role",
         runs=3,
         concurrency=5,
     )
