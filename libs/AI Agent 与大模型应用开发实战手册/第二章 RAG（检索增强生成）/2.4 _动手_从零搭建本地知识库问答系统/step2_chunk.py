@@ -153,7 +153,6 @@ if __name__ == "__main__":
 
     # 用网页做演示，结构相对清晰
     doc = parse_document("https://docs.python.org/3/library/pathlib.html")
-
     fixed_chunks = chunk_fixed_size(doc, chunk_size=512)
     section_chunks = chunk_by_section(doc, max_chunk_size=1000)
 
