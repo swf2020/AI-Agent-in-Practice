@@ -1,8 +1,14 @@
 """端到端冒烟测试，确认整个调用链路正常。需要真实 API Key。"""
 import asyncio
 import json
+import sys
+import os
+
+# 将当前目录加入 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from dotenv import load_dotenv
-from llm_gateway.gateway import LLMGateway
+from llm_gateway_gateway import LLMGateway
 
 load_dotenv()
 
@@ -13,7 +19,7 @@ async def main():
     print("=== 单次调用测试 ===")
     resp = await gateway.chat(
         prompt="用一句话解释什么是 Transformer",
-        model="gpt-4o",
+        model="deepseek-chat",  # 使用 DeepSeek 模型
         system="你是一位 AI 教育专家，用最通俗的语言解释技术概念。",
         feature="demo_single",
     )
@@ -29,7 +35,7 @@ async def main():
         "什么是 Function Calling？",
     ]
     results = await gateway.chat_batch(
-        prompts, model="gpt-4o", max_concurrent=3, feature="demo_batch"
+        prompts, model="deepseek-chat", max_concurrent=3, feature="demo_batch"
     )
     for i, r in enumerate(results):
         print(f"[{i}] {prompts[i][:15]}... → {r.content[:40]}...")

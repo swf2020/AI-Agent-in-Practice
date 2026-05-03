@@ -4,14 +4,18 @@ LLMGateway：统一多模型调用入口。
 """
 import os
 import asyncio
+import sys
 from typing import Any
 from dotenv import load_dotenv
 import litellm
 from litellm import Router
 from pydantic import BaseModel
 
-from .cost_tracker import CostTracker
-from .config.models import MODEL_LIST, FALLBACKS
+# 将当前目录加入 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from llm_gateway_cost_tracker import CostTracker
+from llm_gateway_config_models import MODEL_LIST, FALLBACKS
 
 load_dotenv()
 
@@ -113,12 +117,18 @@ class LLMGateway:
         # 记录本次消耗
         self.tracker.record(raw, feature=feature)
 
+        # 计算成本（处理模型未映射的情况）
+        try:
+            cost_usd = round(litellm.completion_cost(completion_response=raw), 6)
+        except Exception:
+            cost_usd = 0.0
+
         return LLMResponse(
             content=raw.choices[0].message.content or "",
             model=raw.model or model,
             prompt_tokens=raw.usage.prompt_tokens,
             completion_tokens=raw.usage.completion_tokens,
-            cost_usd=round(litellm.completion_cost(completion_response=raw), 6),
+            cost_usd=cost_usd,
         )
 
     async def chat_batch(
