@@ -179,6 +179,64 @@ mkdocs build
 
 ---
 
+## 🎤 面试刷题资源（interview/）
+
+`interview/` 目录包含一套完整的 AI Agent 社招面试题集采集与解答系统。
+
+### 📁 目录结构
+
+```
+interview/
+├── ai-agent-interview-collector/
+│   └── SKILL.md                      # Claude Code Skill 定义文件
+├── ai_agent_interview_questions_20260502.md   # 面试题集（86题，8大模块）
+└── answers/
+    ├── module_00_other.md              # 其他/综合类（6题）
+    ├── module_01_prompt_llm.md         # Prompt / LLM 原理类（12题）
+    ├── module_02_rag.md               # RAG 设计与优化类（26题）
+    ├── module_03_tool_calling.md      # 工具调用类（13题）
+    ├── module_04_agent_architecture.md # Agent 架构设计类（15题）
+    ├── module_05_multi_agent.md       # 多 Agent 设计类（12题）
+    ├── module_06_engineering.md       # 工程落地类（12题）
+    ├── module_07_deployment.md        # 云端部署类（11题）
+    └── module_08_evolution.md         # 技术演进与视野类（10题）
+```
+
+### 功能说明
+
+- **题集来源**：牛客/脉脉/小红书/B站/知乎/CSDN 等 14+ 中文平台，采集自近 12 个月真实社招面经
+- **分类体系**：按 8 大技术模块 + 综合类组织，共 86 道去重题目
+- **解答覆盖**：每题包含"考察点 → 解答思路 → 参考答案 + 加分项"四段式结构，共 117 题解答（7375 行）
+- **高频标注**：题集末尾标注近 1 个月出现 3 次以上的热点题目
+
+### SKILL.md 安装与使用
+
+**安装步骤：**
+
+```bash
+# 将 skill 复制到你的 Claude Code skills 目录
+cp -r interview/ai-agent-interview-collector ~/.claude/skills/ai-agent-interview-collector
+```
+
+**使用方式：**
+
+安装后，在 Claude Code 对话中说以下任意一句即可触发：
+
+- "更新面试题集"
+- "刷新 AI Agent 面试题"
+- "收集最新面试题"
+- "跑一次面试题采集"
+
+Skill 会自动执行：从中文互联网搜索近 12 个月的真实面试题 → 清洗去重 → 按 8 大模块分类 → 生成 Markdown 题集 → 并行调用大模型为每题生成解答思路与参考答案 → 保存到本地。
+
+**自定义输出路径：**
+
+```
+跑一次面试题采集，输出到 ~/my-projects/interview-questions/
+```
+
+---
+
 ## 📊 统计信息
 
 | 项目 | 数量 |
@@ -186,7 +244,7 @@ mkdocs build
 | 总章节数 | 8 章 |
 | 文档文件数 | 63 个 |
 | 动手实验 | 15+ 个 |
-| 面试题集 | 多章节覆盖 |
+| 面试题集（interview/） | 86 题 + 117 题解答 |
 
 ---
 
