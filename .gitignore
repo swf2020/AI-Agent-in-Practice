@@ -54,3 +54,5 @@ workspace/
 qdrant_storage/
 .chainlit/
 .files/
+CLAUDE.md
+.claude/
