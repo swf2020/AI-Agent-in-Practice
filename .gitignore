@@ -24,7 +24,7 @@ wheels/
 *.egg
 
 # Virtual environment
-.env/
+.env
 .venv/
 env/
 venv/
@@ -43,6 +43,9 @@ venv.bak/
 # Logs
 *.log
 logs/
+
+# History files
+history.jsonl
 
 # OS
 .DS_Store

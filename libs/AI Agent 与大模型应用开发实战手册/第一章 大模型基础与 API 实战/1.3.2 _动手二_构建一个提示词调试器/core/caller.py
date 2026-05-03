@@ -7,6 +7,7 @@ LLM 并发调用层
   3. return_exceptions=True 确保一个模型出错不影响其他模型的结果
 """
 import asyncio
+import os
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -52,16 +53,23 @@ async def call_single(
     cfg = MODEL_REGISTRY[model_key]
     start = time.perf_counter()
 
+    kwargs: dict[str, Any] = {
+        "model": cfg["litellm_id"],
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+
+    if cfg.get("api_key_env"):
+        kwargs["api_key"] = os.environ.get(cfg["api_key_env"])
+    if cfg.get("base_url"):
+        kwargs["base_url"] = cfg["base_url"]
+
     try:
-        resp = await acompletion(
-            model=cfg["litellm_id"],
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
+        resp = await acompletion(**kwargs)
         latency = round(time.perf_counter() - start, 2)
         usage = resp.usage
         input_tok = usage.prompt_tokens

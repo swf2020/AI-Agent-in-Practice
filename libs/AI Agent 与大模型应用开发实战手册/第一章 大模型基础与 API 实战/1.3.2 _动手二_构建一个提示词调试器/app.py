@@ -111,8 +111,8 @@ def save_scores_and_notes(
 
 
 def refresh_history() -> pd.DataFrame:
-    """刷新历史记录表格"""
-    return load_history()
+    """刷新历史记录表格（强制重新读取文件）"""
+    return load_history(use_cache=False)
 
 
 def fill_from_history(evt: gr.SelectData, df: pd.DataFrame):
@@ -147,8 +147,6 @@ def fill_from_history(evt: gr.SelectData, df: pd.DataFrame):
 # ─────────────── Gradio Blocks UI ───────────────
 with gr.Blocks(
     title="🔬 Prompt 调试器",
-    theme=gr.themes.Soft(),
-    css=".output-col { min-height: 300px; }",
 ) as demo:
     gr.Markdown("# 🔬 Prompt 调试器\n> 改变一个变量，观察输出变化，记录结论\n\n**支持的模型：DeepSeek-V3, Qwen-Max**")
 
@@ -213,7 +211,7 @@ with gr.Blocks(
     with gr.Accordion("📚 历史记录", open=False):
         refresh_btn = gr.Button("🔄 刷新历史")
         history_df = gr.DataFrame(
-            value=load_history,
+            value=load_history(),
             label="实验历史（点击行可回填参数）",
             interactive=False,
             wrap=True,
@@ -261,8 +259,10 @@ with gr.Blocks(
 
 if __name__ == "__main__":
     demo.launch(
-        server_name="0.0.0.0",  # 允许局域网访问
-        server_port=7860,
-        share=False,            # True 可生成公网链接（Colab 场景使用）
+        server_name="127.0.0.1",
+        server_port=7861,
+        theme=gr.themes.Soft(),
+        css=".output-col { min-height: 300px; }",
+        share=False,
         show_error=True,
     )
