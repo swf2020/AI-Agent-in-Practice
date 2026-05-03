@@ -52,3 +52,5 @@ history.jsonl
 Thumbs.db
 workspace/
 qdrant_storage/
+.chainlit/
+.files/
