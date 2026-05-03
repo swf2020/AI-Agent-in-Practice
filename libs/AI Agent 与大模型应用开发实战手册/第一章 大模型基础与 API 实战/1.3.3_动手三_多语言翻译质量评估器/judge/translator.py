@@ -3,11 +3,10 @@
 """
 import asyncio
 import os
-from dotenv import load_dotenv
 from litellm import acompletion
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-load_dotenv()
+from core_config import MODEL_REGISTRY
 
 TRANSLATE_PROMPT = """请将以下英文句子翻译成中文。
 要求：
@@ -24,11 +23,20 @@ async def translate_with_llm(
     model: str,
 ) -> str:
     """调用 LLM 翻译单条文本，失败自动重试3次"""
-    resp = await acompletion(
-        model=model,
-        messages=[{"role": "user", "content": TRANSLATE_PROMPT.format(source=source)}],
-        temperature=0.3,  # 翻译任务用低 temperature 保持稳定，但不能为0（否则过于死板）
-    )
+    kwargs = {
+        "model": model,
+        "messages": [{"role": "user", "content": TRANSLATE_PROMPT.format(source=source)}],
+        "temperature": 0.3,
+    }
+
+    if model in MODEL_REGISTRY:
+        cfg = MODEL_REGISTRY[model]
+        if cfg.get("api_key_env"):
+            kwargs["api_key"] = os.environ.get(cfg["api_key_env"])
+        if cfg.get("base_url"):
+            kwargs["base_url"] = cfg["base_url"]
+
+    resp = await acompletion(**kwargs)
     return resp.choices[0].message.content.strip()
 
 

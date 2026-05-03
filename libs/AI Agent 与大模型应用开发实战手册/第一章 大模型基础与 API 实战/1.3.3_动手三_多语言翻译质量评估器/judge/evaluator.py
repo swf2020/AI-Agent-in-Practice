@@ -3,12 +3,15 @@
 """
 import asyncio
 import json
+import os
 import time
+from dataclasses import dataclass
 from typing import Any
 
 from litellm import acompletion
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from core_config import MODEL_REGISTRY
 from judge.prompts import PROMPT_VERSIONS
 
 
@@ -56,14 +59,24 @@ async def judge_single(
     else:
         prompt = prompt_template.format(source=source, translation=translation)
 
+    # 获取模型配置
+    kwargs: dict[str, Any] = {
+        "model": judge_model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+        "response_format": {"type": "json_object"},
+        "max_tokens": 300,
+    }
+
+    if judge_model in MODEL_REGISTRY:
+        cfg = MODEL_REGISTRY[judge_model]
+        if cfg.get("api_key_env"):
+            kwargs["api_key"] = os.environ.get(cfg["api_key_env"])
+        if cfg.get("base_url"):
+            kwargs["base_url"] = cfg["base_url"]
+
     t0 = time.perf_counter()
-    resp = await acompletion(
-        model=judge_model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,                              # 裁判必须 temperature=0
-        response_format={"type": "json_object"},   # 强制 JSON 模式
-        max_tokens=300,                             # 评分输出不长，限制 token 节省成本
-    )
+    resp = await acompletion(**kwargs)
     latency_ms = (time.perf_counter() - t0) * 1000
 
     raw = resp.choices[0].message.content
