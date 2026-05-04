@@ -1,6 +1,7 @@
 """上下文压缩模块：LLMLingua 与 LLM 摘要压缩两种实现。"""
 
 from openai import OpenAI
+from core_config import get_chat_model_id
 
 
 class LLMLinguaCompressor:
@@ -55,9 +56,9 @@ class SummaryCompressor:
     实现最简单，适合快速集成，无需额外加载本地模型。
     """
 
-    def __init__(self, client: OpenAI, model: str = "gpt-4o-mini") -> None:
+    def __init__(self, client: OpenAI, model: str | None = None) -> None:
         self.client = client
-        self.model = model
+        self.model = model or get_chat_model_id()
 
     def compress(
         self,

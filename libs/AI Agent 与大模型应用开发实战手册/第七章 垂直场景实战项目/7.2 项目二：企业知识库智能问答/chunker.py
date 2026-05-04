@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from core_config import CHUNK_OVERLAP, CHUNK_SIZE
 from document_parser import ParsedDocument
 
 
@@ -23,8 +24,8 @@ class DocumentChunk:
 
 
 _SPLITTER = RecursiveCharacterTextSplitter(
-    chunk_size=512,
-    chunk_overlap=64,
+    chunk_size=CHUNK_SIZE,
+    chunk_overlap=CHUNK_OVERLAP,
     separators=["\n## ", "\n### ", "\n#### ", "\n\n", "\n", "。", "！", "？", " ", ""],
     length_function=len,
 )

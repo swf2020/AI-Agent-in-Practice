@@ -10,6 +10,7 @@ import os
 # 将当前目录加入 Python 路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from core_config import ACTIVE_MODEL_KEY, get_router_model_name
 from llm_gateway_gateway import LLMGateway
 
 
@@ -18,15 +19,16 @@ async def benchmark_serial_vs_concurrent(n_requests: int = 5) -> None:
     gateway = LLMGateway()
     prompts = [f"用一句话解释什么是机器学习（第{i+1}次）" for i in range(n_requests)]
 
+    model_name = get_router_model_name(ACTIVE_MODEL_KEY)
     print(f"\n{'='*50}")
-    print(f"测试 {n_requests} 次请求，模型：deepseek-chat")
+    print(f"测试 {n_requests} 次请求，模型：{model_name}")
     print(f"{'='*50}")
 
     # --- 串行调用 ---
     start = time.perf_counter()
     serial_results = []
     for p in prompts:
-        r = await gateway.chat(p, model="deepseek-chat", feature="benchmark_serial")
+        r = await gateway.chat(p, model=model_name, feature="benchmark_serial")
         serial_results.append(r)
     serial_time = time.perf_counter() - start
     print(f"\n[串行]  总耗时：{serial_time:.2f}s  |  均摊：{serial_time/n_requests:.2f}s/req")
@@ -37,7 +39,7 @@ async def benchmark_serial_vs_concurrent(n_requests: int = 5) -> None:
     # --- 并发调用 ---
     start = time.perf_counter()
     concurrent_results = await gateway.chat_batch(
-        prompts, model="deepseek-chat", max_concurrent=n_requests, feature="benchmark_concurrent"
+        prompts, model=model_name, max_concurrent=n_requests, feature="benchmark_concurrent"
     )
     concurrent_time = time.perf_counter() - start
     speedup = serial_time / concurrent_time

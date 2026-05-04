@@ -3,13 +3,12 @@ import time
 import logging
 from typing import Any
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain.tools import Tool
+from langchain.agents import create_agent
+from langchain_core.tools import Tool
 from langchain_openai import ChatOpenAI
-from langchain import hub
-from langfuse.callback import CallbackHandler as LangfuseCallbackHandler
 
 from config import get_settings
+from core_config import get_litellm_id, get_api_key, get_base_url
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -49,26 +48,12 @@ def build_tools() -> list[Tool]:
     ]
 
 
-def create_langfuse_handler(
-    session_id: str,
-    user_id: str | None,
-    trace_name: str = "agent_run",
-) -> LangfuseCallbackHandler:
-    """
-    为每次 Agent 执行创建独立的 LangFuse Handler。
+# ReAct 系统提示词
+REACT_SYSTEM_PROMPT = """You are a helpful assistant. You have access to a set of tools that you can use to answer questions.
+Use your tools to solve problems step by step. When you have a final answer, provide it clearly to the user.
 
-    关键设计：每个请求用独立的 Handler，确保 trace 不会跨请求污染。
-    session_id 和 user_id 传入后，LangFuse 界面可以按用户/会话过滤。
-    """
-    return LangfuseCallbackHandler(
-        public_key=settings.langfuse_public_key,
-        secret_key=settings.langfuse_secret_key,
-        host=settings.langfuse_host,
-        session_id=session_id,
-        user_id=user_id,
-        trace_name=trace_name,
-        tags=["production", "react-agent"],
-    )
+Available tools:
+{tools}"""
 
 
 async def run_agent(
@@ -86,40 +71,29 @@ async def run_agent(
     """
     start_time = time.monotonic()
 
+    tools = build_tools()
+    tools_desc = "\n".join(f"- {t.name}: {t.description}" for t in tools)
+    system_prompt = REACT_SYSTEM_PROMPT.format(tools=tools_desc)
+
     llm = ChatOpenAI(
-        model="gpt-4o-mini",  # 生产环境根据任务复杂度动态路由
+        model=get_litellm_id(),
         temperature=0,
         max_tokens=settings.max_tokens_per_request,
-        api_key=settings.openai_api_key,
+        api_key=get_api_key(),
+        base_url=get_base_url(),
         streaming=False,
     )
 
-    tools = build_tools()
-    # 使用 LangChain Hub 的标准 ReAct 提示词，生产环境建议固定版本 hash
-    prompt = hub.pull("hwchase17/react")
-
-    agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
-
-    langfuse_handler = create_langfuse_handler(
-        session_id=session_id,
-        user_id=user_id,
-    )
-
-    agent_executor = AgentExecutor(
-        agent=agent,
+    agent = create_agent(
+        model=llm,
         tools=tools,
-        max_iterations=settings.agent_max_iterations,
-        handle_parsing_errors=True,  # LLM 输出格式错误时不 crash，而是重试
-        verbose=False,  # 生产环境关闭，避免日志膨胀
+        system_prompt=system_prompt,
     )
 
     try:
-        result = await agent_executor.ainvoke(
-            {"input": message},
-            config={"callbacks": [langfuse_handler]},
+        result = await agent.ainvoke(
+            {"messages": [("user", message)]},
         )
-        # 确保 LangFuse 数据已上报（异步批量上报，需主动 flush）
-        langfuse_handler.flush()
 
         duration_ms = int((time.monotonic() - start_time) * 1000)
         logger.info(
@@ -127,14 +101,21 @@ async def run_agent(
             extra={"session_id": session_id, "duration_ms": duration_ms},
         )
 
+        # 提取最终回复
+        messages = result.get("messages", [])
+        output = ""
+        for msg in reversed(messages):
+            if hasattr(msg, "content") and msg.content:
+                output = msg.content
+                break
+
         return {
-            "output": result["output"],
+            "output": output,
             "duration_ms": duration_ms,
-            "token_usage": {},  # LangFuse Handler 已记录详细用量，此处简化
+            "token_usage": {},
         }
 
     except Exception as e:
-        langfuse_handler.flush()
         duration_ms = int((time.monotonic() - start_time) * 1000)
         logger.error(
             "agent_run_failed",

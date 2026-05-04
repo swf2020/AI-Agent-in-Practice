@@ -3,9 +3,12 @@
 """
 
 from agents import run_dual_agent_loop
+from core_config import get_litellm_id, ACTIVE_MODEL_KEY
 
 
 def main() -> None:
+    print(f"当前模型: {ACTIVE_MODEL_KEY} ({get_litellm_id()})")
+
     # 示例需求：实现一个带缓存的斐波那契计算函数
     requirement = """
     实现一个 Python 函数 `fibonacci(n: int) -> int`，要求：
@@ -24,9 +27,9 @@ def main() -> None:
     )
 
     print("\n" + "="*60)
-    print("📊 最终结果")
+    print("最终结果")
     print("="*60)
-    print(f"状态: {'✅ 成功' if result['success'] else '❌ 未达标'}")
+    print(f"状态: {'通过' if result['success'] else '未达标'}")
     print(f"轮次: {result['rounds']}")
     print(f"综合评分: {result['final_score']:.2f}/1.00")
     print(f"\n最终代码：\n{result['final_code']}")

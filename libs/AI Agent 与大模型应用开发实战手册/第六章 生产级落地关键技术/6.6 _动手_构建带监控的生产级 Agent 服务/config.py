@@ -6,9 +6,9 @@ from pydantic_settings import BaseSettings  # pydantic v2 拆包，需 pip insta
 class Settings(BaseSettings):
     """应用配置，自动从 .env 文件读取。"""
 
-    openai_api_key: str
-    langfuse_public_key: str
-    langfuse_secret_key: str
+    openai_api_key: str = ""
+    langfuse_public_key: str = ""
+    langfuse_secret_key: str = ""
     langfuse_host: str = "https://cloud.langfuse.com"
     redis_url: str = "redis://localhost:6379"
 

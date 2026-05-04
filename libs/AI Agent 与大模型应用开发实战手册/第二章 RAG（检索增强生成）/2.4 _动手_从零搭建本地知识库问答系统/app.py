@@ -14,7 +14,7 @@ _pipeline: RAGPipeline | None = None
 def get_pipeline() -> RAGPipeline:
     global _pipeline
     if _pipeline is None:
-        _pipeline = RAGPipeline(top_k=5, score_threshold=0.5)
+        _pipeline = RAGPipeline(top_k=5, score_threshold=0.4)
     return _pipeline
 
 

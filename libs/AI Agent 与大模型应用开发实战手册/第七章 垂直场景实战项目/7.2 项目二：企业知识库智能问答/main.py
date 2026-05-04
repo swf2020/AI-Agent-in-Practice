@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from qdrant_client import QdrantClient
 
+from core_config import QDRANT_API_KEY, QDRANT_COLLECTION, QDRANT_URL
 from generator import AnswerGenerator, GeneratedAnswer
 from retriever import HybridRetriever
 
@@ -24,10 +25,10 @@ async def lifespan(app: FastAPI):
     global _retriever, _generator
 
     client = QdrantClient(
-        url=os.getenv("QDRANT_URL", "http://localhost:6333"),
-        api_key=os.getenv("QDRANT_API_KEY"),
+        url=os.getenv("QDRANT_URL", QDRANT_URL),
+        api_key=os.getenv("QDRANT_API_KEY", QDRANT_API_KEY),
     )
-    collection = os.getenv("QDRANT_COLLECTION", "enterprise_kb")
+    collection = os.getenv("QDRANT_COLLECTION", QDRANT_COLLECTION)
 
     _retriever = HybridRetriever(
         collection_name=collection,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+from typing import Optional
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from langchain_core.tools import tool
@@ -11,6 +12,7 @@ _client = WebClient(token=settings.slack_bot_token)
 
 @tool
 def slack_send_notification(message: str, channel: Optional[str] = None) -> str:
+    """向指定 Slack 频道发送通知消息"""
     target = channel or settings.slack_notify_channel
     try:
         response = _client.chat_postMessage(channel=target, text=message)

@@ -31,6 +31,11 @@ _RRF_K = 60
 _RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
 
 
+def _get_default_reranker() -> CrossEncoder:
+    """创建默认 CrossEncoder 实例（延迟初始化，避免 import 时下载模型）"""
+    return CrossEncoder(_RERANKER_MODEL)
+
+
 class HybridRetriever:
     def __init__(
         self,

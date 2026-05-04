@@ -2,6 +2,7 @@
 
 import json
 from openai import OpenAI
+from core_config import get_chat_model_id
 
 
 class QueryRewriter:
@@ -10,9 +11,9 @@ class QueryRewriter:
     设计原则：策略可单独使用，也可组合使用。
     """
 
-    def __init__(self, client: OpenAI, model: str = "gpt-4o-mini") -> None:
+    def __init__(self, client: OpenAI, model: str | None = None) -> None:
         self.client = client
-        self.model = model
+        self.model = model or get_chat_model_id()
 
     def hyde(self, query: str) -> str:
         """

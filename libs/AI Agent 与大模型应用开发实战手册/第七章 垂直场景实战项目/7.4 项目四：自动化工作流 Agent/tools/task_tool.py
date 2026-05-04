@@ -14,6 +14,7 @@ def notion_create_task(
     due_date: str = "",
     priority: str = "medium",
 ) -> str:
+    """在 Notion 数据库中创建一个新任务页面"""
     properties: dict = {
         "Name": {"title": [{"text": {"content": title}}]},
         "Description": {"rich_text": [{"text": {"content": description}}]},
@@ -52,6 +53,7 @@ def jira_create_issue(
     due_date: str = "",
     priority: str = "Medium",
 ) -> str:
+    """在 Jira 项目中创建一个新 Issue"""
     fields: dict = {
         "project": {"key": settings.jira_project_key},
         "summary": title,

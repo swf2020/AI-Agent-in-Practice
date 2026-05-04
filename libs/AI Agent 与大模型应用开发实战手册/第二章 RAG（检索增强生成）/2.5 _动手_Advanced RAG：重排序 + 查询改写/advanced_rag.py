@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from baseline_rag import NaiveRAG, RetrievedChunk
 from query_rewriter import QueryRewriter
-from reranker import BGEReranker
+from reranker import DashScopeReranker
 from context_compressor import SummaryCompressor
 
 
@@ -38,9 +38,9 @@ class AdvancedRAG(NaiveRAG):
     def __init__(self, config: AdvancedRAGConfig | None = None) -> None:
         super().__init__()
         self.config = config or AdvancedRAGConfig()
-        self.rewriter = QueryRewriter(self.client)
-        self.reranker = BGEReranker() if self.config.use_reranker else None
-        self.compressor = SummaryCompressor(self.client)
+        self.rewriter = QueryRewriter(self.chat_client)
+        self.reranker = DashScopeReranker() if self.config.use_reranker else None
+        self.compressor = SummaryCompressor(self.chat_client)
 
     def _multi_retrieve(self, queries: list[str]) -> list[RetrievedChunk]:
         """

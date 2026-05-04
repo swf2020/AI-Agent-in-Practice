@@ -1,15 +1,19 @@
 """Naive RAG 基线实现，作为对比实验的起点。"""
 
-import os
 from typing import Optional
 from dataclasses import dataclass
 
-import numpy as np
 from dotenv import load_dotenv
 from openai import OpenAI
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     Distance, VectorParams, PointStruct
+)
+from core_config import (
+    get_dashscope_api_key, get_embedding_base_url,
+    get_embedding_model, get_embedding_dim,
+    get_chat_model_id, get_api_key, get_base_url,
+    ACTIVE_MODEL_KEY,
 )
 
 load_dotenv()
@@ -30,15 +34,18 @@ class NaiveRAG:
     不做任何查询改写、重排或压缩。
     """
 
-    EMBED_MODEL = "text-embedding-3-small"
-    CHAT_MODEL = "gpt-4o-mini"
     COLLECTION = "naive_rag_demo"
-    EMBED_DIM = 1536
 
     def __init__(self) -> None:
-        self.client = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+        # Embedding 客户端（DashScope，text-embedding-v4）
+        self.embed_client = OpenAI(
+            api_key=get_dashscope_api_key(),
+            base_url=get_embedding_base_url(),
+        )
+        # 聊天模型客户端（通过 core_config 统一配置）
+        self.chat_client = OpenAI(
+            api_key=get_api_key(),
+            base_url=get_base_url(),
         )
         # 使用内存模式的 Qdrant，无需启动独立服务
         self.qdrant = QdrantClient(":memory:")
@@ -51,14 +58,14 @@ class NaiveRAG:
             self.qdrant.create_collection(
                 collection_name=self.COLLECTION,
                 vectors_config=VectorParams(
-                    size=self.EMBED_DIM, distance=Distance.COSINE
+                    size=get_embedding_dim(), distance=Distance.COSINE
                 ),
             )
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        """批量 Embedding，每次最多 100 条（OpenAI 限制）。"""
-        resp = self.client.embeddings.create(
-            model=self.EMBED_MODEL, input=texts
+        """批量 Embedding，使用配置的 Embedding 模型。"""
+        resp = self.embed_client.embeddings.create(
+            model=get_embedding_model(), input=texts
         )
         return [item.embedding for item in resp.data]
 
@@ -74,14 +81,14 @@ class NaiveRAG:
             for i, (text, emb) in enumerate(zip(chunks, embeddings))
         ]
         self.qdrant.upsert(collection_name=self.COLLECTION, points=points)
-        print(f"✅ 已索引 {len(chunks)} 个切块")
+        print(f"已索引 {len(chunks)} 个切块")
 
     def retrieve(self, query: str, top_k: int = 5) -> list[RetrievedChunk]:
         """向量检索，返回 Top-K 候选。"""
         q_vec = self.embed([query])[0]
-        hits = self.qdrant.search(
+        response = self.qdrant.query_points(
             collection_name=self.COLLECTION,
-            query_vector=q_vec,
+            query=q_vec,
             limit=top_k,
         )
         return [
@@ -90,7 +97,7 @@ class NaiveRAG:
                 score=h.score,
                 chunk_id=h.payload["chunk_id"],
             )
-            for h in hits
+            for h in response.points
         ]
 
     def generate(self, query: str, context_chunks: list[RetrievedChunk]) -> str:
@@ -101,7 +108,7 @@ class NaiveRAG:
                 "role": "system",
                 "content": (
                     "你是一个精准的问答助手。请严格基于以下上下文回答问题，"
-                    "如果上下文中没有相关信息，直接说"不知道"，不要编造。"
+                    "如果上下文中没有相关信息，直接说'不知道'，不要编造。"
                 ),
             },
             {
@@ -109,8 +116,8 @@ class NaiveRAG:
                 "content": f"上下文：\n{context}\n\n问题：{query}",
             },
         ]
-        resp = self.client.chat.completions.create(
-            model=self.CHAT_MODEL,
+        resp = self.chat_client.chat.completions.create(
+            model=get_chat_model_id(),
             messages=messages,
             temperature=0.1,
         )

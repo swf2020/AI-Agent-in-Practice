@@ -1,0 +1,16 @@
+litellm>=1.40.0
+python-dotenv>=1.0.0
+pytest>=7.0.0
+fastapi>=0.100.0
+uvicorn>=0.20.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+arq>=0.25.0
+redis>=4.0.0
+locust>=2.0.0
+prometheus-client>=0.17.0
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langfuse>=2.0.0
+httpx>=0.24.0
+openai>=1.0.0

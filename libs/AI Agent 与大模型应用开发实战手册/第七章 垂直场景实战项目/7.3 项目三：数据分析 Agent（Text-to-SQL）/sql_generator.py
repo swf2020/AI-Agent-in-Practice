@@ -1,11 +1,28 @@
 import re
 from enum import Enum
+from typing import Optional
 from pydantic import BaseModel, Field
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from core_config import get_litellm_id, get_api_key, get_base_url
+
 load_dotenv()
-client = OpenAI()
+
+
+def get_openai_client(
+    api_key: Optional[str] = None,
+    base_url: Optional[str] = None,
+) -> OpenAI:
+    """创建 OpenAI 客户端，使用 core_config 中的配置"""
+    key = api_key or get_api_key()
+    url = base_url or get_base_url()
+    kwargs = {}
+    if key:
+        kwargs["api_key"] = key
+    if url:
+        kwargs["base_url"] = url
+    return OpenAI(**kwargs)
 
 
 class Dialect(str, Enum):
@@ -62,11 +79,14 @@ ORDER BY 日期
 class SQLGenerator:
     def __init__(
         self,
-        model: str = "gpt-4o-mini",
+        model: str | None = None,
         dialect: Dialect = Dialect.SQLITE,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
     ):
-        self.model = model
+        self.model = model or get_litellm_id()
         self.dialect = dialect
+        self.client = get_openai_client(api_key=api_key, base_url=base_url)
 
     def generate(
         self,
@@ -86,7 +106,7 @@ class SQLGenerator:
 
         messages.append({"role": "user", "content": question})
 
-        response = client.beta.chat.completions.parse(
+        response = self.client.beta.chat.completions.parse(
             model=self.model,
             messages=messages,
             response_format=SQLGenerationResult,

@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from dotenv import load_dotenv
 from fastembed import TextEmbedding
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import (
@@ -17,11 +16,7 @@ from qdrant_client.http.models import (
 from tqdm import tqdm
 
 from chunker import DocumentChunk
-
-load_dotenv()
-
-_EMBED_MODEL = "BAAI/bge-m3"
-_VECTOR_DIM = 1024
+from core_config import EMBED_MODEL as _EMBED_MODEL, QDRANT_API_KEY, QDRANT_COLLECTION, QDRANT_URL, VECTOR_DIM as _VECTOR_DIM
 
 
 class VectorIndexer:
@@ -30,12 +25,10 @@ class VectorIndexer:
         collection_name: str | None = None,
         qdrant_url: str | None = None,
     ) -> None:
-        self.collection_name = collection_name or os.getenv(
-            "QDRANT_COLLECTION", "enterprise_kb"
-        )
+        self.collection_name = collection_name or QDRANT_COLLECTION
         self._client = QdrantClient(
-            url=qdrant_url or os.getenv("QDRANT_URL", "http://localhost:6333"),
-            api_key=os.getenv("QDRANT_API_KEY"),
+            url=qdrant_url or QDRANT_URL,
+            api_key=QDRANT_API_KEY,
         )
         self._embedder = TextEmbedding(model_name=_EMBED_MODEL)
         self._ensure_collection()

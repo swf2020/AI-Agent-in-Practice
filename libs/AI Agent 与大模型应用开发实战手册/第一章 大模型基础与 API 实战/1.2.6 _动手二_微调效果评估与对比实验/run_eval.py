@@ -12,6 +12,7 @@ from eval.metrics import compute_bert_score, compute_rouge
 from eval.llm_judge import batch_judge
 from eval.ablation import AblationSuite, build_example_suite
 from eval.overfitting import load_trainer_state, plot_loss_curves
+from core_config import get_litellm_id, get_api_key
 
 load_dotenv()
 
@@ -80,10 +81,10 @@ for name, preds in predictions.items():
 # Step 3：LLM Judge
 # --------------------------------------------------------------------------- #
 print("\nStep 3: LLM Judge")
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+client = OpenAI(api_key=get_api_key("GPT-4o-mini"))
 
 for name, preds in predictions.items():
-    scores = batch_judge(TEST_SAMPLES, preds, client, model="gpt-4o-mini")
+    scores = batch_judge(TEST_SAMPLES, preds, client, model=get_litellm_id("GPT-4o-mini"))
     avg_total = sum(s.total for s in scores) / len(scores)
     print(f"[{name}] LLM Judge 均分: {avg_total:.2f}/5.00")
 

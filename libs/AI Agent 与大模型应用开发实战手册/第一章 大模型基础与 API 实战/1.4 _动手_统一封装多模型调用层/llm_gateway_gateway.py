@@ -14,6 +14,7 @@ from pydantic import BaseModel
 # 将当前目录加入 Python 路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from core_config import ACTIVE_MODEL_KEY, get_litellm_id, get_api_key, get_base_url, get_router_model_name
 from llm_gateway_cost_tracker import CostTracker
 from llm_gateway_config_models import MODEL_LIST, FALLBACKS
 
@@ -78,7 +79,7 @@ class LLMGateway:
     async def chat(
         self,
         prompt: str,
-        model: str = "gpt-4o",
+        model: str | None = None,
         system: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
@@ -104,6 +105,10 @@ class LLMGateway:
         if system:
             messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": prompt})
+
+        # 若未指定模型，使用 core_config 中配置的激活模型
+        if model is None:
+            model = get_router_model_name()
 
         # Router.acompletion 是异步版本，内部自动处理 Fallback
         raw: litellm.ModelResponse = await self.router.acompletion(
@@ -134,7 +139,7 @@ class LLMGateway:
     async def chat_batch(
         self,
         prompts: list[str],
-        model: str = "gpt-4o",
+        model: str | None = None,
         system: str | None = None,
         max_concurrent: int = 10,
         feature: str = "default",
@@ -154,6 +159,10 @@ class LLMGateway:
         Returns:
             与 prompts 等长的 LLMResponse 列表，顺序一致
         """
+        # 若未指定模型，使用 core_config 中配置的激活模型
+        if model is None:
+            model = get_router_model_name()
+
         # Semaphore 控制并发上限，防止同时发出几百个请求触发 429
         semaphore = asyncio.Semaphore(max_concurrent)
 

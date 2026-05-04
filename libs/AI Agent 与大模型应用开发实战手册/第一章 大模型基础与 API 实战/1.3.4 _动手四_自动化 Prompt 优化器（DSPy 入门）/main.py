@@ -10,6 +10,7 @@ from dspy.evaluate import Evaluate
 from dspy.teleprompt import BootstrapFewShot
 from dotenv import load_dotenv
 from typing import Literal
+from core_config import get_litellm_id, get_api_key, ACTIVE_MODEL_KEY
 
 load_dotenv()
 
@@ -17,13 +18,13 @@ load_dotenv()
 def configure_lm():
     """配置 LLM"""
     lm = dspy.LM(
-        model="deepseek/deepseek-chat",
-        api_key=os.getenv("DEEPSEEK_API_KEY"),
+        model=get_litellm_id(),
+        api_key=get_api_key(),
         temperature=0,
         cache=True,
     )
     dspy.configure(lm=lm)
-    print("✅ LLM 配置完成：DeepSeek-V3")
+    print(f"✅ LLM 配置完成：{ACTIVE_MODEL_KEY}")
 
 
 class SentimentSignature(dspy.Signature):

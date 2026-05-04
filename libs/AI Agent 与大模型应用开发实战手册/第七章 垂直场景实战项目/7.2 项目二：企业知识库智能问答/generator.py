@@ -3,14 +3,10 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 
-from dotenv import load_dotenv
 from openai import OpenAI
 
+from core_config import CONFIDENCE_THRESHOLD as _CONFIDENCE_THRESHOLD, get_api_key, get_base_url, get_litellm_id
 from retriever import RetrievedChunk
-
-load_dotenv()
-
-_CONFIDENCE_THRESHOLD = 0.0
 
 _ABSTAIN_RESPONSE = (
     "抱歉，根据现有文档库，我无法找到与您问题相关的可靠信息。"
@@ -64,10 +60,10 @@ class AnswerGenerator:
         confidence_threshold: float = _CONFIDENCE_THRESHOLD,
     ) -> None:
         self._client = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            base_url=os.getenv("OPENAI_BASE_URL"),
+            api_key=get_api_key(),
+            base_url=get_base_url(),
         )
-        self._model = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        self._model = model or get_litellm_id()
         self._threshold = confidence_threshold
 
     def generate(

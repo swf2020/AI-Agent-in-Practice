@@ -14,11 +14,9 @@ from typing import Generator
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+from core_config import get_api_key, get_base_url, get_litellm_id, ACTIVE_MODEL_KEY, MODEL_REGISTRY
 
-# 模型配置
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-QWEN_API_KEY = os.getenv("QWEN_API_KEY")
+load_dotenv()
 
 
 class ChunkType(str, Enum):
@@ -35,24 +33,29 @@ class StreamChunk:
     timestamp: float = field(default_factory=time.perf_counter)
 
 
-def get_openai_client():
-    """根据环境变量返回正确配置的 OpenAI 客户端。"""
-    if DEEPSEEK_API_KEY:
-        return OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
-    elif QWEN_API_KEY:
-        return OpenAI(api_key=QWEN_API_KEY, base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")
+def get_openai_client(model_key: str | None = None):
+    """根据 core_config 配置返回正确配置的 OpenAI 客户端。"""
+    key = model_key or ACTIVE_MODEL_KEY
+    cfg = MODEL_REGISTRY.get(key)
+    if cfg is None:
+        # 回退到无配置情况
+        return OpenAI()
+    api_key = get_api_key(key)
+    base_url = get_base_url(key)
+    if api_key:
+        return OpenAI(api_key=api_key, base_url=base_url)
     else:
         return OpenAI()
 
 
-def get_default_model():
-    """根据环境变量返回默认模型名称。"""
-    if DEEPSEEK_API_KEY:
-        return "deepseek-chat"
-    elif QWEN_API_KEY:
-        return "qwen-plus"
-    else:
-        return "gpt-4o"
+def get_default_model(model_key: str | None = None):
+    """根据 core_config 返回默认模型名称（SDK 用，去掉 provider 前缀）。"""
+    key = model_key or ACTIVE_MODEL_KEY
+    litellm_id = get_litellm_id(key)
+    # OpenAI SDK 不需要 "provider/" 前缀，去掉它
+    if "/" in litellm_id:
+        return litellm_id.split("/", 1)[1]
+    return litellm_id
 
 
 # ─────────────────────────────────────────────
@@ -67,7 +70,7 @@ COT_SYSTEM_PROMPT = """\
 2. 再在 <answer> 标签内给出最终答案（简洁清晰）
 
 格式示例：
-<think>
+</think>
 首先分析题目...
 然后考虑...
 因此得出...
@@ -89,7 +92,7 @@ def stream_cot_prompt(
 
     Args:
         prompt: 用户问题
-        model:  任何 OpenAI 兼容模型名称，默认根据环境变量自动选择
+        model:  任何 OpenAI 兼容模型名称，默认根据 ACTIVE_MODEL_KEY 自动选择
         temperature: 采样温度，推理任务建议 0.3-0.7
 
     Yields:

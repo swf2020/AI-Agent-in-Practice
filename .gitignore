@@ -40,12 +40,33 @@ venv.bak/
 *~
 .DS_Store
 
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+*.schema_embeddings.json
+test_charts/
+test_ecommerce.db
+
+# Debug backup directories
+**/_backup/
+
 # Logs
 *.log
 logs/
 
 # History files
 history.jsonl
+
+# Project-specific generated files
+trading_checkpoints.db
+comparison_results.json
+smoke_test_output/
+bm25_index.pkl
+
+# 1.2.6 评估项目测试产物
+libs/**/ablation_*.png
+libs/**/loss_curves.png
 
 # OS
 .DS_Store
@@ -56,3 +77,6 @@ qdrant_storage/
 .files/
 CLAUDE.md
 .claude/
+PROGRESS.md
+REPORT.md
+data/

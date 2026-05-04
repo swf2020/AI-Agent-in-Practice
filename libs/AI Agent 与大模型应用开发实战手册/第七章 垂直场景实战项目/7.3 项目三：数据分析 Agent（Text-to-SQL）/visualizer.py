@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,8 +9,10 @@ from openai import OpenAI
 from pathlib import Path
 from dotenv import load_dotenv
 
+from core_config import get_litellm_id, get_api_key, get_base_url
+from sql_generator import get_openai_client
+
 load_dotenv()
-client = OpenAI()
 
 
 class ChartType(str, Enum):
@@ -29,7 +32,12 @@ class ChartDecision(BaseModel):
     title: str = Field(description="图表标题")
 
 
-def _infer_chart_type(question: str, df: pd.DataFrame) -> ChartDecision:
+def _infer_chart_type(
+    question: str,
+    df: pd.DataFrame,
+    client: Optional[OpenAI] = None,
+    model: Optional[str] = None,
+) -> ChartDecision:
     col_info = {
         col: {
             "dtype": str(df[col].dtype),
@@ -56,8 +64,11 @@ def _infer_chart_type(question: str, df: pd.DataFrame) -> ChartDecision:
 **重要：x_column 和 y_column 必须是数据中实际存在的列名，区分大小写。**
 """
 
-    response = client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
+    llm = client or get_openai_client()
+    model_name = model or get_litellm_id()
+
+    response = llm.beta.chat.completions.parse(
+        model=model_name,
         messages=[{"role": "user", "content": prompt}],
         response_format=ChartDecision,
         temperature=0,
@@ -65,14 +76,24 @@ def _infer_chart_type(question: str, df: pd.DataFrame) -> ChartDecision:
     return response.choices[0].message.parsed
 
 
-def _generate_summary(question: str, sql: str, df: pd.DataFrame, chart_type: ChartType) -> str:
+def _generate_summary(
+    question: str,
+    sql: str,
+    df: pd.DataFrame,
+    chart_type: ChartType,
+    client: Optional[OpenAI] = None,
+    model: Optional[str] = None,
+) -> str:
     summary_stats = df.describe(include="all").to_string() if len(df) <= 20 else (
         f"共 {len(df)} 行数据。"
         f"主要数值列统计：{df.select_dtypes(include='number').describe().to_string()}"
     )
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
+    llm = client or get_openai_client()
+    model_name = model or get_litellm_id()
+
+    response = llm.chat.completions.create(
+        model=model_name,
         messages=[{
             "role": "user",
             "content": (
@@ -90,12 +111,21 @@ def _generate_summary(question: str, sql: str, df: pd.DataFrame, chart_type: Cha
 
 
 class DataVisualizer:
-    def __init__(self, output_dir: str = "charts"):
+    def __init__(
+        self,
+        output_dir: str = "charts",
+        client: Optional[OpenAI] = None,
+        model: Optional[str] = None,
+    ):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
+        self.client = client or get_openai_client()
+        self.model = model or get_litellm_id()
 
-    def visualize(self, question: str, sql: str, df: pd.DataFrame, save_html: bool = True) -> dict:
-        decision = _infer_chart_type(question, df)
+    def visualize(
+        self, question: str, sql: str, df: pd.DataFrame, save_html: bool = True
+    ) -> dict:
+        decision = _infer_chart_type(question, df, client=self.client, model=self.model)
         print(f"📊 图表决策：{decision.chart_type.value} — {decision.reasoning}")
 
         fig = self._render_chart(df, decision)
@@ -109,7 +139,10 @@ class DataVisualizer:
             fig.write_html(html_path)
             print(f"💾 图表已保存：{html_path}")
 
-        summary = _generate_summary(question, sql, df, decision.chart_type)
+        summary = _generate_summary(
+            question, sql, df, decision.chart_type,
+            client=self.client, model=self.model,
+        )
         print(f"\n📝 数据摘要：\n{summary}")
 
         return {

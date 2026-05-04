@@ -39,6 +39,7 @@ def _decode_body(payload: dict) -> str:
 
 @tool
 def gmail_read_email(message_id: str) -> str:
+    """读取指定邮件的内容并返回 JSON 格式的 EmailMessage"""
     service = _get_gmail_service()
     msg = service.users().messages().get(
         userId="me",
@@ -62,6 +63,7 @@ def gmail_read_email(message_id: str) -> str:
 
 @tool
 def gmail_mark_processed(message_id: str) -> str:
+    """将指定邮件标记为已处理（添加 WORKFLOW_PROCESSED 标签并移除 UNREAD）"""
     service = _get_gmail_service()
     labels = service.users().labels().list(userId="me").execute().get("labels", [])
     label_id = next(

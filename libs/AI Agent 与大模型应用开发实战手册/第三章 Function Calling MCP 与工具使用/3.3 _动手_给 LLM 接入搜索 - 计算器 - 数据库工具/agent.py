@@ -6,10 +6,10 @@ import json
 import os
 from typing import Any
 
+import litellm
 from dotenv import load_dotenv
-from openai import OpenAI
-from openai.types.chat import ChatCompletionMessageParam
 
+from core_config import get_api_key, get_base_url, get_litellm_id
 from tools.base import ToolDispatcher
 from tools.code_tool import E2BCodeExecutorTool
 from tools.db_tool import TextToSQLTool
@@ -20,17 +20,18 @@ load_dotenv()
 
 class ToolCallingAgent:
     """支持多工具调用的 LLM Agent。
-    
+
     实现标准的 ReAct 循环：
     LLM 思考 → 选择工具 → 执行工具 → 观察结果 → 循环直到得出答案
     """
 
     MAX_TURNS = 10  # 防止死循环：最多 10 轮工具调用
 
-    def __init__(self, dispatcher: ToolDispatcher, model: str = "gpt-4o") -> None:
-        self._client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    def __init__(self, dispatcher: ToolDispatcher, model: str | None = None) -> None:
         self._dispatcher = dispatcher
-        self._model = model
+        self._model = model or get_litellm_id()
+        self._api_key = get_api_key()
+        self._base_url = get_base_url()
         self._system_prompt = (
             "你是一个有用的 AI 助手，可以使用搜索、代码执行和数据库查询工具来回答问题。\n"
             "工具使用原则：\n"
@@ -42,22 +43,24 @@ class ToolCallingAgent:
 
     def run(self, user_input: str, verbose: bool = False) -> str:
         """执行工具调用循环，返回最终答案。
-        
+
         Args:
             user_input: 用户输入
             verbose: 是否打印工具调用过程（调试用）
-        
+
         Returns:
             LLM 的最终文本回答
         """
-        messages: list[ChatCompletionMessageParam] = [
+        messages: list[dict[str, str]] = [
             {"role": "system", "content": self._system_prompt},
             {"role": "user", "content": user_input},
         ]
 
         for turn in range(self.MAX_TURNS):
-            response = self._client.chat.completions.create(
+            response = litellm.completion(
                 model=self._model,
+                api_key=self._api_key,
+                api_base=self._base_url,
                 messages=messages,
                 tools=self._dispatcher.schemas,
                 tool_choice="auto",  # 让 LLM 自主决定是否调用工具
@@ -77,7 +80,7 @@ class ToolCallingAgent:
                 tool_args = tool_call.function.arguments
 
                 if verbose:
-                    print(f"\n🔧 调用工具: {tool_name}")
+                    print(f"\n调用工具: {tool_name}")
                     print(f"   参数: {tool_args[:200]}")
 
                 tool_result = self._dispatcher.dispatch(tool_name, tool_args)
@@ -103,4 +106,4 @@ def build_agent(db_url: str = "sqlite:///demo.db") -> ToolCallingAgent:
         TextToSQLTool(db_url=db_url),
     ]
     dispatcher = ToolDispatcher(tools)
-    return ToolCallingAgent(dispatcher=dispatcher, model="gpt-4o")
+    return ToolCallingAgent(dispatcher=dispatcher)

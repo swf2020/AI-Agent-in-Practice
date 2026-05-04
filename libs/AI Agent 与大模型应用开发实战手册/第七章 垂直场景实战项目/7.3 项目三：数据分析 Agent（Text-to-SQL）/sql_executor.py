@@ -6,19 +6,15 @@ import pandas as pd
 from dataclasses import dataclass
 from typing import Optional
 from tenacity import retry, stop_after_attempt, wait_fixed
-from openai import OpenAI
-from dotenv import load_dotenv
 
-load_dotenv()
-client = OpenAI()
+from core_config import QUERY_TIMEOUT_SECONDS, MAX_RETRIES
+
 
 FORBIDDEN_KEYWORDS = frozenset({
     "INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER",
     "TRUNCATE", "REPLACE", "MERGE", "GRANT", "REVOKE",
     "ATTACH", "DETACH",
 })
-
-QUERY_TIMEOUT_SECONDS = 10
 
 
 @dataclass
@@ -121,8 +117,6 @@ class SQLExecutor:
 
 
 class SelfCorrectingExecutor:
-    MAX_RETRIES = 3
-
     def __init__(
         self,
         executor: SQLExecutor,
@@ -139,7 +133,7 @@ class SelfCorrectingExecutor:
         current_sql = initial_sql
         correction_history: list[dict] = []
 
-        for attempt in range(self.MAX_RETRIES + 1):
+        for attempt in range(MAX_RETRIES + 1):
             result = self.executor.execute(current_sql)
 
             if result.success:
@@ -147,8 +141,8 @@ class SelfCorrectingExecutor:
                     print(f"✅ 第 {attempt} 次修正后成功")
                 return result, current_sql, attempt
 
-            if attempt == self.MAX_RETRIES:
-                print(f"❌ 达到最大修正次数（{self.MAX_RETRIES}），放弃")
+            if attempt == MAX_RETRIES:
+                print(f"❌ 达到最大修正次数（{MAX_RETRIES}），放弃")
                 return result, current_sql, attempt
 
             print(f"🔄 第 {attempt + 1} 次修正，错误：{result.error[:100]}...")
@@ -185,4 +179,4 @@ class SelfCorrectingExecutor:
                 "content": f"修正后的 SQL：{current_sql}"
             })
 
-        return result, current_sql, self.MAX_RETRIES
+        return result, current_sql, MAX_RETRIES

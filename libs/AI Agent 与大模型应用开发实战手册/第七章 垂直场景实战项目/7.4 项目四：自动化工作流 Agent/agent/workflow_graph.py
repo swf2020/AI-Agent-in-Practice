@@ -13,10 +13,11 @@ from tools.gmail_tool import gmail_read_email, gmail_mark_processed
 from tools.slack_tool import slack_send_notification, send_approval_request, update_approval_message
 from tools.task_tool import notion_create_task, jira_create_issue
 from config import settings
+from core_config import get_litellm_id, get_api_key
 
 _llm = ChatAnthropic(
-    model="claude-3-5-sonnet-20241022",
-    api_key=settings.anthropic_api_key,
+    model=get_litellm_id(),
+    api_key=get_api_key(),
     temperature=0,
 )
 

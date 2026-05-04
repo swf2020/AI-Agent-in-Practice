@@ -32,7 +32,6 @@ if not Path(DB_PATH).exists():
 # ── 创建 MCP Server 实例 ──────────────────────────────────
 mcp = FastMCP(
     name="database-server",
-    version="1.0.0",
     # Server 的 instructions 会被注入到 Claude 的系统提示中
     # 告诉 Claude 这个 Server 的能力边界和使用约定
     instructions="""

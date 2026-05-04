@@ -1,6 +1,8 @@
 import sqlite3
 import json
 import hashlib
+import re
+import os
 from dataclasses import dataclass, field
 from typing import Optional
 import numpy as np
@@ -8,8 +10,24 @@ import tiktoken
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from core_config import (
+    get_api_key, get_base_url, get_litellm_id,
+    EMBED_MODEL, LARGE_SCHEMA_THRESHOLD,
+)
+
 load_dotenv()
-client = OpenAI()
+
+
+def _get_embedding_client() -> OpenAI:
+    """创建用于 Embedding 的 OpenAI 客户端"""
+    kwargs = {}
+    key = get_api_key()
+    url = get_base_url()
+    if key:
+        kwargs["api_key"] = key
+    if url:
+        kwargs["base_url"] = url
+    return OpenAI(**kwargs)
 
 
 @dataclass
@@ -24,9 +42,7 @@ class TableSchema:
 
 
 class SchemaManager:
-    LARGE_SCHEMA_THRESHOLD = 20
-
-    def __init__(self, db_path: str, embed_model: str = "text-embedding-3-small"):
+    def __init__(self, db_path: str, embed_model: str = EMBED_MODEL):
         self.db_path = db_path
         self.embed_model = embed_model
         self.tables: dict[str, TableSchema] = {}
@@ -71,7 +87,6 @@ class SchemaManager:
 
             col_descriptions = []
             for col in columns:
-                import re
                 pattern = rf"{col['name']}\s+\S+[^,\n]*--\s*(.+)"
                 match = re.search(pattern, ddl, re.IGNORECASE)
                 comment = match.group(1).strip() if match else ""
@@ -103,7 +118,6 @@ class SchemaManager:
             "".join(t.description for t in self.tables.values()).encode()
         ).hexdigest()
 
-        import os
         if os.path.exists(cache_path):
             with open(cache_path) as f:
                 cache = json.load(f)
@@ -117,6 +131,7 @@ class SchemaManager:
         descriptions = [t.description for t in self.tables.values()]
         table_names = list(self.tables.keys())
 
+        client = _get_embedding_client()
         response = client.embeddings.create(
             model=self.embed_model,
             input=descriptions,
@@ -134,12 +149,13 @@ class SchemaManager:
     def retrieve_relevant_tables(
         self, query: str, top_k: int = 5
     ) -> list[TableSchema]:
-        if len(self.tables) < self.LARGE_SCHEMA_THRESHOLD:
+        if len(self.tables) < LARGE_SCHEMA_THRESHOLD:
             return list(self.tables.values())
 
         if not next(iter(self.tables.values())).embedding:
             self.build_embeddings()
 
+        client = _get_embedding_client()
         query_emb = np.array(
             client.embeddings.create(model=self.embed_model, input=[query])
             .data[0].embedding
