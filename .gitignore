@@ -83,3 +83,5 @@ data/
 *.pid
 *.rdb
 evals/
+.ruff_cache/
+ruff_cache/
