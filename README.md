@@ -12,7 +12,7 @@
 
 **核心特点**：
 - ✅ 15+ 可运行实战项目（代码可直接执行）
-- ✅ 8 章体系化内容（基础 → 进阶 → 生产级）
+- ✅ 10 章 + 附录体系化内容（基础 → 进阶 → 生产级 → 面试）
 - ✅ 覆盖主流框架（LangGraph、AutoGen、CrewAI、TradingAgents）
 - ✅ 生产级落地经验（监控、成本控制、安全）
 
@@ -27,12 +27,14 @@
 
 | 章节 | 内容 |
 |------|------|
+| 第 0 章 | 写给读者：学习路线图 |
 | 第 1-2 章 | 大模型基础：LLM API 调用、微调、Prompt Engineering、RAG |
 | 第 3-4 章 | Agent 核心：Function Calling、MCP、ReAct、Planning、记忆系统 |
 | 第 5 章 | Multi-Agent：多 Agent 协作模式、AutoGen、CrewAI |
 | 第 6 章 | 生产级落地：流式输出、成本控制、缓存、安全、可观测性 |
 | 第 7 章 | 实战项目：AI 选股分析师、知识库问答、Text-to-SQL、工作流 Agent |
 | 第 8 章 | 技术演进：大模型发展史、Agent 演进路线图、未来预测 |
+| 第 9 章 | 面试题真题：原理/工程/设计/视野/开放题 |
 
 ---
 
@@ -44,7 +46,7 @@ git clone https://github.com/swf2020/AI-Agent-in-Practice.git
 cd AI-Agent-in-Practice
 
 # 进入实战项目目录
-cd libs/AI\ Agent\ 与大模型应用开发实战手册/第七章\ 垂直场景实战项目/7.1\ 项目一：AI\ 选股分析师（基于\ TradingAgents）/
+cd libs/AI\ Agent\ In\ Practice/07_垂直场景实战项目/7.1\ 项目一：AI\ 选股分析师（基于\ TradingAgents）/
 
 # 运行示例（需要配置 .env 中的 API Key）
 python main.py 1
@@ -61,12 +63,12 @@ mkdocs serve
 ```
 AI-Agent-in-Practice/
 ├── docs/                    # 教程文档（CC BY-NC-SA 4.0）
-│   └── AI Agent 与大模型应用开发实战手册/
-│       ├── 第一章 ~ 第八章/
+│   └── AI Agent In Practice/
+│       ├── 00_ ~ 10_/       # 第零章 ~ 附录（按自然顺序）
 │       └── index.md         # 内容索引
 ├── libs/                    # 代码示例（MIT License）
-│   └── AI Agent 与大模型应用开发实战手册/
-│       ├── 第一章 ~ 第七章/  # 各章节代码
+│   └── AI Agent In Practice/
+│       ├── 01_ ~ 07_/       # 各章节代码（按自然顺序）
 │       └── 7.1 ~ 7.4/       # 实战项目完整代码
 ├── README.md                # 本文件
 ├── CONTRIBUTING.md          # 贡献指南
@@ -93,7 +95,7 @@ AI-Agent-in-Practice/
 
 | 指标 | 数量 |
 |------|------|
-| 总章节数 | 8 章 |
+| 总章节数 | 10 章 + 附录 |
 | 文档文件数 | 63+ 个 |
 | 动手实验 | 15+ 个 |
 | 实战项目 | 4 个完整项目 |
