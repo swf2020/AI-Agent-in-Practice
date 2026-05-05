@@ -1,3 +1,20 @@
+                              LICENSE NOTICE
+                        ======================
+
+This project uses a mixed license approach:
+
+1. **Code in `/libs/` directory**: Licensed under the MIT License
+   See: libs/LICENSE
+
+2. **Documentation in `/docs/` directory**: Licensed under 
+   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+   See: docs/LICENSE
+
+3. **Root level configuration files** (e.g., README.md, .gitignore, etc.):
+   Licensed under the Apache License 2.0 (below)
+
+========================================================================
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

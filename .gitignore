@@ -1,0 +1,85 @@
+# Build outputs
+site/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+*.schema_embeddings.json
+test_charts/
+test_ecommerce.db
+
+# Debug backup directories
+**/_backup/
+
+# Logs
+*.log
+logs/
+
+# History files
+history.jsonl
+
+# Project-specific generated files
+trading_checkpoints.db
+comparison_results.json
+smoke_test_output/
+bm25_index.pkl
+
+# 1.2.6 评估项目测试产物
+libs/**/ablation_*.png
+libs/**/loss_curves.png
+
+# OS
+.DS_Store
+Thumbs.db
+workspace/
+qdrant_storage/
+.chainlit/
+.files/
+CLAUDE.md
+.claude/
+PROGRESS.md
+REPORT.md
+data/
+*.pid
+*.rdb
+evals/

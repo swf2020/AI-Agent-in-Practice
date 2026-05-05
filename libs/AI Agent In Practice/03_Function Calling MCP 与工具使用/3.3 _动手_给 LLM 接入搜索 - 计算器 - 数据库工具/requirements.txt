@@ -1,0 +1,7 @@
+python-dotenv>=1.0.0
+litellm>=1.40.0
+tavily-python>=0.3.0
+e2b-code-interpreter>=0.5.0
+sqlalchemy>=2.0.0
+openai>=1.0.0
+pytest>=7.0.0
