@@ -19,9 +19,11 @@ class Settings(BaseSettings):
     # 成本控制：单次请求最大 Token 消耗
     max_tokens_per_request: int = 4000
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "allow",
+    }
 
 
 @lru_cache(maxsize=1)

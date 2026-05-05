@@ -80,3 +80,4 @@ CLAUDE.md
 PROGRESS.md
 REPORT.md
 data/
+*.pid

@@ -5,7 +5,7 @@ from typing import Any
 
 from langchain.agents import create_agent
 from langchain_core.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_litellm import ChatLiteLLM
 
 from config import get_settings
 from core_config import get_litellm_id, get_api_key, get_base_url
@@ -75,12 +75,12 @@ async def run_agent(
     tools_desc = "\n".join(f"- {t.name}: {t.description}" for t in tools)
     system_prompt = REACT_SYSTEM_PROMPT.format(tools=tools_desc)
 
-    llm = ChatOpenAI(
+    llm = ChatLiteLLM(
         model=get_litellm_id(),
         temperature=0,
         max_tokens=settings.max_tokens_per_request,
         api_key=get_api_key(),
-        base_url=get_base_url(),
+        api_base=get_base_url(),
         streaming=False,
     )
 

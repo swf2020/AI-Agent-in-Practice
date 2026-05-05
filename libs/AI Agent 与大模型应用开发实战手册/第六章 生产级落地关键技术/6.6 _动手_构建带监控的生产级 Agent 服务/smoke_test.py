@@ -2,8 +2,13 @@
 import asyncio
 import httpx
 import time
+import os
 
 BASE_URL = "http://localhost:8000"
+
+# 禁用代理，避免连接本地服务时走代理
+os.environ.pop('http_proxy', None)
+os.environ.pop('https_proxy', None)
 
 
 async def smoke_test():

@@ -152,7 +152,7 @@ def run_dual_agent_loop(
             print(f"{'='*60}")
 
         # ── Step 1: Coder 生成代码 ──
-        coder_reply = _call_llm(coder_messages, temperature=0.7)
+        coder_reply = _call_llm(coder_messages, temperature=0.1)
         blocks = _extract_code_blocks(coder_reply)
         implementation = blocks.get("implementation", "")
         tests = blocks.get("tests", "")
