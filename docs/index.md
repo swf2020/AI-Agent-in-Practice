@@ -354,7 +354,7 @@
 - 五类角色分工：基本面/情绪/新闻/技术分析师 + 研究员/交易员/风控经理
 - LangGraph 有状态图在本项目中的应用拆解
 
-#### [7.1.2 环境搭建与数据接入](AI Agent In Practice/07_垂直场景实战项目/7.1.2 环境搭建与数据接入.md)
+#### 7.1.2 项目结构与快速开始
 
 - 安装配置：pip install tradingagents + API Keys 配置
 - 数据源接入：Yahoo Finance / FinnHub / Reddit API
@@ -367,7 +367,7 @@
 - Risk Management 三种风险偏好（激进/中性/保守）实现
 - Structured Output：Pydantic Schema 约束决策输出
 
-#### [7.1.4 动手实验](AI Agent In Practice/07_垂直场景实战项目/7.1.4 动手实验.md)
+#### 7.1.4 动手实验
 
 - 实验一：分析 NVDA / TSLA 并解读五级评级输出
 - 实验二：接入 A 股数据源（东方财富 / AKShare）
@@ -398,7 +398,7 @@
 - 带段落级引用的回答生成（角注格式）
 - 置信度评估：无答案时主动拒答而非编造
 
-#### [7.2.5 评估与上线](AI Agent In Practice/07_垂直场景实战项目/7.2.5 评估与上线.md)
+#### 7.2.5 评估与上线
 
 - RAGAS 评估 + 人工抽样复核双轨制
 - Chainlit 前端 + FastAPI 后端生产部署
