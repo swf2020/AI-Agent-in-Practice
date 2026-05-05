@@ -2,7 +2,14 @@
 # smoke_test.py
 
 import os
-os.environ["OPENAI_API_KEY"] = "your-key-here"  # 或从 .env 读取
+from dotenv import load_dotenv
+load_dotenv()
+
+# 确保当前激活模型所需的环境变量已设置
+from core_config import ACTIVE_MODEL_KEY, MODEL_REGISTRY
+_api_key_env = MODEL_REGISTRY[ACTIVE_MODEL_KEY].get("api_key_env")
+if _api_key_env and not os.environ.get(_api_key_env):
+    os.environ[_api_key_env] = "your-key-here"  # 仅作冒烟测试
 
 from agents import run_dual_agent_loop
 

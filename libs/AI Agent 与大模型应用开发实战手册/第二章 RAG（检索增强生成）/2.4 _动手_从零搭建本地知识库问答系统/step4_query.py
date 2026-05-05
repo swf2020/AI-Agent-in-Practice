@@ -11,7 +11,7 @@ from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
 from step3_index import COLLECTION_NAME, EMBED_MODEL_NAME, QDRANT_PATH
-from core_config import MODEL_REGISTRY, get_model_list
+from core_config import MODEL_REGISTRY
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ def get_llm_client(model_key: str = "DeepSeek-V3"):
     if model_key.startswith("Qwen") and base_url:
         os.environ["OPENAI_API_KEY"] = api_key or ""
         os.environ["OPENAI_API_BASE"] = base_url
-        return litellm, "openai/qwen-plus"
+        return litellm, cfg["litellm_id"]
     else:
         return litellm, cfg["litellm_id"]
 

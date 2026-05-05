@@ -1,5 +1,4 @@
 # run_agent.py —— 端到端冒烟测试，直接复制运行
-import os
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
 from graph import build_graph

@@ -7,7 +7,6 @@ Reviewer Agent：审查代码质量，给出修改建议。
 """
 
 import re
-import json
 import litellm
 from dataclasses import dataclass, field
 

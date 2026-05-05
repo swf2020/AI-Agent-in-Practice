@@ -119,7 +119,7 @@ def run_static_analysis(code: str) -> ToolResult:
         # flake8：只报告 E（错误）和 W（警告），忽略 E501（行长度）
         flake8_result = subprocess.run(
             ["python", "-m", "flake8", str(code_path), "--max-line-length=100",
-             "--select=E,W", "--exclude=E501"],
+             "--select=E,W", "--ignore=E501"],
             capture_output=True, text=True, timeout=15
         )
         flake8_output = flake8_result.stdout.strip()

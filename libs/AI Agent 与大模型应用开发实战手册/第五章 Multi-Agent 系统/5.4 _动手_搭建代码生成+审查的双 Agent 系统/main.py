@@ -1,6 +1,8 @@
 """
 双 Agent 代码生成+审查系统入口。
 """
+from dotenv import load_dotenv
+load_dotenv()
 
 from agents import run_dual_agent_loop
 from core_config import get_litellm_id, get_chat_model_id, ACTIVE_MODEL_KEY

@@ -17,10 +17,10 @@ class ModelConfig(TypedDict, total=False):
 MODEL_REGISTRY: dict[str, ModelConfig] = {
     "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
-        "chat_model_id": "deepseek-v4-flash",
+        "chat_model_id": "deepseek-chat",
         "price_in": 0.00027,
         "price_out": 0.0011,
-        "max_tokens_limit": 4096,
+        "max_tokens_limit": 8192,
         "api_key_env": "DEEPSEEK_API_KEY",
         "base_url": "https://api.deepseek.com/v1",
     },
@@ -35,8 +35,8 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     },
     # 以下模型用于 LangChain 直连（不通过 LiteLLM），保留显示名供切换参考
     "Claude-Sonnet": {
-        "litellm_id": "claude-sonnet-4-5",
-        "chat_model_id": "claude-sonnet-4-5",
+        "litellm_id": "anthropic/claude-sonnet-4-20250514",
+        "chat_model_id": "claude-sonnet-4-20250514",
         "price_in": 0.003,
         "price_out": 0.015,
         "max_tokens_limit": 8192,

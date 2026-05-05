@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
@@ -7,7 +9,7 @@ from router import should_continue
 from tools import TOOLS
 
 
-def build_graph(use_memory: bool = True) -> "CompiledGraph":
+def build_graph(use_memory: bool = True):
     """构建并编译 Agent 图。
     
     Args:
@@ -51,7 +53,3 @@ def build_graph(use_memory: bool = True) -> "CompiledGraph":
     
     # 5. 编译图（compile 会做静态验证：检查孤立节点、死路等）
     return graph_builder.compile(checkpointer=checkpointer)
-
-
-# 模块级别的图实例（单例，避免重复编译）
-agent_graph = build_graph(use_memory=True)

@@ -23,10 +23,6 @@ def create_llm(provider: str = "default"):
         llm = ChatOpenAI(model=get_chat_model_id("GPT-4o-Mini"), temperature=0)
     else:
         # 默认路径：通过 LiteLLM 调用，模型由 core_config 统一管理
-        import litellm
-        from litellm import completion
-        from langchain_core.language_models import BaseChatModel
-
         litellm_model = get_litellm_id()
         api_key = get_api_key()
         base_url = get_base_url()
