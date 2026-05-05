@@ -4,15 +4,13 @@ import hashlib
 import re
 import os
 from dataclasses import dataclass, field
-from typing import Optional
 import numpy as np
 import tiktoken
 from openai import OpenAI
 from dotenv import load_dotenv
 
 from core_config import (
-    get_api_key, get_base_url, get_litellm_id,
-    EMBED_MODEL, LARGE_SCHEMA_THRESHOLD,
+    get_api_key, get_base_url, EMBED_MODEL, LARGE_SCHEMA_THRESHOLD,
 )
 
 load_dotenv()

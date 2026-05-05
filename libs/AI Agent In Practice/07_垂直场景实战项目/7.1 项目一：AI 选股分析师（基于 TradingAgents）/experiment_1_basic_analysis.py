@@ -2,12 +2,8 @@
 实验一：分析美股 NVDA / TSLA，解读 TradingAgents 五级评级输出。
 依赖上一步配置好的 .env 文件。
 """
-import os
-from datetime import date, timedelta
 from dotenv import load_dotenv
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 
 # TradingAgents 公开 API
 from tradingagents.graph.trading_graph import TradingAgentsGraph

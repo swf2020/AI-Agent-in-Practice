@@ -1,6 +1,6 @@
 # tests/test_main.py — 冒烟测试
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import sys
 import os
 
@@ -13,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -85,7 +83,7 @@ class TestModuleImports:
     """验证各实验模块可以正常导入（不触发 LLM 调用）"""
 
     def test_parse_output_importable(self):
-        from experiment_1_parse_output import display_decision, RATING_COLORS
+        from experiment_1_parse_output import RATING_COLORS
         assert isinstance(RATING_COLORS, dict)
         assert "buy" in RATING_COLORS
 
@@ -93,8 +91,7 @@ class TestModuleImports:
         """实验四的 MODEL_CONFIGS 定义可被解析（跳过 tradingagents 依赖导入）"""
         # tradingagents v0.3.1 没有 default_config 模块，项目代码依赖的接口可能来自
         # 未发布版本或本地开发分支。此处仅验证项目内的配置定义逻辑正确。
-        import dataclasses
-        from dataclasses import dataclass, field
+        from dataclasses import dataclass
         from typing import Literal
 
         ModelProvider = Literal["openai", "deepseek", "ollama"]

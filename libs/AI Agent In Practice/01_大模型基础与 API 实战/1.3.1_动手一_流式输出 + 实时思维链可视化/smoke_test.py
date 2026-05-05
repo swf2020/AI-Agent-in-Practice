@@ -1,7 +1,6 @@
 # 最小验证示例，单文件可直接运行
 # 支持 DeepSeek、Qwen 或 OpenAI
 
-import os
 from dotenv import load_dotenv
 
 load_dotenv()

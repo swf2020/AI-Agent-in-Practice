@@ -13,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -67,7 +65,7 @@ class TestCoreConfig:
 # ── 测试消融实验模块 ───────────────────────────────────
 class TestAblation:
     def test_build_example_suite(self):
-        from eval.ablation import build_example_suite, AblationRecord
+        from eval.ablation import build_example_suite
         suite = build_example_suite()
         assert len(suite.records) > 0
 

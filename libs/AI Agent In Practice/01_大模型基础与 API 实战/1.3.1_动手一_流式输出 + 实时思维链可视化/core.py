@@ -5,7 +5,6 @@
   2. DeepSeek 推理模型：使用 deepseek-reasoner 原生推理能力
 """
 
-import os
 import time
 from dataclasses import dataclass, field
 from enum import Enum

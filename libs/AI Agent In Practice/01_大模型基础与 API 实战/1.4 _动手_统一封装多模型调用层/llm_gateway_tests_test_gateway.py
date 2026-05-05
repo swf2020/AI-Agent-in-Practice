@@ -2,7 +2,6 @@
 单元测试：Mock LiteLLM API，不产生真实 API 调用。
 运行：pytest llm_gateway/tests/ -v
 """
-import asyncio
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 from litellm import ModelResponse

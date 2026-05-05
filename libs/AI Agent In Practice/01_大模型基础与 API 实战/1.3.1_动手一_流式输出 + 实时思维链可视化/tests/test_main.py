@@ -1,7 +1,8 @@
 # tests/test_main.py — 自动生成的冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, PROJECT_DIR)
@@ -12,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -61,7 +60,7 @@ class TestCoreConfig:
 # ── 测试 core 模块 ──────────────────────────────────────
 class TestCoreModule:
     def test_import_core(self):
-        from core import ChunkType, StreamChunk
+        from core import ChunkType
         assert ChunkType.THINKING == "thinking"
         assert ChunkType.ANSWER == "answer"
         assert ChunkType.META == "meta"

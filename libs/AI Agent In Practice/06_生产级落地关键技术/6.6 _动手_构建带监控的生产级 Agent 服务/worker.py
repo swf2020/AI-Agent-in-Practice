@@ -1,11 +1,9 @@
 from __future__ import annotations
 import json
 import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from arq import create_pool
 from arq.connections import RedisSettings
 
 from agent import run_agent

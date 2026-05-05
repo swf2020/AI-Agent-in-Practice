@@ -9,7 +9,6 @@
 """
 import time
 import json
-import os
 from dataclasses import dataclass, field, asdict
 from typing import Literal
 from dotenv import load_dotenv

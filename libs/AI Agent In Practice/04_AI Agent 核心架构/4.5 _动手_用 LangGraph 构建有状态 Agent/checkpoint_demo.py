@@ -52,6 +52,7 @@ def demo_human_approval():
     from router import should_continue
     from tools import TOOLS
     from langgraph.prebuilt import ToolNode
+    from langgraph.graph import StateGraph, START, END
 
     graph_builder = StateGraph(AgentState)
     graph_builder.add_node("agent", agent_node)
@@ -71,7 +72,7 @@ def demo_human_approval():
     
     # Step 1：发起请求，Agent 决策调用工具后暂停
     print("=== 发起请求（Agent 即将调用工具）===")
-    result = approval_graph.invoke(
+    _result = approval_graph.invoke(
         input={
             "messages": [HumanMessage(content="搜索 LangGraph 最新版本号")],
             "tool_calls_count": 0,
@@ -85,7 +86,7 @@ def demo_human_approval():
     last_msg = snapshot.values["messages"][-1]
     
     if hasattr(last_msg, "tool_calls") and last_msg.tool_calls:
-        print(f"\n⏸️  Agent 暂停，待审批的工具调用：")
+        print("\n⏸️  Agent 暂停，待审批的工具调用：")
         for tc in last_msg.tool_calls:
             print(f"   工具: {tc['name']}, 参数: {tc['args']}")
         

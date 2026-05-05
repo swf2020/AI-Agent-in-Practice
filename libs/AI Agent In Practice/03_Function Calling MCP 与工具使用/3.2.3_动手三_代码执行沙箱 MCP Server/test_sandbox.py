@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, ".")
 
 # 直接导入验证（绕过 MCP 协议层）
-from sandbox_server import execute_python, install_package, get_execution_history, reset_session, is_safe_code
+from sandbox_server import execute_python, get_execution_history, reset_session
 
 def test_basic_execution():
     """测试基本代码执行"""

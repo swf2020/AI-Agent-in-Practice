@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 from core_config import get_litellm_id, get_api_key, get_base_url, DB_PATH
 from schema_manager import SchemaManager
-from sql_generator import SQLGenerator, Dialect, get_openai_client
+from sql_generator import SQLGenerator, Dialect
 from sql_executor import SQLExecutor, SelfCorrectingExecutor
 from visualizer import DataVisualizer
 

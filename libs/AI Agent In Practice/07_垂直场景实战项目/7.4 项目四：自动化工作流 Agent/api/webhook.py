@@ -10,7 +10,7 @@ async def gmail_push_webhook(request: Request):
     if not pubsub_data:
         raise HTTPException(status_code=400, detail="No Pub/Sub data")
 
-    notification = json.loads(base64.urlsafe_b64decode(pubsub_data + "=="))
+    _notification = json.loads(base64.urlsafe_b64decode(pubsub_data + "=="))
 
     from scheduler.tasks import poll_gmail_and_dispatch
     poll_gmail_and_dispatch.delay()

@@ -13,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -152,7 +150,7 @@ class TestSQLExecutor:
 # ── 测试 SQL Generator 结构 ───────────────────────────
 class TestSQLGenerator:
     def test_import(self):
-        from sql_generator import SQLGenerator, Dialect, SQLGenerationResult
+        from sql_generator import Dialect
         assert isinstance(Dialect.SQLITE.value, str)
 
     def test_sql_clean(self):
@@ -163,7 +161,6 @@ class TestSQLGenerator:
     @patch("sql_generator.get_openai_client")
     def test_generator_uses_config(self, mock_client_factory):
         """验证 SQLGenerator 从 core_config 获取模型配置"""
-        from core_config import get_litellm_id
         from sql_generator import SQLGenerator, Dialect
         mock_client = MagicMock()
         mock_client_factory.return_value = mock_client

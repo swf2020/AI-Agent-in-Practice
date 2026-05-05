@@ -1,7 +1,8 @@
 # tests/test_main.py — 自动生成的冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIR)
@@ -12,9 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_chat_model_id,
-            get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -80,8 +78,7 @@ class TestCoreConfig:
 class TestEmbeddingRerankerConfig:
     def test_embedding_config(self):
         from core_config import (
-            EMBEDDING_MODEL, EMBEDDING_DIM, EMBEDDING_BASE_URL,
-            get_embedding_model, get_embedding_dim, get_embedding_base_url,
+            EMBEDDING_MODEL, EMBEDDING_DIM, get_embedding_model, get_embedding_dim,
         )
         assert EMBEDDING_MODEL == "text-embedding-v4"
         assert EMBEDDING_DIM == 1024
@@ -91,7 +88,7 @@ class TestEmbeddingRerankerConfig:
     def test_reranker_config(self):
         from core_config import (
             RERANKER_MODEL, RERANKER_TOP_N,
-            get_reranker_model, get_reranker_top_n,
+            get_reranker_model,
         )
         assert RERANKER_MODEL == "qwen3-rerank"
         assert RERANKER_TOP_N == 5
@@ -221,7 +218,7 @@ class TestNaiveRAG:
     @patch("baseline_rag.OpenAI")
     def test_retrieve_and_generate(self, mock_openai_cls, mock_qdrant_cls):
         """验证检索+生成链路在 mock 下可正常执行"""
-        from baseline_rag import NaiveRAG, RetrievedChunk
+        from baseline_rag import NaiveRAG
 
         # Mock Qdrant
         mock_qdrant = MagicMock()
@@ -287,7 +284,6 @@ class TestReranker:
     def test_reranker_fallback_on_empty(self):
         """空列表应直接返回空"""
         from reranker import DashScopeReranker
-        from baseline_rag import RetrievedChunk
 
         reranker = DashScopeReranker()
         result = reranker.rerank("test query", [])

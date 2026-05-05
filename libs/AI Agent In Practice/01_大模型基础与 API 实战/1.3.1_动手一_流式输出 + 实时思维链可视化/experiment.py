@@ -136,7 +136,7 @@ def run_extended_thinking(prompt: str, budget: int = 4000) -> ExperimentResult:
 def print_comparison(results: list[ExperimentResult], question: str) -> None:
     """打印横向对比报告。"""
     console.print()
-    console.rule(f"[bold]对比实验报告[/bold]")
+    console.rule("[bold]对比实验报告[/bold]")
     console.print(f"[dim]问题：{question}[/dim]\n")
 
     for r in results:

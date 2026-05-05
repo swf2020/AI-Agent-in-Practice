@@ -1,7 +1,7 @@
 # tests/test_main.py — 冒烟测试
 import pytest
-from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__))))
 
 
@@ -10,8 +10,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -103,6 +101,6 @@ class TestDSPyStructure:
         from main import accuracy_metric
         example = type("Example", (), {"sentiment": "正面"})()
         prediction = type("Prediction", (), {"sentiment": "正面"})()
-        assert accuracy_metric(example, prediction) == True
+        assert accuracy_metric(example, prediction) is True
         prediction2 = type("Prediction", (), {"sentiment": "负面"})()
-        assert accuracy_metric(example, prediction2) == False
+        assert accuracy_metric(example, prediction2) is False

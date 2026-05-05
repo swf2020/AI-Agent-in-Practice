@@ -1,7 +1,8 @@
 # tests/test_main.py — QLoRA 微调项目冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, PROJECT_DIR)
@@ -12,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY, FINETUNE_BASE_MODEL,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -55,7 +54,7 @@ class TestCoreConfig:
         assert result is None or isinstance(result, str)
 
     def test_get_active_config(self):
-        from core_config import get_active_config, ACTIVE_MODEL_KEY
+        from core_config import get_active_config
         cfg = get_active_config()
         assert cfg["litellm_id"] is not None
 

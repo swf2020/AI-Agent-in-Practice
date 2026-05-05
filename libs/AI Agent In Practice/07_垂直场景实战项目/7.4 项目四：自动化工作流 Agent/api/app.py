@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from api.webhook import gmail_push_webhook
 from api.slack_callback import slack_interactions_handler
 

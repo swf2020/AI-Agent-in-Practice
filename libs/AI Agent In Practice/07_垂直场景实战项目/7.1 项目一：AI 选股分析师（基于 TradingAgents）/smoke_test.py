@@ -38,7 +38,6 @@ def test_astock_adapter():
 
 def test_checkpoint_save():
     """实验三：验证 Checkpoint 数据库结构正确（不触发 LLM）"""
-    import sqlite3
     from experiment_3_checkpoint import CHECKPOINT_DB, _init_checkpoint_db
 
     conn = _init_checkpoint_db()

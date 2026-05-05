@@ -1,7 +1,5 @@
 # demo_setup.py + smoke_test.py 合并版本，可直接运行
 
-import os
-import json
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 
@@ -66,7 +64,7 @@ for case in test_cases:
     
     answer = agent.run(case["query"], verbose=True)
     
-    print(f"\n💬 最终回答:")
+    print("\n💬 最终回答:")
     print(answer)
 
-print(f"\n\n✅ 所有测试通过！")
+print("\n\n✅ 所有测试通过！")

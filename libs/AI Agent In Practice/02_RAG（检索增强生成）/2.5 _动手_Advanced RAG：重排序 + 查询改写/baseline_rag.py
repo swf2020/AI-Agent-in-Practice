@@ -1,6 +1,5 @@
 """Naive RAG 基线实现，作为对比实验的起点。"""
 
-from typing import Optional
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
@@ -13,7 +12,6 @@ from core_config import (
     get_dashscope_api_key, get_embedding_base_url,
     get_embedding_model, get_embedding_dim,
     get_chat_model_id, get_api_key, get_base_url,
-    ACTIVE_MODEL_KEY,
 )
 
 load_dotenv()

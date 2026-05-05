@@ -14,7 +14,7 @@ from pydantic import BaseModel
 # 将当前目录加入 Python 路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core_config import ACTIVE_MODEL_KEY, get_litellm_id, get_api_key, get_base_url, get_router_model_name
+from core_config import get_router_model_name
 from llm_gateway_cost_tracker import CostTracker
 from llm_gateway_config_models import MODEL_LIST, FALLBACKS
 

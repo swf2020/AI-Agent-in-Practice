@@ -5,7 +5,6 @@ SQL 安全守卫：使用 sqlparse 进行 AST 级别的语句类型验证
   sqlparse 解析后能拿到真实的 statement type
 """
 import sqlparse
-from sqlparse.sql import Statement
 from sqlparse.tokens import Keyword, DDL, DML
 
 

@@ -38,7 +38,7 @@ async def benchmark_serial_vs_concurrent(n_requests: int = 5) -> None:
 
     # --- 并发调用 ---
     start = time.perf_counter()
-    concurrent_results = await gateway.chat_batch(
+    _concurrent_results = await gateway.chat_batch(
         prompts, model=model_name, max_concurrent=n_requests, feature="benchmark_concurrent"
     )
     concurrent_time = time.perf_counter() - start

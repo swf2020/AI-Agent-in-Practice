@@ -3,7 +3,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
 from state import AgentState
 from tools import TOOLS
-from core_config import get_litellm_id, get_chat_model_id, get_api_key, get_base_url, ACTIVE_MODEL_KEY, MODEL_REGISTRY
+from core_config import get_litellm_id, get_chat_model_id, get_api_key, get_base_url
 
 
 def create_llm(provider: str = "default"):

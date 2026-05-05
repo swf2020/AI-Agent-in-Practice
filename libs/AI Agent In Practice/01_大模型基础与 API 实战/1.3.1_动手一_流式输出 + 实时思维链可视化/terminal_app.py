@@ -5,15 +5,13 @@
 """
 
 import time
-import sys
 from rich.columns import Columns
 from rich.console import Console
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
-from rich.table import Table
 
-from core import ChunkType, StreamChunk, stream_cot_prompt, stream_extended_thinking
+from core import ChunkType, stream_cot_prompt, stream_extended_thinking
 
 console = Console()
 

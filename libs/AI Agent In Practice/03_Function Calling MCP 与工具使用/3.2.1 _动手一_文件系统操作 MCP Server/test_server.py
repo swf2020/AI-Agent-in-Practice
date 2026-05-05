@@ -1,7 +1,8 @@
 # 直接调用 Server 函数进行单元测试，不走 MCP 协议
 # 适合 CI 环境或 Colab 调试
 
-import sys, os
+import sys
+import os
 os.environ["MCP_ALLOWED_ROOT"] = os.path.expanduser("~/Desktop/workspace/AI-Agent-in-Practice/libs/AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2.1 _动手一_文件系统操作 MCP Server")
 
 # 把 Server 文件当模块导入

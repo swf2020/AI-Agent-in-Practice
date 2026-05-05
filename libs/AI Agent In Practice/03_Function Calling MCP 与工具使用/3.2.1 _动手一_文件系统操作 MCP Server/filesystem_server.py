@@ -3,7 +3,6 @@ import stat
 import fnmatch
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from fastmcp import FastMCP
 
@@ -185,7 +184,7 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8000, help="HTTP 模式端口号")
     args = parser.parse_args()
 
-    print(f"文件系统 MCP Server 启动", file=sys.stderr)
+    print("文件系统 MCP Server 启动", file=sys.stderr)
     print(f"   根目录：{_get_allowed_root()}", file=sys.stderr)
     print(f"   传输方式：{args.transport}", file=sys.stderr)
 

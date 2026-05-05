@@ -12,7 +12,6 @@ from __future__ import annotations
 import akshare as ak
 import pandas as pd
 from datetime import datetime, timedelta
-from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)

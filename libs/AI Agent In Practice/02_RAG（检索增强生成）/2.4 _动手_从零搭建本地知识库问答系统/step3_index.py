@@ -3,7 +3,6 @@
 """
 from __future__ import annotations
 
-import json
 import time
 from pathlib import Path
 from typing import Iterator
@@ -60,7 +59,7 @@ def ensure_collection(client: QdrantClient) -> None:
             collection_name=COLLECTION_NAME,
             optimizer_config={"indexing_threshold": 1},
         )
-        print(f"已设置索引阈值")
+        print("已设置索引阈值")
     else:
         print(f"Collection 已存在：{COLLECTION_NAME}")
 

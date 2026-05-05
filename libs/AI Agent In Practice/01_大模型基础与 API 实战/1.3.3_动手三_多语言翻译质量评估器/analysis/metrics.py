@@ -6,7 +6,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import spearmanr
-from dataclasses import dataclass
 
 
 def correlation_with_human(

@@ -1,7 +1,8 @@
 # tests/test_main.py — 自动生成的冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 
@@ -10,8 +11,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_chat_model_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0

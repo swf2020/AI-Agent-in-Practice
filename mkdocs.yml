@@ -1,92 +1,100 @@
 site_name: AI Agent in Practice
 site_url: https://swf2020.github.io/AI-Agent-in-Practice/
-
 theme:
   name: material
   language: zh
   palette:
     primary: indigo
-
 nav:
-  - 首页: index.md
-  - 第零章 写给读者:
-    - 学习路线图: AI Agent 与大模型应用开发实战手册/第零章 写给读者/学习路线图.md
-  - 第一章 大模型基础与 API 实战:
-    - 1.1 LLM核心概念: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.1 LLM核心概念.md
-    - 1.2.1 微调技术全景与选型决策: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.1 微调技术全景与选型决策.md
-    - 1.2.2 LoRA 原理精讲: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.2 LoRA 原理精讲.md
-    - 1.2.3 QLoRA 原理精讲: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.3 QLoRA 原理精讲.md
-    - 1.2.4 数据工程：微调数据的准备与质量控制: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.4 数据工程：微调数据的准备与质量控制.md
-    - 1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型.md
-    - 1.2.6 【动手二】微调效果评估与对比实验: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.6 【动手二】微调效果评估与对比实验.md
-    - 1.2.7 【动手三】基于 Unsloth 的高效微调加速实战: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.2.7 【动手三】基于 Unsloth 的高效微调加速实战.md
-    - 1.3 Prompt Engineering 实战: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3 Prompt Engineering 实战.md
-    - 1.3.1【动手一】流式输出 + 实时思维链可视化: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3.1【动手一】流式输出 + 实时思维链可视化.md
-    - 1.3.2 【动手二】构建一个提示词调试器: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3.2 【动手二】构建一个提示词调试器.md
-    - 1.3.3【动手三】多语言翻译质量评估器: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3.3【动手三】多语言翻译质量评估器.md
-    - 1.3.4 【动手四】自动化 Prompt 优化器（DSPy 入门）: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.3.4 【动手四】自动化 Prompt 优化器（DSPy 入门）.md
-    - 1.4 【动手】统一封装多模型调用层: AI Agent 与大模型应用开发实战手册/第一章 大模型基础与 API 实战/1.4 【动手】统一封装多模型调用层.md
-  - 第二章 RAG（检索增强生成）:
-    - 2.1 RAG 架构全景: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.1 RAG 架构全景.md
-    - 2.2 Embedding 与向量数据库: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.2 Embedding 与向量数据库.md
-    - 2.3 检索策略（稠密 - 稀疏 - 混合）: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.3 检索策略（稠密 - 稀疏 - 混合）.md
-    - 2.4 【动手】从零搭建本地知识库问答系统: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.4 【动手】从零搭建本地知识库问答系统.md
-    - 2.5 【动手】Advanced RAG：重排序 + 查询改写: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.5 【动手】Advanced RAG：重排序 + 查询改写.md
-    - 2.6 RAG 评估体系（RAGAS 框架）: AI Agent 与大模型应用开发实战手册/第二章 RAG（检索增强生成）/2.6 RAG 评估体系（RAGAS 框架）.md
-  - 第三章 Function Calling MCP 与工具使用:
-    - 3.1 Function Calling 原理与协议: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.1 Function Calling 原理与协议.md
-    - 3.2 MCP 协议详解: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2 MCP 协议详解.md
-    - 3.2.1 【动手一】文件系统操作 MCP Server: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2.1 【动手一】文件系统操作 MCP Server.md
-    - 3.2.2 【动手二】数据库查询 MCP Server: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2.2 【动手二】数据库查询 MCP Server.md
-    - 3.2.3【动手三】代码执行沙箱 MCP Server: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md
-    - 3.3 【动手】给 LLM 接入搜索 - 计算器 - 数据库工具: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.3 【动手】给 LLM 接入搜索 - 计算器 - 数据库工具.md
-    - 3.4 工具可靠性与错误处理: AI Agent 与大模型应用开发实战手册/第三章 Function Calling MCP 与工具使用/3.4 工具可靠性与错误处理.md
-  - 第四章 AI Agent 核心架构:
-    - 4.1 Agent 定义：感知-规划-行动循环: AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.1 Agent 定义：感知-规划-行动循环.md
-    - 4.2 ReAct 范式实战: AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.2 ReAct 范式实战.md
-    - 4.3 Planning 策略（ToT - GoT - Plan-and-Execute）: AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.3 Planning 策略（ToT - GoT - Plan-and-Execute）.md
-    - 4.4 记忆系统设计: AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.4 记忆系统设计.md
-    - 4.5 【动手】用 LangGraph 构建有状态 Agent: AI Agent 与大模型应用开发实战手册/第四章 AI Agent 核心架构/4.5 【动手】用 LangGraph 构建有状态 Agent.md
-  - 第五章 Multi-Agent 系统:
-    - 5.1 多 Agent 协作模式（层级 - 对等 - 流水线）: AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.1 多 Agent 协作模式（层级 - 对等 - 流水线）.md
-    - 5.2 AutoGen 框架实战: AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.2 AutoGen 框架实战.md
-    - 5.3 CrewAI 角色分工实战: AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.3 CrewAI 角色分工实战.md
-    - 5.4 【动手】搭建代码生成+审查的双 Agent 系统: AI Agent 与大模型应用开发实战手册/第五章 Multi-Agent 系统/5.4 【动手】搭建代码生成+审查的双 Agent 系统.md
-  - 第六章 生产级落地关键技术:
-    - 6.1 流式输出与用户体验: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.1 流式输出与用户体验.md
-    - 6.2 成本控制与 Token 优化: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.2 成本控制与 Token 优化.md
-    - 6.3 缓存策略（Prompt Cache - Semantic Cache）: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.3 缓存策略（Prompt Cache - Semantic Cache）.md
-    - 6.4 安全与对齐（Prompt Injection 防御）: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.4 安全与对齐（Prompt Injection 防御）.md
-    - 6.5 可观测性（LangSmith - LangFuse）: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.5 可观测性（LangSmith - LangFuse）.md
-    - 6.6 【动手】构建带监控的生产级 Agent 服务: AI Agent 与大模型应用开发实战手册/第六章 生产级落地关键技术/6.6 【动手】构建带监控的生产级 Agent 服务.md
-  - 第七章 垂直场景实战项目:
-    - 7.1 项目一：AI 选股分析师（基于 TradingAgents）: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.1 项目一：AI 选股分析师（基于 TradingAgents）.md
-    - 7.1.2 环境搭建与数据接入: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.1.2 环境搭建与数据接入.md
-    - 7.1.4 动手实验: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.1.4 动手实验.md
-    - 7.2 项目二：企业知识库智能问答: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.2 项目二：企业知识库智能问答.md
-    - 7.2.5 评估与上线: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.2.5 评估与上线.md
-    - 7.3 项目三：数据分析 Agent（Text-to-SQL）: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.3 项目三：数据分析 Agent（Text-to-SQL）.md
-    - 7.4 项目四：自动化工作流 Agent: AI Agent 与大模型应用开发实战手册/第七章 垂直场景实战项目/7.4 项目四：自动化工作流 Agent.md
-  - 第八章 AI 大模型与 Agent 技术演进全景:
-    - 8.1.1 前深度学习时代（2000-2017）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.1 前深度学习时代（2000-2017）.md
-    - 8.1.2 Transformer 革命（2017-2019）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.2 Transformer 革命（2017-2019）.md
-    - 8.1.3 规模定律与涌现能力（2020-2022）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.3 规模定律与涌现能力（2020-2022）.md
-    - 8.1.4 指令对齐与 RLHF 时代（2022-2023）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.4 指令对齐与 RLHF 时代（2022-2023）.md
-    - 8.1.5 开源生态爆发与长上下文竞赛（2023-2024）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.5 开源生态爆发与长上下文竞赛（2023-2024）.md
-    - 8.1.6 推理模型范式（2024-2025）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.1.6 推理模型范式（2024-2025）.md
-    - 8.2.1 前 LLM Agent 时代（约 1960s-2022）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.1 前 LLM Agent 时代（约 1960s-2022）.md
-    - 8.2.2 LLM Agent 萌芽期（2022-2023）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.2 LLM Agent 萌芽期（2022-2023）.md
-    - 8.2.3 框架与协议的规范化（2023-2024）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.3 框架与协议的规范化（2023-2024）.md
-    - 8.2.4 Computer Use 与 GUI Agent（2024）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.4 Computer Use 与 GUI Agent（2024）.md
-    - 8.2.5 Agentic AI 走向生产（2024-2025）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.5 Agentic AI 走向生产（2024-2025）.md
-    - 8.3.1 上下文长度：从 512 Token 到无限流式记忆: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.1 上下文长度：从 512 Token 到无限流式记忆.md
-    - 8.3.2 RAG 技术演进：关键字检索到知识图谱增强: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.2 RAG 技术演进：关键字检索到知识图谱增强.md
-    - 8.3.3 多模态：从 CLIP 到全模态统一模型: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.3 多模态：从 CLIP 到全模态统一模型.md
-    - 8.3.4 高效推理：从量化压缩到推理加速芯片生态: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.4 高效推理：从量化压缩到推理加速芯片生态.md
-    - 8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI.md
-    - 8.3.6 微调技术：从全参数到极低成本适配: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.3.6 微调技术：从全参数到极低成本适配.md
-    - 8.5.1 模型能力演进预判（2025-2030）: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.1 模型能力演进预判（2025-2030）.md
-    - 8.5.2 Agent 架构演进预判: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.2 Agent 架构演进预判.md
-    - 8.5.3 技术瓶颈与开放性挑战: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.3 技术瓶颈与开放性挑战.md
-    - 8.5.4 基础设施与生态演进预判: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.4 基础设施与生态演进预判.md
-    - 8.5.5 社会影响与监管格局: AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.5.5 社会影响与监管格局.md
+- 00_写给读者:
+  - AI Agent In Practice/00_写给读者/学习路线图.md
+- 01_大模型基础与 API 实战:
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.1 LLM核心概念.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.1 微调技术全景与选型决策.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.2 LoRA 原理精讲.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.3 QLoRA 原理精讲.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.4 数据工程：微调数据的准备与质量控制.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.5 【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.6 【动手二】微调效果评估与对比实验.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.2.7 【动手三】基于 Unsloth 的高效微调加速实战.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.3 Prompt Engineering 实战.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.3.1【动手一】流式输出 + 实时思维链可视化.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.3.2 【动手二】构建一个提示词调试器.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.3.3【动手三】多语言翻译质量评估器.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.3.4 【动手四】自动化 Prompt 优化器（DSPy 入门）.md
+  - AI Agent In Practice/01_大模型基础与 API 实战/1.4 【动手】统一封装多模型调用层.md
+- 02_RAG（检索增强生成）:
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.1 RAG 架构全景.md
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.2 Embedding 与向量数据库.md
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.3 检索策略（稠密 - 稀疏 - 混合）.md
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.4 【动手】从零搭建本地知识库问答系统.md
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.5 【动手】Advanced RAG：重排序 + 查询改写.md
+  - AI Agent In Practice/02_RAG（检索增强生成）/2.6 RAG 评估体系（RAGAS 框架）.md
+- 03_Function Calling MCP 与工具使用:
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.1 Function Calling 原理与协议.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2 MCP 协议详解.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.1 【动手一】文件系统操作 MCP Server.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.2 【动手二】数据库查询 MCP Server.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.3 【动手】给 LLM 接入搜索 - 计算器 -
+    数据库工具.md
+  - AI Agent In Practice/03_Function Calling MCP 与工具使用/3.4 工具可靠性与错误处理.md
+- 04_AI Agent 核心架构:
+  - AI Agent In Practice/04_AI Agent 核心架构/4.1 Agent 定义：感知-规划-行动循环.md
+  - AI Agent In Practice/04_AI Agent 核心架构/4.2 ReAct 范式实战.md
+  - AI Agent In Practice/04_AI Agent 核心架构/4.3 Planning 策略（ToT - GoT - Plan-and-Execute）.md
+  - AI Agent In Practice/04_AI Agent 核心架构/4.4 记忆系统设计.md
+  - AI Agent In Practice/04_AI Agent 核心架构/4.5 【动手】用 LangGraph 构建有状态 Agent.md
+- 05_Multi-Agent 系统:
+  - AI Agent In Practice/05_Multi-Agent 系统/5.1 多 Agent 协作模式（层级 - 对等 - 流水线）.md
+  - AI Agent In Practice/05_Multi-Agent 系统/5.2 AutoGen 框架实战.md
+  - AI Agent In Practice/05_Multi-Agent 系统/5.3 CrewAI 角色分工实战.md
+  - AI Agent In Practice/05_Multi-Agent 系统/5.4 【动手】搭建代码生成+审查的双 Agent 系统.md
+- 06_生产级落地关键技术:
+  - AI Agent In Practice/06_生产级落地关键技术/6.1 流式输出与用户体验.md
+  - AI Agent In Practice/06_生产级落地关键技术/6.2 成本控制与 Token 优化.md
+  - AI Agent In Practice/06_生产级落地关键技术/6.3 缓存策略（Prompt Cache - Semantic Cache）.md
+  - AI Agent In Practice/06_生产级落地关键技术/6.4 安全与对齐（Prompt Injection 防御）.md
+  - AI Agent In Practice/06_生产级落地关键技术/6.5 可观测性（LangSmith - LangFuse）.md
+  - AI Agent In Practice/06_生产级落地关键技术/6.6 【动手】构建带监控的生产级 Agent 服务.md
+- 07_垂直场景实战项目:
+  - AI Agent In Practice/07_垂直场景实战项目/7.1 项目一：AI 选股分析师（基于 TradingAgents）.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.1.2 环境搭建与数据接入.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.1.4 动手实验.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.2 项目二：企业知识库智能问答.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.2.5 评估与上线.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.3 项目三：数据分析 Agent（Text-to-SQL）.md
+  - AI Agent In Practice/07_垂直场景实战项目/7.4 项目四：自动化工作流 Agent.md
+- 08_AI 大模型与 Agent 技术演进全景:
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.1 前深度学习时代（2000-2017）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.2 Transformer 革命（2017-2019）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.3 规模定律与涌现能力（2020-2022）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.4 指令对齐与 RLHF 时代（2022-2023）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.5 开源生态爆发与长上下文竞赛（2023-2024）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.1.6 推理模型范式（2024-2025）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.2.1 前 LLM Agent 时代（约 1960s-2022）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.2.2 LLM Agent 萌芽期（2022-2023）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.2.3 框架与协议的规范化（2023-2024）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.2.4 Computer Use 与 GUI Agent（2024）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.2.5 Agentic AI 走向生产（2024-2025）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.1 上下文长度：从 512 Token 到无限流式记忆.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.2 RAG 技术演进：关键字检索到知识图谱增强.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.3 多模态：从 CLIP 到全模态统一模型.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.4 高效推理：从量化压缩到推理加速芯片生态.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.5 对齐技术：从 RLHF 到 DPO 到宪法 AI.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.3.6 微调技术：从全参数到极低成本适配.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.5.1 模型能力演进预判（2025-2030）.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.5.2 Agent 架构演进预判.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.5.3 技术瓶颈与开放性挑战.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.5.4 基础设施与生态演进预判.md
+  - AI Agent In Practice/08_AI 大模型与 Agent 技术演进全景/8.5.5 社会影响与监管格局.md
+- 09_面试题真题:
+  - AI Agent In Practice/09_面试题真题/01_原理题.md
+  - AI Agent In Practice/09_面试题真题/02_工程题.md
+  - AI Agent In Practice/09_面试题真题/03_设计题.md
+  - AI Agent In Practice/09_面试题真题/04_视野题.md
+  - AI Agent In Practice/09_面试题真题/05_开放题.md
+- 10_附录:
+  - AI Agent In Practice/10_附录/A. 主流框架横向对比.md
+  - AI Agent In Practice/10_附录/B. 学习资源导航.md
+  - AI Agent In Practice/10_附录/C. 术语表.md

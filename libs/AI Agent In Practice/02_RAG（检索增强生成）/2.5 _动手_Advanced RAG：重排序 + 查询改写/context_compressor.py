@@ -2,6 +2,7 @@
 
 from openai import OpenAI
 from core_config import get_chat_model_id
+from baseline_rag import RetrievedChunk
 
 
 class LLMLinguaCompressor:

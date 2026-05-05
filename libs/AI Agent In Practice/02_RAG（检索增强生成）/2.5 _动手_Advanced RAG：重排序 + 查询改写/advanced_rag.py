@@ -1,6 +1,6 @@
 """Advanced RAG 完整流水线，整合查询改写、重排序与上下文压缩。"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from baseline_rag import NaiveRAG, RetrievedChunk
 from query_rewriter import QueryRewriter
 from reranker import DashScopeReranker

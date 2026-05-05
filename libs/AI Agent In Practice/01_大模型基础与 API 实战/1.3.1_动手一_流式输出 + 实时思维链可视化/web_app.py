@@ -10,7 +10,6 @@ import streamlit as st
 
 from core import (
     ChunkType,
-    get_default_model,
     stream_cot_prompt,
     stream_extended_thinking,
 )

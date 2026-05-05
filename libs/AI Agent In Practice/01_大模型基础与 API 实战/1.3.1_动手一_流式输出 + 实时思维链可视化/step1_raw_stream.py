@@ -50,7 +50,7 @@ def inspect_stream(prompt: str) -> None:
     generation_time = total_time - (first_token_time - start_time) if first_token_time else total_time
 
     print(f"\n\n{'='*60}")
-    print(f"📊 统计")
+    print("📊 统计")
     print(f"   总耗时:     {total_time:.2f}s")
     print(f"   TTFT:       {ttft:.3f}s")
     print(f"   生成耗时:   {generation_time:.2f}s")

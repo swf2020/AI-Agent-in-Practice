@@ -14,7 +14,6 @@ import tempfile
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 from fastmcp import FastMCP
@@ -225,7 +224,7 @@ def install_package(package_name: str) -> dict[str, Any]:
                 "message": f"安装失败: {result.stderr.strip()[:200]}",
             }
     except subprocess.TimeoutExpired:
-        return {"success": False, "message": f"安装超时 (>60s)"}
+        return {"success": False, "message": "安装超时 (>60s)"}
     except Exception as e:
         return {"success": False, "message": f"安装异常: {e}"}
 
@@ -313,5 +312,5 @@ def reset_session() -> dict[str, Any]:
 if __name__ == "__main__":
     print("🔒 代码执行沙箱 MCP Server 启动", flush=True)
     print(f"   Python: {sys.executable}", flush=True)
-    print(f"   安全模式: 静态分析 + 子进程隔离 + 环境变量隔离", flush=True)
+    print("   安全模式: 静态分析 + 子进程隔离 + 环境变量隔离", flush=True)
     mcp.run(transport="stdio")

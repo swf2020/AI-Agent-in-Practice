@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import math
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 from fastembed import TextEmbedding
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import FieldCondition, Filter, MatchValue

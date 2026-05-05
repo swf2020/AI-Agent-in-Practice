@@ -8,7 +8,6 @@ Reviewer Agent：审查代码质量，给出修改建议。
 
 import re
 import litellm
-from dataclasses import dataclass, field
 
 from core_config import get_litellm_id, get_api_key, get_base_url
 from tools import execute_code_with_tests, run_static_analysis, run_security_scan, ToolResult

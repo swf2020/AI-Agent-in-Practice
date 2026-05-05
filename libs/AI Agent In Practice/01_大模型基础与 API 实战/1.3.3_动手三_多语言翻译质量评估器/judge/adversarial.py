@@ -1,10 +1,8 @@
 """
 三项对抗性测试：位置偏差 / 冗长偏好 / 一致性
 """
-import asyncio
-from dataclasses import dataclass
 
-from judge.evaluator import judge_single, JudgeResult
+from judge.evaluator import judge_single
 
 
 # ── 测试一：位置偏差 ─────────────────────────────────────────

@@ -1,5 +1,6 @@
 """主入口：微调效果评估与对比实验"""
 import os
+import sys
 import warnings
 
 # 确保项目根目录在 sys.path 中

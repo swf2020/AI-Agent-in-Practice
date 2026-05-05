@@ -1,8 +1,6 @@
 from __future__ import annotations
 import base64
 from datetime import datetime
-from typing import Optional
-import json
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials

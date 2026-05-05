@@ -12,8 +12,6 @@ import os
 # 确保项目根目录在 sys.path 中
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import core  # 触发 dotenv 加载
-from core_config import get_model_list
 
 
 def run_cli():

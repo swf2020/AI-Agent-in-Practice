@@ -1,7 +1,6 @@
 """端到端冒烟测试：一键验证全流程"""
 from __future__ import annotations
 
-import sys
 
 def main() -> None:
     print("=" * 50)
@@ -30,7 +29,7 @@ def main() -> None:
     pipeline = RAGPipeline(top_k=3, score_threshold=0.3)
     result = pipeline.ask("pathlib 是什么？")
     assert len(result.answer) > 10, "LLM 回答异常：内容过短"
-    print(f"  ✅ 问答成功")
+    print("  ✅ 问答成功")
     print(f"  问题：{result.question}")
     print(f"  回答：{result.answer[:200]}...")
     print(f"  引用：{len(result.sources)} 条")

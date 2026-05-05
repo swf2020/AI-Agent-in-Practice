@@ -2,7 +2,6 @@
 自动向 Grafana 导入 Agent 服务监控 Dashboard。
 运行：python monitoring/import_dashboard.py
 """
-import json
 import httpx
 
 GRAFANA_URL = "http://localhost:3000"

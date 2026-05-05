@@ -1,7 +1,8 @@
 # tests/test_main.py — 自动生成的冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
-import sys, os
+import sys
+import os
 
 # 确保能找到项目根目录和 core 模块
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,8 +14,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -75,12 +74,12 @@ class TestCoreConfig:
 # ── 测试核心模块可导入 ───────────────────────────────────
 class TestModuleImports:
     def test_caller_import(self):
-        from core.caller import call_all, call_single, CallResult
+        from core.caller import call_all, call_single
         assert callable(call_all)
         assert callable(call_single)
 
     def test_history_import(self):
-        from core.history import save_run, load_history, get_run_by_id
+        from core.history import save_run, load_history
         assert callable(save_run)
         assert callable(load_history)
 
@@ -173,15 +172,13 @@ class TestLLMCall:
 class TestHistory:
     def test_save_and_load(self, tmp_path, monkeypatch):
         """测试保存和读取历史（使用临时目录）"""
-        import tempfile
-        import json
 
         # 切换到临时目录，避免污染项目 history.jsonl
         original_cwd = os.getcwd()
         os.chdir(tmp_path)
 
         try:
-            from core.history import save_run, load_history, HISTORY_FILE
+            from core.history import save_run, load_history
             from core.caller import CallResult
 
             results = [

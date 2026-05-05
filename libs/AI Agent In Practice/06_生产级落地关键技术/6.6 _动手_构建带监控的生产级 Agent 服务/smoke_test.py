@@ -1,7 +1,6 @@
 # smoke_test.py — 端到端冒烟测试，验证完整链路
 import asyncio
 import httpx
-import time
 import os
 
 BASE_URL = "http://localhost:8000"

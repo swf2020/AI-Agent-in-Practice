@@ -7,7 +7,6 @@ import sqlparse
 import pandas as pd
 from dataclasses import dataclass
 from typing import Optional
-from tenacity import retry, stop_after_attempt, wait_fixed
 
 from core_config import QUERY_TIMEOUT_SECONDS, MAX_RETRIES
 from sql_generator import SQLGenerator

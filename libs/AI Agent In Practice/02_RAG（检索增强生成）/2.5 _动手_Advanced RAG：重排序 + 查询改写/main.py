@@ -1,7 +1,6 @@
 """主入口：演示 Advanced RAG 查询流程。"""
 
 from advanced_rag import AdvancedRAG, AdvancedRAGConfig
-from baseline_rag import NaiveRAG
 
 # ── 示例文档 ───────────────────────────────────────────────────────────────────
 DOCS = [

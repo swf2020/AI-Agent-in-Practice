@@ -2,7 +2,7 @@
 Token 消耗与成本追踪器。
 线程安全（使用 dataclass + 字典，单线程 asyncio 环境下无需加锁）。
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from collections import defaultdict
 import litellm
 

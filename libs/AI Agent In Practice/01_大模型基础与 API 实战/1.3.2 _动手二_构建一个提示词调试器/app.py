@@ -12,7 +12,6 @@ from datetime import datetime
 import gradio as gr
 import pandas as pd
 
-import core  # 触发 dotenv 加载
 from core.caller import call_all, CallResult, MODEL_REGISTRY
 from core.history import (
     export_comparison_report,

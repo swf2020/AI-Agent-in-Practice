@@ -1,7 +1,8 @@
 # tests/test_main.py — 冒烟测试
 import pytest
-from unittest.mock import patch, MagicMock, PropertyMock
-import sys, os
+from unittest.mock import patch, MagicMock
+import sys
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Set dummy API key so tools.py can be imported (TavilySearchResults requires it)
@@ -13,8 +14,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0

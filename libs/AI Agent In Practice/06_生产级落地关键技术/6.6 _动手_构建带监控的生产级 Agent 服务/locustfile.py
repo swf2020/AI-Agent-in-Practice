@@ -1,9 +1,7 @@
 from __future__ import annotations
-import json
 import time
 import random
 from locust import HttpUser, task, between, events
-from locust.runners import MasterRunner
 
 
 # 测试用的问题集，覆盖不同复杂度

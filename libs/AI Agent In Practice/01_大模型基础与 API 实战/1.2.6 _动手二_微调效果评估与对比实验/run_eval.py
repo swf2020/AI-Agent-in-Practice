@@ -1,7 +1,6 @@
 # run_eval.py — 端到端冒烟测试，直接运行验证整个评估流水线
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -10,7 +9,7 @@ from openai import OpenAI
 from eval.inference import EvalSample, InferenceConfig, ModelInferencer
 from eval.metrics import compute_bert_score, compute_rouge
 from eval.llm_judge import batch_judge
-from eval.ablation import AblationSuite, build_example_suite
+from eval.ablation import build_example_suite
 from eval.overfitting import load_trainer_state, plot_loss_curves
 from core_config import get_litellm_id, get_api_key
 

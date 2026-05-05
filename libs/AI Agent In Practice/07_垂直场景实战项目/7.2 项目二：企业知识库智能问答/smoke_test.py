@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import tempfile
-from pathlib import Path
 
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
@@ -60,7 +59,7 @@ def run_smoke_test():
         print("\n5. 回答生成测试...")
         generator = AnswerGenerator()
         answer = generator.generate("年假有多少天", results)
-        print(f"   ✓ 生成完成")
+        print("   ✓ 生成完成")
         print(f"   答案：{answer.answer}")
         print(f"   引用数：{len(answer.references)}")
         

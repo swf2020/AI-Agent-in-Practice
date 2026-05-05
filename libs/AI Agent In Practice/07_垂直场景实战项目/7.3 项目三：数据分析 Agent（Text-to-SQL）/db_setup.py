@@ -1,7 +1,6 @@
 import sqlite3
 import random
 from datetime import datetime, timedelta
-from pathlib import Path
 
 
 def create_demo_database(db_path: str = "ecommerce.db") -> None:

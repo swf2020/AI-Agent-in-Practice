@@ -3,7 +3,6 @@
 此模块重新导出所有符号，确保 core/caller.py 等原有导入无需修改。
 """
 from core_config import (
-    ModelConfig,
     MODEL_REGISTRY,
     ACTIVE_MODEL_KEY,
     estimate_cost,

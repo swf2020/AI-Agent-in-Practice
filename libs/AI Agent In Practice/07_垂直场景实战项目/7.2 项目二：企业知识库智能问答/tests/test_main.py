@@ -1,7 +1,8 @@
 # tests/test_main.py — 冒烟测试
 import pytest
 from unittest.mock import patch, MagicMock
-import sys, os
+import sys
+import os
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIR)
@@ -12,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -55,9 +54,8 @@ class TestCoreConfig:
     def test_config_constants(self):
         """验证向量数据库等常量存在"""
         from core_config import (
-            QDRANT_URL, QDRANT_COLLECTION, EMBED_MODEL,
-            VECTOR_DIM, TOP_K_PER_SOURCE, FINAL_TOP_N,
-            CHUNK_SIZE, CHUNK_OVERLAP,
+            QDRANT_URL, EMBED_MODEL,
+            VECTOR_DIM, CHUNK_SIZE,
         )
         assert isinstance(QDRANT_URL, str)
         assert isinstance(EMBED_MODEL, str)

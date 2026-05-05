@@ -7,9 +7,7 @@
   - 容错性好：某行损坏不影响其他行的读取
 """
 import json
-import os
 from datetime import datetime, timezone
-from functools import lru_cache
 from pathlib import Path
 
 import pandas as pd

@@ -3,7 +3,6 @@
 通过环境变量 DATABASE_URL 切换，不需要改代码
 """
 import json
-import os
 import sqlite3
 from contextlib import contextmanager
 from typing import Generator, Any

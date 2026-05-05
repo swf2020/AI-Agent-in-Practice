@@ -9,7 +9,7 @@ from openai import OpenAI
 from pathlib import Path
 from dotenv import load_dotenv
 
-from core_config import get_litellm_id, get_api_key, get_base_url
+from core_config import get_litellm_id
 from sql_generator import get_openai_client
 
 load_dotenv()

@@ -2,21 +2,18 @@
 
 import asyncio
 import json
-import pandas as pd
 from dataclasses import asdict
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from data.test_set import TEST_SET
-from judge import evaluate_translation, evaluate_batch
+from judge import evaluate_translation
 from judge.evaluator import judge_batch
-from judge.adversarial import test_position_bias, test_consistency
+from judge.adversarial import test_position_bias
 from analysis.metrics import (
     correlation_with_human,
     consistency_score,
-    plot_heatmap,
-    generate_summary_report,
 )
 
 
@@ -90,7 +87,7 @@ async def main():
 
     if len(llm_overall) == len(human_overall):
         corr = correlation_with_human(llm_overall, human_overall)
-        print(f"  相关系数：")
+        print("  相关系数：")
         print(f"    Spearman 相关系数: {corr['spearman_r']}")
         print(f"    P 值: {corr['p_value']}")
         print(f"    显著性: {'显著' if corr['significant'] else '不显著'}")

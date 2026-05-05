@@ -9,10 +9,8 @@
 ⚠️ tradingagents 0.3.1 暂不支持 memory/checkpoint 注入。
 本实验改用 SQLite 手动记录分析状态，验证 checkpoint 概念。
 """
-import os
 import sqlite3
 import json
-from datetime import datetime
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.config import TradingAgentsConfig
@@ -108,7 +106,7 @@ def analyze_with_checkpoint(
         (task_id,)
     ).fetchone()
     if row and row[0] == "completed" and row[1]:
-        console.print(f"[yellow]⚡ 找到已完成的 checkpoint，直接返回[/yellow]")
+        console.print("[yellow]⚡ 找到已完成的 checkpoint，直接返回[/yellow]")
         result = json.loads(row[1])
         result["thread_id"] = task_id
         return result
@@ -143,7 +141,7 @@ def analyze_with_checkpoint(
         }
 
         _save_checkpoint(conn, task_id, ticker, analysis_date, "completed", result)
-        console.print(f"[green]✓ 分析完成，checkpoint 已保存[/green]")
+        console.print("[green]✓ 分析完成，checkpoint 已保存[/green]")
         return result
 
     except KeyboardInterrupt:

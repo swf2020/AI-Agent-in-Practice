@@ -3,7 +3,6 @@
 DSPy 自动化 Prompt 优化器 - 端到端完整示例
 运行：python main.py
 """
-import os
 import random
 import dspy
 from dspy.evaluate import Evaluate
@@ -76,7 +75,7 @@ def main():
     baseline = SentimentClassifier()
     
     result = baseline(text="这个产品真的超级棒，强烈推荐！")
-    print(f"  输入：这个产品真的超级棒，强烈推荐！")
+    print("  输入：这个产品真的超级棒，强烈推荐！")
     print(f"  推理：{result.reason}")
     print(f"  预测：{result.sentiment}")
     

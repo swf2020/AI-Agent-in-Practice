@@ -13,8 +13,6 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
-            get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
         assert len(MODEL_REGISTRY) > 0
@@ -91,7 +89,7 @@ class TestParse:
 # ── 测试切块模块 ─────────────────────────────────────────
 class TestChunk:
     def test_chunk_module_importable(self):
-        from step2_chunk import chunk_document, chunk_fixed_size, chunk_by_section, Chunk
+        from step2_chunk import chunk_document
         assert callable(chunk_document)
 
     def test_chunk_fixed_size(self):

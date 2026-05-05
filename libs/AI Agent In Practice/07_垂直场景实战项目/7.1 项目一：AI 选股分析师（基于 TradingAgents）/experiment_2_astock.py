@@ -1,7 +1,6 @@
 """
 实验二：用 AKShare 适配器分析 A 股，以贵州茅台（600519）为例。
 """
-import os
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.config import TradingAgentsConfig

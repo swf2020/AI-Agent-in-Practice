@@ -9,13 +9,11 @@ from typing import AsyncGenerator
 from arq import create_pool
 from arq.connections import ArqRedis, RedisSettings
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
 from prometheus_client import (
     Counter,
     Histogram,
     generate_latest,
     CONTENT_TYPE_LATEST,
-    CollectorRegistry,
 )
 from starlette.responses import Response
 
@@ -28,7 +26,6 @@ from models import (
     TaskResult,
     TaskStatus,
 )
-from worker import WorkerSettings
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
