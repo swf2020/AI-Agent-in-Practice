@@ -91,8 +91,8 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "enterprise_kb")
 
 # Embedding 模型配置
-EMBED_MODEL = "BAAI/bge-m3"
-VECTOR_DIM = 1024
+EMBED_MODEL = "BAAI/bge-small-zh-v1.5"
+VECTOR_DIM = 512
 
 # 检索配置
 TOP_K_PER_SOURCE = 20

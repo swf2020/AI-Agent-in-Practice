@@ -68,7 +68,8 @@ def run_smoke_test():
         
     finally:
         os.unlink(test_file)
-        client.delete_collection(collection_name="test_kb")
+        if "client" in locals():
+            client.delete_collection(collection_name="test_kb")
 
 
 if __name__ == "__main__":

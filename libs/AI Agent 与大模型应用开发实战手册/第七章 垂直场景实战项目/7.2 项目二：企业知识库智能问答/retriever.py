@@ -45,7 +45,7 @@ class HybridRetriever:
     ) -> None:
         self.collection_name = collection_name
         self._client = qdrant_client
-        self._embedder = TextEmbedding(model_name="BAAI/bge-m3")
+        self._embedder = TextEmbedding(model_name="BAAI/bge-small-zh-v1.5")
         self._reranker = CrossEncoder(_RERANKER_MODEL)
 
         self._bm25: BM25Okapi | None = None

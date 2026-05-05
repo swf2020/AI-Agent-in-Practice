@@ -56,7 +56,7 @@ def test_model_config():
     """实验四：验证 DeepSeek 配置格式（不实际调用，节约成本）"""
     from experiment_4_model_comparison import MODEL_CONFIGS
     assert "deepseek" in MODEL_CONFIGS
-    assert MODEL_CONFIGS["deepseek"].provider == "deepseek"
+    assert MODEL_CONFIGS["deepseek"].provider == "litellm"  # 使用 litellm 作为代理
     assert MODEL_CONFIGS["deepseek"].cost_per_1m_input < MODEL_CONFIGS["gpt4o"].cost_per_1m_input
     console.print("[green]✓ 实验四：模型配置验证通过[/green]")
 

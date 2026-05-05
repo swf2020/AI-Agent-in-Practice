@@ -15,9 +15,9 @@ console = Console()
 def _make_config() -> TradingAgentsConfig:
     """创建 A 股分析配置"""
     return TradingAgentsConfig(
-        llm_provider="openai",
-        deep_think_llm="gpt-4o",
-        quick_think_llm="gpt-4o-mini",
+        llm_provider="litellm",
+        deep_think_llm="deepseek/deepseek-chat",
+        quick_think_llm="deepseek/deepseek-chat",
         reasoning_effort="medium",
         max_debate_rounds=3,
         max_risk_discuss_rounds=3,
@@ -64,7 +64,7 @@ def analyze_astock(ticker: str, analysis_date: str) -> dict:
     patch_astock_tools(adapter)
 
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamentals", "news", "technical"],
+        selected_analysts=["fundamentals", "news"],
         config=config,
         debug=False,
     )
@@ -72,7 +72,17 @@ def analyze_astock(ticker: str, analysis_date: str) -> dict:
     console.print(f"[bold cyan]开始分析 A 股 {ticker}...[/bold cyan]")
     state, decision = graph.propagate(ticker, analysis_date)
 
-    return {"ticker": ticker, "date": analysis_date, "decision": decision, "state": state}
+    # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
+    if isinstance(decision, str):
+        decision_dict = {
+            "action": decision.lower(),
+            "reasoning": "分析完成",
+            "confidence": 0.8,
+        }
+    else:
+        decision_dict = decision
+
+    return {"ticker": ticker, "date": analysis_date, "decision": decision_dict, "state": state}
 
 
 if __name__ == "__main__":

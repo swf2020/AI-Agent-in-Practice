@@ -7,6 +7,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.redis import RedisSaver
 from langgraph.types import interrupt
+from langgraph.config import RunnableConfig
 
 from models import WorkflowState, ExtractedTask, RiskLevel, EmailMessage
 from tools.gmail_tool import gmail_read_email, gmail_mark_processed
@@ -54,7 +55,7 @@ def node_extract_task(state: WorkflowState) -> dict:
     return {"extracted_task": task}
 
 
-def node_request_approval(state: WorkflowState, config: dict) -> dict:
+def node_request_approval(state: WorkflowState, config: RunnableConfig) -> dict:
     assert state.extracted_task is not None and state.email is not None
 
     run_id = config["configurable"]["thread_id"]

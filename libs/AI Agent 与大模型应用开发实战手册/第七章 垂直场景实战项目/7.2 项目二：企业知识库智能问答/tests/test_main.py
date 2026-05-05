@@ -61,7 +61,7 @@ class TestCoreConfig:
         )
         assert isinstance(QDRANT_URL, str)
         assert isinstance(EMBED_MODEL, str)
-        assert VECTOR_DIM == 1024
+        assert VECTOR_DIM == 512
         assert CHUNK_SIZE == 512
 
 

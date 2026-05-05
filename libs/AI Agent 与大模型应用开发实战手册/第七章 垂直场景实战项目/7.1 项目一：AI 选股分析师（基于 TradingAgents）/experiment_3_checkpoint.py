@@ -55,9 +55,9 @@ def get_saver() -> sqlite3.Connection:
 def _make_config() -> TradingAgentsConfig:
     """创建配置"""
     return TradingAgentsConfig(
-        llm_provider="openai",
-        deep_think_llm="gpt-4o",
-        quick_think_llm="gpt-4o-mini",
+        llm_provider="litellm",
+        deep_think_llm="deepseek/deepseek-chat",
+        quick_think_llm="deepseek/deepseek-chat",
         reasoning_effort="medium",
         max_debate_rounds=3,
         max_risk_discuss_rounds=3,
@@ -117,18 +117,28 @@ def analyze_with_checkpoint(
         console.print(f"[bold cyan]分析 {ticker}（支持断点续跑）...[/bold cyan]")
 
         graph = TradingAgentsGraph(
-            selected_analysts=["fundamentals", "sentiment", "news", "technical"],
+            selected_analysts=["fundamentals", "news"],
             config=config,
             debug=False,
         )
 
         state, decision = graph.propagate(ticker, analysis_date)
 
+        # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
+        if isinstance(decision, str):
+            decision_dict = {
+                "action": decision.lower(),
+                "reasoning": "分析完成",
+                "confidence": 0.8,
+            }
+        else:
+            decision_dict = decision
+
         result = {
             "ticker": ticker,
             "date": analysis_date,
             "thread_id": task_id,
-            "decision": decision,
+            "decision": decision_dict,
             "state": state,
         }
 

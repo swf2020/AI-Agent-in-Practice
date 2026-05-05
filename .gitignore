@@ -81,3 +81,5 @@ PROGRESS.md
 REPORT.md
 data/
 *.pid
+*.rdb
+evals/

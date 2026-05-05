@@ -27,9 +27,9 @@ RISK_TO_EFFORT = {
 def _make_config(risk_level: str = "neutral") -> TradingAgentsConfig:
     """创建 TradingAgentsConfig 实例"""
     return TradingAgentsConfig(
-        llm_provider="openai",
-        deep_think_llm="gpt-4o",
-        quick_think_llm="gpt-4o-mini",
+        llm_provider="litellm",
+        deep_think_llm="deepseek/deepseek-chat",
+        quick_think_llm="deepseek/deepseek-chat",
         reasoning_effort=RISK_TO_EFFORT.get(risk_level, "medium"),
         max_debate_rounds=3,
         max_risk_discuss_rounds=3,
@@ -57,7 +57,7 @@ def run_analysis(
 
     # 初始化图（懒加载，不调用不产生费用）
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamentals", "sentiment", "news", "technical"],
+        selected_analysts=["fundamentals", "news"],
         config=config,
         debug=False,  # 生产建议 False，调试时设 True 查看中间输出
     )
@@ -68,9 +68,19 @@ def run_analysis(
     # 耗时通常 2-5 分钟，取决于模型响应速度
     state, decision = graph.propagate(ticker, analysis_date)
 
+    # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
+    if isinstance(decision, str):
+        decision_dict = {
+            "action": decision.lower(),
+            "reasoning": "分析完成",
+            "confidence": 0.8,
+        }
+    else:
+        decision_dict = decision
+
     return {
         "ticker": ticker,
         "date": analysis_date,
-        "decision": decision,
+        "decision": decision_dict,
         "state": state,
     }

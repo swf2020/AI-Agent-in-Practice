@@ -58,7 +58,7 @@ def display_decision(result: dict) -> None:
         ("止盈价", decision.get("take_profit", "N/A")),
         ("置信度", f"{decision.get('confidence', 0):.0%}"),
         ("风险偏好", RISK_LABELS.get(
-            result["state"].get("risk_tolerance", "neutral"), "未知"
+            getattr(result["state"], "risk_tolerance", "neutral"), "未知"
         )),
     ]
     for name, value in metrics:

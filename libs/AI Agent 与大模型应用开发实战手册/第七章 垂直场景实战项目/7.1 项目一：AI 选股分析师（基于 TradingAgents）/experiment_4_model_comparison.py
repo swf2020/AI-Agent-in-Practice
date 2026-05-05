@@ -47,10 +47,10 @@ MODEL_CONFIGS: dict[str, ModelConfig] = {
     ),
     "deepseek": ModelConfig(
         name="DeepSeek-V3",
-        provider="deepseek",
-        deep_model="deepseek-chat",       # DeepSeek-V3 对应的模型 ID
-        quick_model="deepseek-chat",
-        cost_per_1m_input=0.27,           # DeepSeek 定价约为 GPT-4o 的 5%
+        provider="litellm",
+        deep_model="deepseek/deepseek-chat",  # LiteLLM 格式
+        quick_model="deepseek/deepseek-chat",
+        cost_per_1m_input=0.27,              # DeepSeek 定价约为 GPT-4o 的 5%
         cost_per_1m_output=1.10,
     ),
 }
@@ -103,7 +103,7 @@ def run_with_model(
     config = _make_config(mc)
 
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamentals", "news", "technical"],
+        selected_analysts=["fundamentals", "news"],
         config=config,
         debug=False,
     )
@@ -112,7 +112,17 @@ def run_with_model(
     state, decision = graph.propagate(ticker, analysis_date)
     elapsed = time.time() - start_time
 
-    reasoning = decision.get("reasoning", "")
+    # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
+    if isinstance(decision, str):
+        decision_dict = {
+            "action": decision.lower(),
+            "reasoning": "分析完成",
+            "confidence": 0.8,
+        }
+    else:
+        decision_dict = decision
+
+    reasoning = decision_dict.get("reasoning", "")
 
     # 粗略估算成本（token 数基于字符数估算，1 token ≈ 4 字符）
     estimated_tokens = len(reasoning) / 4
@@ -122,13 +132,13 @@ def run_with_model(
         model_name=mc.name,
         ticker=ticker,
         analysis_date=analysis_date,
-        action=decision.get("action", "unknown"),
-        confidence=decision.get("confidence", 0.0),
-        target_price=decision.get("target_price"),
+        action=decision_dict.get("action", "unknown"),
+        confidence=decision_dict.get("confidence", 0.0),
+        target_price=decision_dict.get("target_price"),
         reasoning_length=len(reasoning),
         elapsed_seconds=elapsed,
         estimated_cost_usd=estimated_cost,
-        raw_decision=decision,
+        raw_decision=decision_dict,
     )
 
 

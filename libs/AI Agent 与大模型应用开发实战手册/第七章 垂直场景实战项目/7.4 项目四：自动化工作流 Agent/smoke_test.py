@@ -4,7 +4,6 @@ from unittest.mock import patch, MagicMock
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
-from agent.workflow_graph import build_workflow_graph
 from models import WorkflowState, EmailMessage, ExtractedTask, RiskLevel
 
 
@@ -27,14 +26,35 @@ def run_smoke_test():
         risk_reason="涉及批量删除操作，数据不可恢复",
     )
 
+    # 关键修复：
+    # - @tool 装饰对象（BaseTool）不能用 patch("xxx.invoke") 来 mock，
+    #   因为 setattr 会触发 Pydantic 的 __setattr__ 校验。
+    #   正确做法：用 MagicMock 替换整个对象，并配置其 .invoke() 返回值。
+    # - _extractor 是 RunnableSequence，同样不能用 patch 替换其方法。
+    # - send_approval_request / update_approval_message 是普通函数，可用 patch 替换。
+    mock_gmail_read = MagicMock()
+    mock_gmail_read.invoke.return_value = fake_email.model_dump_json()
+    mock_extractor = MagicMock()
+    mock_extractor.invoke.return_value = fake_task
+    mock_notion = MagicMock()
+    mock_notion.invoke.return_value = "notion-page-abc"
+    mock_slack_notify = MagicMock()
+    mock_slack_notify.invoke.return_value = "ts-notify"
+    mock_gmail_mark = MagicMock()
+    mock_gmail_mark.invoke.return_value = "done"
+
     with (
-        patch("agent.workflow_graph.node_read_email", return_value={"email": fake_email}),
-        patch("agent.workflow_graph._extractor.invoke", return_value=fake_task),
-        patch("tools.slack_tool.send_approval_request", return_value="1234567890.123456"),
-        patch("tools.slack_tool.update_approval_message"),
-        patch("tools.task_tool.notion_create_task.invoke", return_value="notion-page-abc"),
-        patch("tools.slack_tool.slack_send_notification.invoke"),
-        patch("tools.gmail_tool.gmail_mark_processed.invoke"),
+        patch("agent.workflow_graph.gmail_read_email", mock_gmail_read),
+        patch("agent.workflow_graph._extractor", mock_extractor),
+        patch("agent.workflow_graph.send_approval_request", return_value="1234567890.123456"),
+        patch("agent.workflow_graph.update_approval_message"),
+        patch("agent.workflow_graph.notion_create_task", mock_notion),
+        patch("agent.workflow_graph.slack_send_notification", mock_slack_notify),
+        patch("agent.workflow_graph.gmail_mark_processed", mock_gmail_mark),
+        patch("agent.workflow_graph.settings", MagicMock(
+            notion_api_key="fake-notion-key",
+            notion_database_id="fake-db-id",
+        )),
     ):
         import agent.workflow_graph as wg
 
