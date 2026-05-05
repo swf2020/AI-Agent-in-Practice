@@ -717,6 +717,25 @@
 - AI 对劳动力市场的结构性冲击：哪些岗位先受影响？历史类比与差异分析
 - 负责任 AI 开发原则：开发者视角的伦理实践清单
 
+## Module 9：面试题真题
+
+> 按题型分类整理的真实面试题目与详细解答，来源涵盖牛客 / 知乎 / Datawhale / 各大厂面经等。
+
+### [原理题](第九章：面试题真题/原理题.md) — 28 题
+Transformer / Attention / RoPE / KV Cache / LoRA / QLoRA / MoE / 解码策略 / RLHF / DPO / GRPO / 位置编码 / Tokenization / 词元化 / 涌现能力 / VLM / CLIP / ReAct / Function Calling / 记忆系统 / SFT / 缩放定律 / MHA-MQA-GQA / 评估体系 / Lost in the Middle / MoE
+
+### [工程题](第九章：面试题真题/工程题.md) — 32 题
+流式输出 / SSE vs WebSocket / 停止生成 / 长连接管理 / 熔断降级 / 模型切换 / 并发排队 / 削峰限流 / 成本控制 / 延迟排查 / 上下文爆炸 / 密钥安全 / 向量库一致性 / 大规模 RAG / RAG vs 微调 / 全链路压测 / 日志管理 / 消息防乱序 / 断点续打 / 模型量化 / 容器化部署 / K8s / GPU 调度 / 工具超时重试 / 评测体系 / Rerank / 向量距离度量 / 可观测性 / 非文本事件 / 多模型调度 / 缓存设计 / 长尾任务 / 兜底策略 / 跨服务透传 / 任务完成率 / Prompt Injection
+
+### [设计题](第九章：面试题真题/设计题.md) — 20 题
+微调方案设计 / Prompt 管理体系 / 可追溯 RAG / 采购审批 Agent / LLM 网关 / 内容审核系统 / 工具权限管理 / Deep Research 停止判断 / 企业知识库问答 / Text2SQL / 客服多 Agent / 运维 Agent / 低延迟 RAG / Agent 平台搭建 / 多模型服务网格 / 灾备切换 / 多语言 Prompt / 专项评估方案 / 退款处理 Agent / 成本优化
+
+### [视野题](第九章：面试题真题/视野题.md) — 12 题
+RAG vs 长上下文 / GRPO vs PPO / 开源 vs 闭源 / AGI 距离 / 具身智能 / Transformer vs SSM / 商业落地行业 / 多模态融合 / 创业公司技术栈 / 更强模型 vs 精巧架构 / 个性化隐私安全 / 数据瓶颈与合成数据
+
+### [开放题](第九章：面试题真题/开放题.md) — 10 题
+Agent 可信差距 / 学习路径建议 / Agent 工程师素质 / 最大瓶颈 / 个人知识管理 Agent / 颠覆性应用行业 / 合成数据角色 / RAG-微调-提示词决策 / 隐私安全实践 / Transformer 架构未来
+
 ## 附录
 
 ### 主流框架横向对比表
