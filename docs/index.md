@@ -738,18 +738,18 @@ Agent 可信差距 / 学习路径建议 / Agent 工程师素质 / 最大瓶颈 /
 
 ## 附录
 
-### 主流框架横向对比表
+### [A. 主流框架横向对比](AI%20Agent%20In%20Practice/附录/A.%20主流框架横向对比.md)
 
 - 对比维度：学习曲线 / 生产成熟度 / 社区活跃度 / 多 Agent 支持 / 可观测性集成 / License
 - 覆盖框架：LangChain / LangGraph / LlamaIndex / AutoGen / CrewAI / Semantic Kernel / Dify / Flowise
 
-### 学习资源导航
+### [B. 学习资源导航](AI%20Agent%20In%20Practice/附录/B.%20学习资源导航.md)
 
 - 必读论文清单（附 arXiv 链接 + 一句话摘要）
 - 优质开源项目推荐（附 GitHub Star 与适用场景）
 - 持续跟进渠道：Newsletter / X 账号 / Discord 社区
 
-### 术语表
+### [C. 术语表](AI%20Agent%20In%20Practice/附录/C.%20术语表.md)
 
 - 中英文对照索引（含首次出现章节标注）
 - 缩写速查：RAG / CoT / ReAct / MCP / RLHF / SFT …
