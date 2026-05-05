@@ -3,7 +3,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
 from state import AgentState
 from tools import TOOLS
-from core_config import get_litellm_id, get_api_key, get_base_url, ACTIVE_MODEL_KEY, MODEL_REGISTRY
+from core_config import get_litellm_id, get_chat_model_id, get_api_key, get_base_url, ACTIVE_MODEL_KEY, MODEL_REGISTRY
 
 
 def create_llm(provider: str = "default"):
@@ -18,9 +18,9 @@ def create_llm(provider: str = "default"):
     让模型知道有哪些工具可用，返回的 AIMessage 可能携带 tool_calls。
     """
     if provider == "anthropic":
-        llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0)
+        llm = ChatAnthropic(model=get_chat_model_id("Claude-Sonnet"), temperature=0)
     elif provider == "openai":
-        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+        llm = ChatOpenAI(model=get_chat_model_id("GPT-4o-Mini"), temperature=0)
     else:
         # 默认路径：通过 LiteLLM 调用，模型由 core_config 统一管理
         import litellm
@@ -31,8 +31,8 @@ def create_llm(provider: str = "default"):
         api_key = get_api_key()
         base_url = get_base_url()
 
-        # 使用 langchain 的 ChatLiteLLM 适配层
-        from langchain_community.chat_models import ChatLiteLLM
+        # 使用 langchain-litellm 的 ChatLiteLLM 适配层
+        from langchain_litellm import ChatLiteLLM
 
         llm = ChatLiteLLM(
             model=litellm_model,

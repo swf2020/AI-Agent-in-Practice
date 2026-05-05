@@ -10,7 +10,7 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
+            get_litellm_id, get_chat_model_id, get_api_key, get_base_url,
             get_model_list, estimate_cost, get_active_config,
         )
         assert isinstance(MODEL_REGISTRY, dict)
@@ -21,7 +21,7 @@ class TestCoreConfig:
     def test_model_registry_schema(self):
         """验证每个模型条目包含必要字段"""
         from core_config import MODEL_REGISTRY
-        required_keys = {"litellm_id", "price_in", "price_out",
+        required_keys = {"litellm_id", "chat_model_id", "price_in", "price_out",
                          "max_tokens_limit", "api_key_env", "base_url"}
         for name, cfg in MODEL_REGISTRY.items():
             missing = required_keys - set(cfg.keys())
@@ -31,6 +31,14 @@ class TestCoreConfig:
         from core_config import get_litellm_id
         result = get_litellm_id()
         assert isinstance(result, str) and len(result) > 0
+
+    def test_get_chat_model_id(self):
+        """验证 chat_model_id 无前缀"""
+        from core_config import get_chat_model_id, get_litellm_id
+        chat_id = get_chat_model_id()
+        lite_id = get_litellm_id()
+        assert "/" not in chat_id
+        assert chat_id != lite_id
 
     def test_get_model_list(self):
         from core_config import get_model_list, MODEL_REGISTRY

@@ -24,8 +24,11 @@ def run_smoke_test():
         
         # 流式输出：实时看到工具调用过程
         for event in graph.stream(
-            input={"messages": [HumanMessage(content=question)]} if i == 1
-                  else {"messages": [HumanMessage(content=question)]},
+            input={
+                "messages": [HumanMessage(content=question)],
+                "tool_calls_count": 0,
+                "requires_approval": False,
+            },
             config=config,
             stream_mode="values",  # 每次 State 更新都输出
         ):

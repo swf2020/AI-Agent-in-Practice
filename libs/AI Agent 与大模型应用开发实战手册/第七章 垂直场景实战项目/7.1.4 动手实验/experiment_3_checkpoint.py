@@ -5,13 +5,17 @@
 - TradingAgents 的 TradingAgentsGraph 内部维护一个 LangGraph StateGraph
 - 每个 Analyst / Researcher / Trader 节点执行后触发 checkpoint 保存
 - 通过 thread_id 唯一标识一次分析任务，相同 thread_id 可恢复
+
+⚠️ tradingagents 0.3.1 暂不支持 memory/checkpoint 注入。
+本实验改用 SQLite 手动记录分析状态，验证 checkpoint 概念。
 """
 import os
 import sqlite3
+import json
+from datetime import datetime
 from dotenv import load_dotenv
-from langgraph.checkpoint.sqlite import SqliteSaver
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import TradingAgentsConfig
 from rich.console import Console
 
 load_dotenv()
@@ -21,16 +25,53 @@ console = Console()
 CHECKPOINT_DB = "trading_checkpoints.db"
 
 
-def get_saver() -> SqliteSaver:
-    """
-    创建 SQLite Checkpoint Saver。
-
-    生产环境替换为 PostgreSQL:
-        from langgraph.checkpoint.postgres import PostgresSaver
-        return PostgresSaver.from_conn_string("postgresql://user:pass@host/db")
-    """
+def _init_checkpoint_db() -> sqlite3.Connection:
+    """初始化 checkpoint 数据库"""
     conn = sqlite3.connect(CHECKPOINT_DB, check_same_thread=False)
-    return SqliteSaver(conn)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS checkpoints (
+            thread_id TEXT PRIMARY KEY,
+            ticker TEXT,
+            analysis_date TEXT,
+            status TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            result_json TEXT
+        )
+    """)
+    conn.commit()
+    return conn
+
+
+def get_saver() -> sqlite3.Connection:
+    """
+    获取 Checkpoint 数据库连接。
+
+    注：tradingagents 0.3.1 不支持 SqliteSaver 注入，
+    此处返回连接供手动保存结果使用。
+    """
+    return _init_checkpoint_db()
+
+
+def _make_config() -> TradingAgentsConfig:
+    """创建配置"""
+    return TradingAgentsConfig(
+        llm_provider="openai",
+        deep_think_llm="gpt-4o",
+        quick_think_llm="gpt-4o-mini",
+        reasoning_effort="medium",
+        max_debate_rounds=3,
+        max_risk_discuss_rounds=3,
+        max_recur_limit=100,
+    )
+
+
+def _save_checkpoint(conn, thread_id, ticker, analysis_date, status, result=None):
+    """手动保存 checkpoint"""
+    conn.execute(
+        "INSERT OR REPLACE INTO checkpoints (thread_id, ticker, analysis_date, status, result_json) VALUES (?, ?, ?, ?, ?)",
+        (thread_id, ticker, analysis_date, status, json.dumps(result) if result else None),
+    )
+    conn.commit()
 
 
 def analyze_with_checkpoint(
@@ -57,37 +98,33 @@ def analyze_with_checkpoint(
     task_id = thread_id or f"{ticker}_{analysis_date}_{uuid.uuid4().hex[:8]}"
     console.print(f"[dim]Task ID: {task_id}[/dim]  ← 保存此 ID，中断后用于续跑")
 
-    config = DEFAULT_CONFIG.copy()
-    config.update({
-        "llm_provider": "openai",
-        "deep_think_llm": "gpt-4o",
-        "quick_think_llm": "gpt-4o-mini",
-        "online_tools": True,
-    })
+    config = _make_config()
 
-    saver = get_saver()
+    conn = get_saver()
 
-    graph = TradingAgentsGraph(
-        selected_analysts=["fundamental", "sentiment", "news", "technical"],
-        config=config,
-        debug=False,
-        # 关键：将 Checkpoint Saver 注入图引擎
-        memory=saver,
-    )
-
-    # LangGraph 通过 configurable.thread_id 路由到对应 checkpoint
-    run_config = {"configurable": {"thread_id": task_id}}
+    # 检查是否已有 checkpoint
+    row = conn.execute(
+        "SELECT status, result_json FROM checkpoints WHERE thread_id = ?",
+        (task_id,)
+    ).fetchone()
+    if row and row[0] == "completed" and row[1]:
+        console.print(f"[yellow]⚡ 找到已完成的 checkpoint，直接返回[/yellow]")
+        result = json.loads(row[1])
+        result["thread_id"] = task_id
+        return result
 
     try:
         console.print(f"[bold cyan]分析 {ticker}（支持断点续跑）...[/bold cyan]")
-        state, decision = graph.propagate(
-            ticker,
-            analysis_date,
-            config=run_config,
+
+        graph = TradingAgentsGraph(
+            selected_analysts=["fundamental", "sentiment", "news", "technical"],
+            config=config,
+            debug=False,
         )
 
-        console.print(f"[green]✓ 分析完成[/green]")
-        return {
+        state, decision = graph.propagate(ticker, analysis_date)
+
+        result = {
             "ticker": ticker,
             "date": analysis_date,
             "thread_id": task_id,
@@ -95,13 +132,19 @@ def analyze_with_checkpoint(
             "state": state,
         }
 
+        _save_checkpoint(conn, task_id, ticker, analysis_date, "completed", result)
+        console.print(f"[green]✓ 分析完成，checkpoint 已保存[/green]")
+        return result
+
     except KeyboardInterrupt:
+        _save_checkpoint(conn, task_id, ticker, analysis_date, "interrupted")
         console.print(
             f"\n[yellow]⚡ 手动中断。续跑命令：[/yellow]\n"
             f"  analyze_with_checkpoint('{ticker}', '{analysis_date}', thread_id='{task_id}')"
         )
         raise
     except Exception as e:
+        _save_checkpoint(conn, task_id, ticker, analysis_date, "error")
         console.print(
             f"\n[red]✗ 异常中断：{e}[/red]\n"
             f"[yellow]续跑时传入 thread_id='{task_id}'[/yellow]"
@@ -116,11 +159,11 @@ def list_checkpoints(ticker: str | None = None) -> None:
     conn = sqlite3.connect(CHECKPOINT_DB)
     cursor = conn.cursor()
 
-    query = "SELECT thread_id, checkpoint_id, created_at FROM checkpoints"
+    query = "SELECT thread_id, status, created_at FROM checkpoints"
     params = []
     if ticker:
-        query += " WHERE thread_id LIKE ?"
-        params.append(f"{ticker}%")
+        query += " WHERE ticker = ?"
+        params.append(ticker)
     query += " ORDER BY created_at DESC LIMIT 20"
 
     rows = cursor.execute(query, params).fetchall()
@@ -128,11 +171,11 @@ def list_checkpoints(ticker: str | None = None) -> None:
     from rich.table import Table
     table = Table(title="已保存的 Checkpoint")
     table.add_column("Thread ID", style="cyan")
-    table.add_column("最新节点")
+    table.add_column("状态")
     table.add_column("时间")
 
-    for thread_id, checkpoint_id, created_at in rows:
-        table.add_row(thread_id, checkpoint_id[:20] + "...", str(created_at))
+    for thread_id, status, created_at in rows:
+        table.add_row(thread_id, status, str(created_at))
 
     console.print(table)
     conn.close()

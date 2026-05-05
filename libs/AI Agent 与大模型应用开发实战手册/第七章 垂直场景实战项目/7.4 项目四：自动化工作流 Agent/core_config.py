@@ -3,8 +3,9 @@ import os
 from typing import TypedDict
 
 
-class ModelConfig(TypedDict):
-    litellm_id: str          # LiteLLM 识别的模型字符串
+class ModelConfig(TypedDict, total=False):
+    litellm_id: str          # LiteLLM 识别的模型字符串（含 provider 前缀）
+    chat_model_id: str       # OpenAI SDK 直连时使用的模型名（无前缀）
     price_in: float          # 每 1K input tokens 价格（美元）
     price_out: float         # 每 1K output tokens 价格（美元）
     max_tokens_limit: int    # 模型支持的最大 max_tokens
@@ -16,14 +17,16 @@ class ModelConfig(TypedDict):
 MODEL_REGISTRY: dict[str, ModelConfig] = {
     "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
+        "chat_model_id": "deepseek-v4-flash",
         "price_in": 0.00027,
         "price_out": 0.0011,
         "max_tokens_limit": 4096,
         "api_key_env": "DEEPSEEK_API_KEY",
-        "base_url": None,
+        "base_url": "https://api.deepseek.com/v1",
     },
     "Qwen-Max": {
         "litellm_id": "qwen/qwen-plus",
+        "chat_model_id": "qwen-plus",
         "price_in": 0.001,
         "price_out": 0.004,
         "max_tokens_limit": 4096,
@@ -32,6 +35,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     },
     "Claude-Max": {
         "litellm_id": "claude-3-5-sonnet-latest",
+        "chat_model_id": "claude-3-5-sonnet-latest",
         "price_in": 0.003,
         "price_out": 0.015,
         "max_tokens_limit": 8192,
@@ -50,9 +54,16 @@ def get_active_config() -> ModelConfig:
 
 
 def get_litellm_id(model_key: str | None = None) -> str:
-    """获取指定模型（默认激活模型）的 LiteLLM ID"""
+    """获取指定模型的 LiteLLM SDK ID（含 provider 前缀）"""
     key = model_key or ACTIVE_MODEL_KEY
     return MODEL_REGISTRY[key]["litellm_id"]
+
+
+def get_chat_model_id(model_key: str | None = None) -> str:
+    """获取 OpenAI SDK 直连时使用的模型名（无前缀）"""
+    key = model_key or ACTIVE_MODEL_KEY
+    cfg = MODEL_REGISTRY[key]
+    return cfg.get("chat_model_id", cfg["litellm_id"].split("/")[-1])
 
 
 def get_api_key(model_key: str | None = None) -> str | None:

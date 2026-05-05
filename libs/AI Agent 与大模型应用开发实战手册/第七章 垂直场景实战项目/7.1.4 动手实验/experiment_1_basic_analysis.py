@@ -11,10 +11,30 @@ from rich.table import Table
 
 # TradingAgents 公开 API
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import TradingAgentsConfig
 
 load_dotenv()
 console = Console()
+
+# 风险偏好 → reasoning_effort 映射
+RISK_TO_EFFORT = {
+    "aggressive":   "high",
+    "neutral":      "medium",
+    "conservative": "low",
+}
+
+
+def _make_config(risk_level: str = "neutral") -> TradingAgentsConfig:
+    """创建 TradingAgentsConfig 实例"""
+    return TradingAgentsConfig(
+        llm_provider="openai",
+        deep_think_llm="gpt-4o",
+        quick_think_llm="gpt-4o-mini",
+        reasoning_effort=RISK_TO_EFFORT.get(risk_level, "medium"),
+        max_debate_rounds=3,
+        max_risk_discuss_rounds=3,
+        max_recur_limit=100,
+    )
 
 
 def run_analysis(
@@ -33,15 +53,7 @@ def run_analysis(
     Returns:
         包含决策和分析报告的字典
     """
-    # 复制默认配置，避免污染全局状态
-    config = DEFAULT_CONFIG.copy()
-    config.update({
-        "llm_provider": "openai",
-        "deep_think_llm": "gpt-4o",       # 高推理需求节点（研究员/风控）
-        "quick_think_llm": "gpt-4o-mini",  # 低推理需求节点（数据汇总）
-        "risk_tolerance": risk_level,
-        "online_tools": True,              # 启用实时数据获取
-    })
+    config = _make_config(risk_level)
 
     # 初始化图（懒加载，不调用不产生费用）
     graph = TradingAgentsGraph(

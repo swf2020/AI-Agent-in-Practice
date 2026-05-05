@@ -14,7 +14,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Literal
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import TradingAgentsConfig
 from rich.console import Console
 from rich.table import Table
 
@@ -56,6 +56,19 @@ MODEL_CONFIGS: dict[str, ModelConfig] = {
 }
 
 
+def _make_config(mc: ModelConfig) -> TradingAgentsConfig:
+    """根据 ModelConfig 创建 TradingAgentsConfig"""
+    return TradingAgentsConfig(
+        llm_provider=mc.provider,
+        deep_think_llm=mc.deep_model,
+        quick_think_llm=mc.quick_model,
+        reasoning_effort="medium",
+        max_debate_rounds=3,
+        max_risk_discuss_rounds=3,
+        max_recur_limit=100,
+    )
+
+
 @dataclass
 class AnalysisResult:
     """单次分析结果的结构化记录。"""
@@ -87,15 +100,7 @@ def run_with_model(
     mc = MODEL_CONFIGS[model_key]
     console.print(f"\n[bold cyan]使用 {mc.name} 分析 {ticker}...[/bold cyan]")
 
-    config = DEFAULT_CONFIG.copy()
-    config.update({
-        "llm_provider": mc.provider,
-        "deep_think_llm": mc.deep_model,
-        "quick_think_llm": mc.quick_model,
-        "backend_url": _get_backend_url(mc.provider),
-        "risk_tolerance": "neutral",
-        "online_tools": True,
-    })
+    config = _make_config(mc)
 
     graph = TradingAgentsGraph(
         selected_analysts=["fundamental", "news", "technical"],
@@ -125,16 +130,6 @@ def run_with_model(
         estimated_cost_usd=estimated_cost,
         raw_decision=decision,
     )
-
-
-def _get_backend_url(provider: ModelProvider) -> str:
-    """返回对应 provider 的 API base URL。"""
-    urls = {
-        "openai":   "https://api.openai.com/v1",
-        "deepseek": "https://api.deepseek.com/v1",
-        "ollama":   "http://localhost:11434/v1",
-    }
-    return urls.get(provider, "https://api.openai.com/v1")
 
 
 def compare_models(

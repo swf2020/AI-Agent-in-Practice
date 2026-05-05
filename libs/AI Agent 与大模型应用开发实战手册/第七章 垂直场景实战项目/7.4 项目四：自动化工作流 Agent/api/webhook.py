@@ -2,8 +2,6 @@ from fastapi import FastAPI, Request, HTTPException
 import base64
 import json
 
-from scheduler.tasks import process_single_email
-
 app = FastAPI()
 
 

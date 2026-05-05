@@ -11,7 +11,7 @@ class TestCoreConfig:
     def test_import(self):
         from core_config import (
             MODEL_REGISTRY, ACTIVE_MODEL_KEY,
-            get_litellm_id, get_api_key, get_base_url,
+            get_litellm_id, get_chat_model_id, get_api_key, get_base_url,
             get_model_list, estimate_cost,
         )
         assert isinstance(MODEL_REGISTRY, dict)
@@ -50,6 +50,14 @@ class TestCoreConfig:
         from core_config import get_api_key
         result = get_api_key()
         assert result is None or isinstance(result, str)
+
+    def test_get_chat_model_id(self):
+        """验证 chat_model_id 无前缀"""
+        from core_config import get_chat_model_id, get_litellm_id
+        chat_id = get_chat_model_id()
+        lite_id = get_litellm_id()
+        assert isinstance(chat_id, str) and len(chat_id) > 0
+        assert "/" not in chat_id or chat_id == lite_id  # 允许无前缀情况
 
 
 # ── 测试 Models ────────────────────────────────────────

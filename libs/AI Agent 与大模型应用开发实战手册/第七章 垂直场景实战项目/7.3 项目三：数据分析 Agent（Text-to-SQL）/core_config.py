@@ -41,7 +41,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
 }
 
 # ✅ 当前激活模型 key — 修改此处全局切换
-ACTIVE_MODEL_KEY: str = "GPT-4o-mini"
+ACTIVE_MODEL_KEY: str = "Qwen-Max"
 
 # 数据库配置
 DB_PATH = os.getenv("DB_PATH", "ecommerce.db")

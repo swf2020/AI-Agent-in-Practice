@@ -5,3 +5,5 @@ import os
 os.environ.setdefault("TAVILY_API_KEY", "test_dummy_key")
 os.environ.setdefault("ANTHROPIC_API_KEY", "test_dummy_key")
 os.environ.setdefault("OPENAI_API_KEY", "test_dummy_key")
+os.environ.setdefault("DEEPSEEK_API_KEY", "test_dummy_key")
+os.environ.setdefault("DASHSCOPE_API_KEY", "test_dummy_key")

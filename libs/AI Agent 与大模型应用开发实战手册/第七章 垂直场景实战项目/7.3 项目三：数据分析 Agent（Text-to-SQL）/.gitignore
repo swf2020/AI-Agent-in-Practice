@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# Test artifacts
+.pytest_cache/
+charts/
+test_charts/
+*.schema_embeddings.json
+
+# Generated database files
+*.db

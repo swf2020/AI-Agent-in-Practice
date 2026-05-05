@@ -3,11 +3,11 @@
 """
 
 from agents import run_dual_agent_loop
-from core_config import get_litellm_id, ACTIVE_MODEL_KEY
+from core_config import get_litellm_id, get_chat_model_id, ACTIVE_MODEL_KEY
 
 
 def main() -> None:
-    print(f"当前模型: {ACTIVE_MODEL_KEY} ({get_litellm_id()})")
+    print(f"当前模型: {ACTIVE_MODEL_KEY} (LiteLLM: {get_litellm_id()}, 直连: {get_chat_model_id()})")
 
     # 示例需求：实现一个带缓存的斐波那契计算函数
     requirement = """

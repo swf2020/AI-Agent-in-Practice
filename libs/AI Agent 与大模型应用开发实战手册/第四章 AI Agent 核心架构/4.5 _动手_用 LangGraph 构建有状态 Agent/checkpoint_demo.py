@@ -36,7 +36,6 @@ def demo_multi_turn_memory():
     print("\n=== 第二轮（自动携带上轮历史）===")
     result2 = graph.invoke(
         input={"messages": [HumanMessage(content="它支持哪些 Checkpoint 后端？")]},
-        # ⚠️ 注意：第二轮只传 messages，不再传 tool_calls_count 等字段
         # LangGraph 会从 Checkpoint 中恢复完整状态，再 merge 新的 messages
         config=config,
     )
@@ -106,3 +105,4 @@ def demo_human_approval():
 
 if __name__ == "__main__":
     demo_multi_turn_memory()
+    demo_human_approval()

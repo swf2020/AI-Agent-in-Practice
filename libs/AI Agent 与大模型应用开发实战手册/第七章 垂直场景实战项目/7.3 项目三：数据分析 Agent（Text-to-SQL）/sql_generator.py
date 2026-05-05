@@ -1,4 +1,5 @@
 import re
+import json
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, Field
@@ -39,6 +40,25 @@ class SQLGenerationResult(BaseModel):
         default_factory=list,
         description="问题中存在的模糊点，如'最近'未指定具体时间范围"
     )
+
+
+def _parse_json_response(text: str) -> dict:
+    """从 LLM 返回的文本中提取 JSON，处理可能的格式问题"""
+    # 尝试直接解析
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # 尝试提取 JSON 块
+    import re
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError:
+            pass
+    # 如果解析失败，返回默认值
+    return {"sql": "", "explanation": "解析失败", "confidence": 0.0, "ambiguities": []}
 
 
 SYSTEM_PROMPT_TEMPLATE = """你是一个专业的数据分析 SQL 专家。你的任务是将用户的自然语言问题转换为正确的 {dialect} SQL 查询。
@@ -106,16 +126,30 @@ class SQLGenerator:
 
         messages.append({"role": "user", "content": question})
 
-        response = self.client.beta.chat.completions.parse(
-            model=self.model,
-            messages=messages,
-            response_format=SQLGenerationResult,
-            temperature=0.1,
-        )
-
-        result = response.choices[0].message.parsed
-        result.sql = self._clean_sql(result.sql)
-        return result
+        # 优先尝试使用结构化输出
+        try:
+            response = self.client.beta.chat.completions.parse(
+                model=self.model,
+                messages=messages,
+                response_format=SQLGenerationResult,
+                temperature=0.1,
+            )
+            result = response.choices[0].message.parsed
+            result.sql = self._clean_sql(result.sql)
+            return result
+        except Exception:
+            # 结构化输出失败时，回退到普通 completion + JSON 手动解析
+            print("⚠️  结构化输出解析失败，回退到普通模式...")
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=0.1,
+            )
+            content = response.choices[0].message.content or ""
+            data = _parse_json_response(content)
+            result = SQLGenerationResult(**data)
+            result.sql = self._clean_sql(result.sql)
+            return result
 
     @staticmethod
     def _clean_sql(sql: str) -> str:

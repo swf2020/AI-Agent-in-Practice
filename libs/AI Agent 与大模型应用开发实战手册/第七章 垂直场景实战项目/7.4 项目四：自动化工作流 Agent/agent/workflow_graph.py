@@ -15,9 +15,10 @@ from tools.task_tool import notion_create_task, jira_create_issue
 from config import settings
 from core_config import get_litellm_id, get_api_key
 
+_api_key = get_api_key() or (settings.anthropic_api_key or "")
 _llm = ChatAnthropic(
     model=get_litellm_id(),
-    api_key=get_api_key(),
+    api_key=_api_key,
     temperature=0,
 )
 

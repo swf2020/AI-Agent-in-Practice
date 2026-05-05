@@ -37,15 +37,14 @@ def test_astock_adapter():
 
 
 def test_checkpoint_save():
-    """实验三：验证 Checkpoint 写入成功（只运行一个节点后手动中断）"""
+    """实验三：验证 Checkpoint 数据库结构正确（不触发 LLM）"""
     import sqlite3
-    from experiment_3_checkpoint import CHECKPOINT_DB, get_saver
+    from experiment_3_checkpoint import CHECKPOINT_DB, _init_checkpoint_db
 
-    saver = get_saver()
+    conn = _init_checkpoint_db()
     # 验证数据库文件已创建
     assert os.path.exists(CHECKPOINT_DB), "Checkpoint 数据库未创建"
 
-    conn = sqlite3.connect(CHECKPOINT_DB)
     tables = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     ).fetchall()
