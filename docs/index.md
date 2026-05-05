@@ -591,7 +591,7 @@
 
 ### 8.2 AI Agent 发展史：从脚本自动化到自主决策系统
 
-#### [8.2.1 前 LLM Agent 时代（–2022）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.1 前 LLM Agent 时代（约 1960s-2022）.md)
+#### [8.2.1 前 LLM Agent 时代（约 1960s–2022）](AI Agent 与大模型应用开发实战手册/第八章 AI 大模型与 Agent 技术演进全景/8.2.1 前 LLM Agent 时代（约 1960s-2022）.md)
 
 - 符号 AI 与专家系统：规则驱动的"硬编码"自动化
 - 强化学习 Agent：AlphaGo / OpenAI Five 的封闭场景巅峰

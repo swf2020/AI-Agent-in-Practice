@@ -1,11 +1,8 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import Request, HTTPException
 import base64
 import json
 
-app = FastAPI()
 
-
-@app.post("/webhook/gmail")
 async def gmail_push_webhook(request: Request):
     body = await request.json()
 

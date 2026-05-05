@@ -65,7 +65,8 @@ class ModelInferencer:
 
         if config.model_mode == "finetuned":
             # ⚠️ 必须先加载基座再套 LoRA，不能直接加载 adapter checkpoint
-            assert config.lora_adapter_path, "finetuned 模式需要提供 lora_adapter_path"
+            if not config.lora_adapter_path:
+                raise ValueError("finetuned 模式需要提供 lora_adapter_path")
             self.model = PeftModel.from_pretrained(
                 base_model,
                 config.lora_adapter_path,

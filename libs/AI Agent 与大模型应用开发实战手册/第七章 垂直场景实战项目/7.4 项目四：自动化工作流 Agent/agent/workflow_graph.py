@@ -14,11 +14,16 @@ from tools.gmail_tool import gmail_read_email, gmail_mark_processed
 from tools.slack_tool import slack_send_notification, send_approval_request, update_approval_message
 from tools.task_tool import notion_create_task, jira_create_issue
 from config import settings
-from core_config import get_litellm_id, get_api_key
+from core_config import get_chat_model_id, get_api_key
 
-_api_key = get_api_key() or (settings.anthropic_api_key or "")
+_api_key = get_api_key() or settings.anthropic_api_key
+if not _api_key:
+    raise RuntimeError(
+        "未配置 ANTHROPIC_API_KEY。请在 .env 文件中设置 ANTHROPIC_API_KEY=your_key"
+    )
+
 _llm = ChatAnthropic(
-    model=get_litellm_id(),
+    model=get_chat_model_id(),
     api_key=_api_key,
     temperature=0,
 )
@@ -33,7 +38,8 @@ def node_read_email(state: WorkflowState) -> dict:
 
 
 def node_extract_task(state: WorkflowState) -> dict:
-    assert state.email is not None
+    if state.email is None:
+        raise ValueError("node_extract_task: state.email 不能为空，请先调用 node_read_email")
 
     messages = [
         SystemMessage(content="""你是一个工作流自动化助手。
@@ -56,7 +62,8 @@ def node_extract_task(state: WorkflowState) -> dict:
 
 
 def node_request_approval(state: WorkflowState, config: RunnableConfig) -> dict:
-    assert state.extracted_task is not None and state.email is not None
+    if state.extracted_task is None or state.email is None:
+        raise ValueError("node_request_approval: state.extracted_task 和 state.email 不能为空")
 
     run_id = config["configurable"]["thread_id"]
 
@@ -82,7 +89,8 @@ def node_request_approval(state: WorkflowState, config: RunnableConfig) -> dict:
 
 
 def node_write_task(state: WorkflowState) -> dict:
-    assert state.extracted_task is not None
+    if state.extracted_task is None:
+        raise ValueError("node_write_task: state.extracted_task 不能为空")
 
     task = state.extracted_task
     result = {}
@@ -114,7 +122,8 @@ def node_write_task(state: WorkflowState) -> dict:
 
 
 def node_send_notification(state: WorkflowState) -> dict:
-    assert state.extracted_task is not None
+    if state.extracted_task is None:
+        raise ValueError("node_send_notification: state.extracted_task 不能为空")
 
     task_ref = state.notion_page_id or state.jira_issue_key or "未知"
     priority_emoji = {"low": "🟢", "medium": "🟡", "high": "🟠", "urgent": "🔴"}.get(

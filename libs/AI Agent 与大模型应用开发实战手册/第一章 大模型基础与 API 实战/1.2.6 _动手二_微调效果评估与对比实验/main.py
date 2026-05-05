@@ -1,5 +1,4 @@
 """主入口：微调效果评估与对比实验"""
-import sys
 import os
 import warnings
 
@@ -9,8 +8,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dotenv import load_dotenv
 load_dotenv()
 
-# 抑制 HuggingFace 等库的冗余 warning
-warnings.filterwarnings("ignore")
+# 抑制 HuggingFace transformers 库的冗余 warning（保留其他库的 warning）
+warnings.filterwarnings("ignore", module="transformers")
 
 
 def run_full_eval():
