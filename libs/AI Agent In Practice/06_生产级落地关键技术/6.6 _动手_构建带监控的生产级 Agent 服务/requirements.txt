@@ -11,6 +11,7 @@ locust>=2.0.0
 prometheus-client>=0.17.0
 langchain>=0.1.0
 langchain-openai>=0.1.0
+langchain-litellm>=0.1.0
 langfuse>=2.0.0
 httpx>=0.24.0
 openai>=1.0.0
