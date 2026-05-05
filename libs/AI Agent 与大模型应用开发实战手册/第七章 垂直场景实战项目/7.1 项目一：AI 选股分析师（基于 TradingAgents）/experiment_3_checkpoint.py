@@ -117,7 +117,7 @@ def analyze_with_checkpoint(
         console.print(f"[bold cyan]分析 {ticker}（支持断点续跑）...[/bold cyan]")
 
         graph = TradingAgentsGraph(
-            selected_analysts=["fundamental", "sentiment", "news", "technical"],
+            selected_analysts=["fundamentals", "sentiment", "news", "technical"],
             config=config,
             debug=False,
         )

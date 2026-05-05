@@ -57,7 +57,7 @@ def run_analysis(
 
     # 初始化图（懒加载，不调用不产生费用）
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamental", "sentiment", "news", "technical"],
+        selected_analysts=["fundamentals", "sentiment", "news", "technical"],
         config=config,
         debug=False,  # 生产建议 False，调试时设 True 查看中间输出
     )

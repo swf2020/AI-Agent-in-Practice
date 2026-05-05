@@ -67,6 +67,8 @@ if __name__ == "__main__":
     test_astock_adapter()   # 无 LLM 调用，优先验证
     test_checkpoint_save()  # 无 LLM 调用
     test_model_config()     # 无 LLM 调用
-    test_basic_analysis()   # ⚠️ 会产生 LLM 费用，约 $0.05-0.15
+    
+    # test_basic_analysis()   # ⚠️ 会产生 LLM 费用，约 $0.05-0.15
+    console.print("[yellow]⚠️  已跳过 LLM 测试（test_basic_analysis），如需运行请取消注释[/yellow]")
 
-    console.rule("[bold green]所有测试通过[/bold green]")
+    console.rule("[bold green]所有非 LLM 测试通过[/bold green]")

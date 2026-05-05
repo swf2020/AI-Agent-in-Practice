@@ -103,7 +103,7 @@ def run_with_model(
     config = _make_config(mc)
 
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamental", "news", "technical"],
+        selected_analysts=["fundamentals", "news", "technical"],
         config=config,
         debug=False,
     )

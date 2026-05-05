@@ -64,7 +64,7 @@ def analyze_astock(ticker: str, analysis_date: str) -> dict:
     patch_astock_tools(adapter)
 
     graph = TradingAgentsGraph(
-        selected_analysts=["fundamental", "news", "technical"],
+        selected_analysts=["fundamentals", "news", "technical"],
         config=config,
         debug=False,
     )
