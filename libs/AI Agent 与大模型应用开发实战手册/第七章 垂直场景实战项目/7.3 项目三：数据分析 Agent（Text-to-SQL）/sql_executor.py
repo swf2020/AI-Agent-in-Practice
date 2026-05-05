@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sqlite3
 import time
 import signal
@@ -8,6 +10,7 @@ from typing import Optional
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from core_config import QUERY_TIMEOUT_SECONDS, MAX_RETRIES
+from sql_generator import SQLGenerator
 
 
 FORBIDDEN_KEYWORDS = frozenset({

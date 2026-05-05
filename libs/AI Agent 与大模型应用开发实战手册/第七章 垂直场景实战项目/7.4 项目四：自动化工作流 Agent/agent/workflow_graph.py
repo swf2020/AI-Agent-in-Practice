@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import json
-from typing import Annotated, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -8,6 +9,9 @@ from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.redis import RedisSaver
 from langgraph.types import interrupt
 from langgraph.config import RunnableConfig
+
+if TYPE_CHECKING:
+    from langgraph.pregel import CompiledGraph
 
 from models import WorkflowState, ExtractedTask, RiskLevel, EmailMessage
 from tools.gmail_tool import gmail_read_email, gmail_mark_processed
@@ -164,7 +168,7 @@ def route_by_approval(state: WorkflowState) -> Literal["write_task", "reject_and
     return "reject_and_notify"
 
 
-def build_workflow_graph(redis_url: str) -> "CompiledGraph":
+def build_workflow_graph(redis_url: str) -> CompiledGraph:
     builder = StateGraph(WorkflowState)
 
     builder.add_node("read_email", node_read_email)

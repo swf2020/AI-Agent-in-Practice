@@ -67,7 +67,7 @@ def gmail_mark_processed(message_id: str) -> str:
     service = _get_gmail_service()
     labels = service.users().labels().list(userId="me").execute().get("labels", [])
     label_id = next(
-        (l["id"] for l in labels if l["name"] == "WORKFLOW_PROCESSED"),
+        (lb["id"] for lb in labels if lb["name"] == "WORKFLOW_PROCESSED"),
         None
     )
     if not label_id:

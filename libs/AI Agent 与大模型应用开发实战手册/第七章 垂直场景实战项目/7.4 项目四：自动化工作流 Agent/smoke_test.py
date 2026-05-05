@@ -84,8 +84,8 @@ def run_smoke_test():
         print("▶ Step 1: 首次执行（预期在审批节点暂停）...")
         try:
             graph.invoke(WorkflowState(email_id="test_msg_001"), config=config)
-        except Exception as e:
-            print(f"  图执行状态：中断等待审批（符合预期）")
+        except Exception:
+            print("  图执行状态：中断等待审批（符合预期）")
 
         snapshot = graph.get_state(config)
         print(f"  当前节点：{snapshot.next}")
