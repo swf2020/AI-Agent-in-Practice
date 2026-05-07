@@ -1,4 +1,4 @@
-# AI Agent 与大模型应用开发实战手册
+# AI Agent In Practice
 
 > 🚀 **从入门到精通的 AI Agent 实战指南**
 

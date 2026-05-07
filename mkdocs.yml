@@ -5,14 +5,24 @@ theme:
   language: zh
   palette:
     primary: indigo
+  custom_dir: docs/overrides
   features:
     - navigation.tabs
     - navigation.top
     - search.suggest
     - search.highlight
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 markdown_extensions:
   - toc:
       toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
 - 首页: index.md
 - 00_写给读者:
