@@ -19,9 +19,12 @@ load_dotenv()
 
 @dataclass
 class RetrievedChunk:
-    """检索结果的数据结构，贯穿整条链路。"""
+    """检索结果的数据结构，贯穿整条链路。
+
+    [Fix #12] score 改为 float | None，压缩后的上下文无真实评分。
+    """
     text: str
-    score: float
+    score: float | None
     chunk_id: str
     source: str = ""
 
@@ -61,11 +64,24 @@ class NaiveRAG:
             )
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        """批量 Embedding，使用配置的 Embedding 模型。"""
-        resp = self.embed_client.embeddings.create(
-            model=get_embedding_model(), input=texts
+        """批量 Embedding，使用配置的 Embedding 模型。
+
+        [Fix #10] 添加重试机制应对 API 限流/超时
+        """
+        from tenacity import retry, stop_after_attempt, wait_exponential
+
+        @retry(
+            stop=stop_after_attempt(3),
+            wait=wait_exponential(multiplier=1, max=10),
+            reraise=True,
         )
-        return [item.embedding for item in resp.data]
+        def _do_embed(texts: list[str]) -> list[list[float]]:
+            resp = self.embed_client.embeddings.create(
+                model=get_embedding_model(), input=texts
+            )
+            return [item.embedding for item in resp.data]
+
+        return _do_embed(texts)
 
     def index_documents(self, chunks: list[str]) -> None:
         """将文档切块写入向量库。"""

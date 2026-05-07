@@ -86,4 +86,9 @@ class SummaryCompressor:
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
-        return resp.choices[0].message.content.strip()
+        result = resp.choices[0].message.content.strip()
+        # [Fix #16] 输出长度校验，避免 LLM 不遵守 prompt 要求
+        max_len = max_words * 2  # 留些余量（中英文字符比不同）
+        if len(result) > max_len:
+            result = result[:max_len] + "..."
+        return result

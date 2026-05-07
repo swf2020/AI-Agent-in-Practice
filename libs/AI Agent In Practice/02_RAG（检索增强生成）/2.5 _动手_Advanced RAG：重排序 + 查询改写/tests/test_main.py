@@ -103,53 +103,36 @@ class TestEmbeddingRerankerConfig:
 
 # ── 测试主模块可导入 ───────────────────────────────────
 def test_baseline_module_importable():
-    try:
-        import importlib.util
-        path = os.path.join(PROJECT_DIR, "baseline_rag.py")
-        spec = importlib.util.spec_from_file_location("baseline_rag", path)
-        assert spec is not None, "baseline_rag.py 不存在"
-    except Exception as e:
-        pytest.skip(f"主模块检测跳过: {e}")
+    """[Fix #18] 实际导入模块，捕捉 import-time 错误"""
+    import baseline_rag
+    assert hasattr(baseline_rag, "NaiveRAG")
+    assert hasattr(baseline_rag, "RetrievedChunk")
 
 
 def test_advanced_rag_module_importable():
-    try:
-        import importlib.util
-        path = os.path.join(PROJECT_DIR, "advanced_rag.py")
-        spec = importlib.util.spec_from_file_location("advanced_rag", path)
-        assert spec is not None, "advanced_rag.py 不存在"
-    except Exception as e:
-        pytest.skip(f"主模块检测跳过: {e}")
+    """[Fix #18] 实际导入模块，捕捉 import-time 错误"""
+    import advanced_rag
+    assert hasattr(advanced_rag, "AdvancedRAG")
+    assert hasattr(advanced_rag, "AdvancedRAGConfig")
 
 
 def test_query_rewriter_module_importable():
-    try:
-        import importlib.util
-        path = os.path.join(PROJECT_DIR, "query_rewriter.py")
-        spec = importlib.util.spec_from_file_location("query_rewriter", path)
-        assert spec is not None, "query_rewriter.py 不存在"
-    except Exception as e:
-        pytest.skip(f"主模块检测跳过: {e}")
+    """[Fix #18] 实际导入模块，捕捉 import-time 错误"""
+    import query_rewriter
+    assert hasattr(query_rewriter, "QueryRewriter")
 
 
 def test_reranker_module_importable():
-    try:
-        import importlib.util
-        path = os.path.join(PROJECT_DIR, "reranker.py")
-        spec = importlib.util.spec_from_file_location("reranker", path)
-        assert spec is not None, "reranker.py 不存在"
-    except Exception as e:
-        pytest.skip(f"主模块检测跳过: {e}")
+    """[Fix #18] 实际导入模块，捕捉 import-time 错误"""
+    import reranker
+    assert hasattr(reranker, "DashScopeReranker")
 
 
 def test_context_compressor_module_importable():
-    try:
-        import importlib.util
-        path = os.path.join(PROJECT_DIR, "context_compressor.py")
-        spec = importlib.util.spec_from_file_location("context_compressor", path)
-        assert spec is not None, "context_compressor.py 不存在"
-    except Exception as e:
-        pytest.skip(f"主模块检测跳过: {e}")
+    """[Fix #18] 实际导入模块，捕捉 import-time 错误"""
+    import context_compressor
+    assert hasattr(context_compressor, "LLMLinguaCompressor")
+    assert hasattr(context_compressor, "SummaryCompressor")
 
 
 # ── 测试 RRF 融合逻辑 ───────────────────────────────────

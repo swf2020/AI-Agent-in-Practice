@@ -31,21 +31,29 @@ async def on_start() -> None:
 @cl.on_message
 async def on_message(message: cl.Message) -> None:
     """处理用户消息"""
-    pipeline = get_pipeline()
-    question = message.content.strip()
+    # [Fix #6] 添加异常处理，避免 Chainlit 界面直接报错
+    try:
+        pipeline = get_pipeline()
+        question = message.content.strip()
 
-    # 显示思考中状态
-    async with cl.Step(name="🔍 检索知识库") as step:
-        result = pipeline.ask(question)
-        step.output = f"找到 {len(result.sources)} 条相关内容"
+        # 显示思考中状态
+        async with cl.Step(name="🔍 检索知识库") as step:
+            result = pipeline.ask(question)
+            step.output = f"找到 {len(result.sources)} 条相关内容"
 
-    # 构建引用来源的展示文本
-    source_text = ""
-    if result.sources:
-        source_lines = [
-            f"- [{c.score:.2f}] `{c.source.split('/')[-1]}`"
-            for c in result.sources
-        ]
-        source_text = "\n\n**参考来源：**\n" + "\n".join(source_lines)
+        # 构建引用来源的展示文本
+        source_text = ""
+        if result.sources:
+            source_lines = [
+                f"- [{c.score:.2f}] `{c.source.split('/')[-1]}`"
+                for c in result.sources
+            ]
+            source_text = "\n\n**参考来源：**\n" + "\n".join(source_lines)
 
-    await cl.Message(content=result.answer + source_text).send()
+        await cl.Message(content=result.answer + source_text).send()
+    except Exception as e:
+        await cl.Message(
+            content=f"❌ 处理出错：{e}\n\n请检查："
+            "1. 是否已运行 `python step3_index.py` 完成索引"
+            "2. API Key 是否正确设置"
+        ).send()

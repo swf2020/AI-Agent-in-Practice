@@ -20,8 +20,10 @@ def main() -> None:
     from step3_index import get_embed_model, get_qdrant_client, index_chunks
     model = get_embed_model()
     client = get_qdrant_client()
-    count = index_chunks(chunks[:5], model, client)  # 只索引前 5 块供测试
-    assert count == 5, f"索引写入数量异常：{count}"
+    # [Fix #8] 使用 min 避免切块少于 5 时 IndexError
+    n_test = min(len(chunks), 5)
+    count = index_chunks(chunks[:n_test], model, client)  # 只索引前 N 块供测试
+    assert count == n_test, f"索引写入数量异常：{count}"
     print(f"  ✅ 索引成功，写入 {count} 块")
 
     print("\nStep 4：问答查询")

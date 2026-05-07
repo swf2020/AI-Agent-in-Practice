@@ -15,6 +15,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from step1_parse import ParsedDocument
 
+# [Fix #5] 模块级别缓存 encoder，避免重复初始化开销
+_ENCODER = tiktoken.get_encoding("cl100k_base")
+
 
 @dataclass
 class Chunk:
@@ -41,7 +44,7 @@ def chunk_fixed_size(
 
     chunk_overlap 保证跨块的句子不会完全割裂语义。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #5] 使用缓存的 encoder
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -77,7 +80,7 @@ def chunk_by_section(
 
     超过 max_chunk_size 的节会用固定大小策略二次切分。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #5] 使用缓存的 encoder
 
     # 匹配所有级别的 Markdown 标题（# ~ ######）
     heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
@@ -138,9 +141,10 @@ def chunk_document(
     strategy: Literal["fixed", "section"] = "section",
 ) -> list[Chunk]:
     """
-    根据文档类型自动选择最优切块策略：
-    - Word/PPT 等结构化文档 → section（利用标题层级）
-    - PDF/网页等非结构化文档 → fixed（按 Token 均匀切分）
+    根据策略参数和文档类型选择切块策略：
+    - 默认 strategy="section" 时优先按标题层级切块（保留语义完整性）
+    - doc_type="word" 的文档强制使用 section（结构化文档）
+    - 显式指定 strategy="fixed" 时按 Token 均匀切分（适合无结构的 PDF/网页）
     """
     if strategy == "section" or doc.doc_type == "word":
         return chunk_by_section(doc)

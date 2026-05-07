@@ -63,6 +63,14 @@ def run_experiment() -> None:
         print(f"  优化步骤：{' → '.join(adv_result['steps'])}")
         print(f"  使用查询数：{len(adv_result['queries_used'])}")
 
+        # [Fix #14] 添加基本质量断言，确保 Advanced RAG 正常运行
+        assert len(adv_result["answer"]) > 0, "Advanced RAG 未生成回答"
+        assert len(adv_result["steps"]) > 0, "Advanced RAG 优化步骤为空"
+        assert len(adv_result["queries_used"]) > 0, "Advanced RAG 使用查询为空"
+
+    print("\n" + "=" * 60)
+    print("✅ 所有断言通过，Naive vs Advanced RAG 对比完成。")
+
 
 if __name__ == "__main__":
     run_experiment()

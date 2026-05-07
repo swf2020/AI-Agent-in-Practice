@@ -17,6 +17,9 @@ load_dotenv()
 
 BGE_QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
 
+# [Fix #3] 全量扫描上限提取为可配置常量
+FULL_SCAN_LIMIT = int(os.getenv("RAG_FULL_SCAN_LIMIT", "5000"))
+
 
 @dataclass
 class RetrievedChunk:
@@ -34,7 +37,11 @@ class RAGAnswer:
 
 
 def get_llm_client(model_key: str = "DeepSeek-V3"):
-    """获取 LLM 客户端（支持 DeepSeek 和 Qwen）"""
+    """获取 LLM 客户端（支持 DeepSeek 和 Qwen）
+
+    [Fix #1] 不再污染全局 os.environ，返回 api_key 和 api_base，
+    由调用方在 completion() 调用时显式传入。
+    """
     import litellm
 
     if model_key not in MODEL_REGISTRY:
@@ -46,12 +53,8 @@ def get_llm_client(model_key: str = "DeepSeek-V3"):
 
     api_key = os.environ.get(api_key_env) if api_key_env else None
 
-    if model_key.startswith("Qwen") and base_url:
-        os.environ["OPENAI_API_KEY"] = api_key or ""
-        os.environ["OPENAI_API_BASE"] = base_url
-        return litellm, cfg["litellm_id"]
-    else:
-        return litellm, cfg["litellm_id"]
+    # [Fix #1] 统一返回 litellm、model_id、api_key、base_url
+    return litellm, cfg["litellm_id"], api_key, base_url
 
 
 class RAGPipeline:
@@ -62,7 +65,7 @@ class RAGPipeline:
         self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
         self.qdrant = QdrantClient(path=QDRANT_PATH)
 
-        self.llm_client, self.model_name = get_llm_client(model_key)
+        self.llm_client, self.model_name, self.api_key, self.api_base = get_llm_client(model_key)
         print(f"✅ LLM 模型：{model_key} ({self.model_name})")
 
     def retrieve(self, question: str) -> list[RetrievedChunk]:
@@ -98,24 +101,39 @@ class RAGPipeline:
         ]
 
     def _retrieve_full_scan(self, query_vector: list[float]) -> list[RetrievedChunk]:
-        """全量扫描检索（当索引未就绪时使用）"""
+        """全量扫描检索（当索引未就绪时使用）
+
+        [Fix #3] 使用分页 scroll 获取全部数据，避免硬编码 1000 条上限遗漏数据
+        """
         import numpy as np
 
-        # 获取所有数据
-        scroll_result = self.qdrant.scroll(
-            collection_name=COLLECTION_NAME,
-            limit=1000,
-            with_vectors=True,
-        )
+        # 分页获取所有数据
+        all_points = []
+        offset = None
+        while True:
+            scroll_result = self.qdrant.scroll(
+                collection_name=COLLECTION_NAME,
+                limit=100,
+                offset=offset,
+                with_vectors=True,
+            )
+            points, next_offset = scroll_result
+            all_points.extend(points)
+            if next_offset is None or len(points) == 0:
+                break
+            offset = next_offset
+            # 安全上限，防止无限循环
+            if len(all_points) >= FULL_SCAN_LIMIT:
+                print(f"⚠️ 全量扫描达到上限 {FULL_SCAN_LIMIT} 条")
+                break
 
-        points = scroll_result[0]
-        if not points:
+        if not all_points:
             return []
 
         # 计算余弦相似度
         query_np = np.array(query_vector)
         scores = []
-        for point in points:
+        for point in all_points:
             if point.vector:
                 vector_np = np.array(point.vector)
                 # 余弦相似度
@@ -173,12 +191,19 @@ class RAGPipeline:
         chunks = self.retrieve(question)
         prompt = self.build_prompt(question, chunks)
 
-        response = self.llm_client.completion(
-            model=self.model_name,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,
-            max_tokens=1024,
-        )
+        # [Fix #1] 显式传入 api_key 和 api_base，避免污染全局环境变量
+        completion_kwargs = {
+            "model": self.model_name,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.1,
+            "max_tokens": 1024,
+        }
+        if self.api_key:
+            completion_kwargs["api_key"] = self.api_key
+        if self.api_base:
+            completion_kwargs["api_base"] = self.api_base
+
+        response = self.llm_client.completion(**completion_kwargs)
 
         return RAGAnswer(
             question=question,

@@ -37,7 +37,8 @@ class QueryRewriter:
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,  # 稍高温度增加多样性，但不宜过高
         )
-        return resp.choices[0].message.content.strip()
+        # [Fix #15] 字数上限保护，避免 LLM 不遵守 prompt 导致超长噪声
+        return resp.choices[0].message.content.strip()[:200]
 
     def multi_query(self, query: str, n: int = 3) -> list[str]:
         """
@@ -59,11 +60,14 @@ class QueryRewriter:
         try:
             raw = json.loads(resp.choices[0].message.content)
             # 兼容模型返回 {"queries": [...]} 或直接 [...] 两种格式
-            variants: list[str] = (
-                raw if isinstance(raw, list)
-                else next(iter(raw.values()))
-            )
-        except (json.JSONDecodeError, StopIteration):
+            if isinstance(raw, list):
+                variants: list[str] = raw
+            else:
+                val = next(iter(raw.values()), [])
+                variants = val if isinstance(val, list) else []
+            # [Fix #13] 严格校验：只保留字符串类型的变体
+            variants = [v for v in variants if isinstance(v, str)]
+        except (json.JSONDecodeError, StopIteration, AttributeError):
             variants = []
 
         # 原始查询始终放第一位，保证召回的下界

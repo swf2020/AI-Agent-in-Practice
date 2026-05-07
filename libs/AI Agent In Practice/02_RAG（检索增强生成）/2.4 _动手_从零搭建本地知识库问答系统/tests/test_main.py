@@ -145,8 +145,10 @@ class TestIndex:
 class TestRAGPipeline:
     @patch("step4_query.SentenceTransformer")
     @patch("step4_query.QdrantClient")
-    def test_pipeline_init_mocked(self, mock_qdrant_cls, mock_sentencetransformer):
+    @patch("step4_query.get_llm_client")
+    def test_pipeline_init_mocked(self, mock_get_llm, mock_qdrant_cls, mock_sentencetransformer):
         """测试 RAGPipeline 在 mock 下可以正常初始化"""
+        mock_get_llm.return_value = (MagicMock(), "test-model", None, None)
         from step4_query import RAGPipeline
         pipeline = RAGPipeline(top_k=3, score_threshold=0.3)
         assert pipeline.top_k == 3
@@ -154,8 +156,10 @@ class TestRAGPipeline:
 
     @patch("step4_query.SentenceTransformer")
     @patch("step4_query.QdrantClient")
-    def test_build_prompt_with_chunks(self, mock_qdrant_cls, mock_sentencetransformer):
+    @patch("step4_query.get_llm_client")
+    def test_build_prompt_with_chunks(self, mock_get_llm, mock_qdrant_cls, mock_sentencetransformer):
         """测试 Prompt 构建逻辑"""
+        mock_get_llm.return_value = (MagicMock(), "test-model", None, None)
         from step4_query import RAGPipeline, RetrievedChunk
         pipeline = RAGPipeline()
         chunks = [
@@ -169,8 +173,10 @@ class TestRAGPipeline:
 
     @patch("step4_query.SentenceTransformer")
     @patch("step4_query.QdrantClient")
-    def test_build_prompt_no_chunks(self, mock_qdrant_cls, mock_sentencetransformer):
+    @patch("step4_query.get_llm_client")
+    def test_build_prompt_no_chunks(self, mock_get_llm, mock_qdrant_cls, mock_sentencetransformer):
         """测试无资料时的 Prompt"""
+        mock_get_llm.return_value = (MagicMock(), "test-model", None, None)
         from step4_query import RAGPipeline
         pipeline = RAGPipeline()
         prompt = pipeline.build_prompt("冷门问题", [])
@@ -179,8 +185,10 @@ class TestRAGPipeline:
 
     @patch("step4_query.SentenceTransformer")
     @patch("step4_query.QdrantClient")
-    def test_retrieve_returns_list(self, mock_qdrant_cls, mock_sentencetransformer):
+    @patch("step4_query.get_llm_client")
+    def test_retrieve_returns_list(self, mock_get_llm, mock_qdrant_cls, mock_sentencetransformer):
         """测试 retrieve 方法返回 list"""
+        mock_get_llm.return_value = (MagicMock(), "test-model", None, None)
         from step4_query import RAGPipeline
         pipeline = RAGPipeline()
         # Qdrant mock 返回空
@@ -190,6 +198,34 @@ class TestRAGPipeline:
         mock_qdrant.scroll.return_value = ([], None)
         results = pipeline.retrieve("测试")
         assert isinstance(results, list)
+
+    @patch("step4_query.SentenceTransformer")
+    @patch("step4_query.QdrantClient")
+    @patch("step4_query.get_llm_client")
+    def test_retrieve_full_scan_path(self, mock_get_llm, mock_qdrant_cls, mock_sentencetransformer):
+        """[Fix #17] 测试 _retrieve_full_scan 正常返回路径"""
+        mock_get_llm.return_value = (MagicMock(), "test-model", None, None)
+        import numpy as np
+        from step4_query import RAGPipeline
+
+        mock_sentencetransformer.return_value.encode.return_value = np.array([0.1] * 512)
+
+        mock_qdrant = mock_qdrant_cls.return_value
+        # 索引查询返回空，触发全量扫描
+        mock_qdrant.query_points.return_value = MagicMock(points=[])
+
+        # 全量扫描返回有效数据
+        mock_point = MagicMock()
+        mock_point.payload = {"text": "全量扫描结果", "source": "test.pdf"}
+        mock_point.vector = [0.2] * 512
+        mock_qdrant.scroll.return_value = ([mock_point], None)
+
+        pipeline = RAGPipeline(top_k=3, score_threshold=0.0)
+        results = pipeline.retrieve("测试")
+
+        assert isinstance(results, list)
+        assert len(results) == 1
+        assert results[0].text == "全量扫描结果"
 
 
 # ── 测试 LLM 调用（Mock litellm）────────────────────────
@@ -239,7 +275,8 @@ class TestEndToEnd:
         mock_llm.completion.return_value = MagicMock(
             choices=[MagicMock(message=MagicMock(content="根据资料，pathlib 是路径处理库。"))]
         )
-        mock_get_llm.return_value = (mock_llm, "deepseek/deepseek-chat")
+        # [Fix #1 适配] get_llm_client 现在返回 4 个值
+        mock_get_llm.return_value = (mock_llm, "deepseek/deepseek-chat", None, None)
 
         from step4_query import RAGPipeline
         pipeline = RAGPipeline(top_k=3, score_threshold=0.3)

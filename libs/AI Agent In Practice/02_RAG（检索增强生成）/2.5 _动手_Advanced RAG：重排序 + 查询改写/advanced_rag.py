@@ -99,9 +99,10 @@ class AdvancedRAG(NaiveRAG):
                 question, candidates, max_words=cfg.compression_max_words
             )
             # 将压缩结果包装为单个 chunk，保持 generate 接口统一
+            # [Fix #12] score 设为 None 表示压缩后未经真实评分，避免误导下游逻辑
             candidates = [
                 RetrievedChunk(
-                    text=compressed_ctx, score=1.0, chunk_id="compressed"
+                    text=compressed_ctx, score=None, chunk_id="compressed"  # type: ignore[arg-type]
                 )
             ]
             steps_log.append("上下文压缩完成")

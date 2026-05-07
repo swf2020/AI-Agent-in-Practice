@@ -3,6 +3,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import time
 from pathlib import Path
 from typing import Iterator
@@ -91,7 +92,8 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
 
         points = [
             PointStruct(
-                id=start_id + i,
+                # [Fix #2] 使用 source+chunk_index 的 hash 作为 ID，避免多文档索引时 ID 冲突
+                id=_chunk_id(chunk.source, chunk.chunk_index),
                 vector=vector.tolist(),
                 payload={
                     "text": chunk.text,
@@ -110,6 +112,15 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
         print(f"  已写入 {total}/{len(chunks)} 块")
 
     return total
+
+
+def _chunk_id(source: str, chunk_index: int) -> int:
+    """根据来源和块索引生成稳定的唯一 ID（12 位十六进制转整数）
+
+    [Fix #2] 避免多文档索引或重复索引时 ID 冲突
+    """
+    h = hashlib.md5(f"{source}:{chunk_index}".encode()).hexdigest()[:12]
+    return int(h, 16)
 
 
 def index_document(source: str, strategy: str = "section") -> None:

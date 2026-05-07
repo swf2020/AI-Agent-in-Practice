@@ -1,15 +1,12 @@
 """Reranker 模块：使用 DashScope qwen3-rerank API 进行精排。"""
 
 import httpx
-from typing import TYPE_CHECKING
 
 from core_config import (
     get_dashscope_api_key, get_reranker_model,
     get_reranker_top_n,
 )
-
-if TYPE_CHECKING:
-    from baseline_rag import RetrievedChunk
+from baseline_rag import RetrievedChunk
 
 
 class DashScopeReranker:
@@ -96,10 +93,17 @@ class DashScopeReranker:
             print(f"⚠️ Reranker API 调用失败，回退到向量检索分数排序: {e}")
             return sorted(chunks, key=lambda c: c.score, reverse=True)[:n]
 
-        # 将 reranker 分值回写到 RetrievedChunk
-        for chunk, score in zip(chunks, scores):
-            chunk.score = score
+        # [Fix #9] 创建新对象而非修改原 chunk，避免污染调用方的原始分数
+        scored_chunks = [
+            RetrievedChunk(
+                text=chunk.text,
+                score=score,
+                chunk_id=chunk.chunk_id,
+                source=chunk.source,
+            )
+            for chunk, score in zip(chunks, scores)
+        ]
 
         # 按分值降序，取 Top-N
-        reranked = sorted(chunks, key=lambda c: c.score, reverse=True)
+        reranked = sorted(scored_chunks, key=lambda c: c.score, reverse=True)
         return reranked[:n]
