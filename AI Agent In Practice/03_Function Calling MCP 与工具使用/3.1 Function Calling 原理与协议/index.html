@@ -1,0 +1,3795 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://swf2020.github.io/AI-Agent-in-Practice/AI%20Agent%20In%20Practice/03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.1%20Function%20Calling%20%E5%8E%9F%E7%90%86%E4%B8%8E%E5%8D%8F%E8%AE%AE/">
+      
+      
+        <link rel="prev" href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.6%20RAG%20%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB%EF%BC%88RAGAS%20%E6%A1%86%E6%9E%B6%EF%BC%89/">
+      
+      
+        <link rel="next" href="../3.2%20MCP%20%E5%8D%8F%E8%AE%AE%E8%AF%A6%E8%A7%A3/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Function Calling 原理与协议 - AI Agent in Practice</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+
+      
+    
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+  });
+</script>
+
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#31-function-calling" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="AI Agent in Practice" class="md-header__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent in Practice
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Function Calling 原理与协议
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-tabs__link">
+          
+  
+  
+  00_写给读者
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-tabs__link">
+          
+  
+  
+  01_大模型基础与 API 实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-tabs__link">
+          
+  
+  
+  02_RAG（检索增强生成）
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  03_Function Calling MCP 与工具使用
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-tabs__link">
+          
+  
+  
+  04_AI Agent 核心架构
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  05_Multi-Agent 系统
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-tabs__link">
+          
+  
+  
+  06_生产级落地关键技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  07_垂直场景实战项目
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  08_AI 大模型与 Agent 技术演进全景
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/01_%E5%8E%9F%E7%90%86%E9%A2%98/" class="md-tabs__link">
+          
+  
+  
+  09_面试题真题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-tabs__link">
+          
+  
+  
+  10_附录
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Agent in Practice" class="md-nav__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent in Practice
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    00_写给读者
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    00_写给读者
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习路线图
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01_大模型基础与 API 实战
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01_大模型基础与 API 实战
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM核心概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.1%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%E5%85%A8%E6%99%AF%E4%B8%8E%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术全景与选型决策
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.2%20LoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.3%20QLoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QLoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.4%20%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%86%E5%A4%87%E4%B8%8E%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数据工程：微调数据的准备与质量控制
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E7%94%A8%20QLoRA%20%E5%BE%AE%E8%B0%83%20Qwen2.5-7B%20%E6%8C%87%E4%BB%A4%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E5%BE%AE%E8%B0%83%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%AE%9E%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】微调效果评估与对比实验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.7%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%9F%BA%E4%BA%8E%20Unsloth%20%E7%9A%84%E9%AB%98%E6%95%88%E5%BE%AE%E8%B0%83%E5%8A%A0%E9%80%9F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】基于 Unsloth 的高效微调加速实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3%20Prompt%20Engineering%20%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Engineering 实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.1%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%20%2B%20%E5%AE%9E%E6%97%B6%E6%80%9D%E7%BB%B4%E9%93%BE%E5%8F%AF%E8%A7%86%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】流式输出 + 实时思维链可视化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%8F%90%E7%A4%BA%E8%AF%8D%E8%B0%83%E8%AF%95%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】构建一个提示词调试器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.3%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E8%B4%A8%E9%87%8F%E8%AF%84%E4%BC%B0%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】多语言翻译质量评估器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E5%9B%9B%E3%80%91%E8%87%AA%E5%8A%A8%E5%8C%96%20Prompt%20%E4%BC%98%E5%8C%96%E5%99%A8%EF%BC%88DSPy%20%E5%85%A5%E9%97%A8%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手四】自动化 Prompt 优化器（DSPy 入门）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%9F%E4%B8%80%E5%B0%81%E8%A3%85%E5%A4%9A%E6%A8%A1%E5%9E%8B%E8%B0%83%E7%94%A8%E5%B1%82/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】统一封装多模型调用层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02_RAG（检索增强生成）
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02_RAG（检索增强生成）
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 架构全景
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.2%20Embedding%20%E4%B8%8E%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding 与向量数据库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.3%20%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5%EF%BC%88%E7%A8%A0%E5%AF%86%20-%20%E7%A8%80%E7%96%8F%20-%20%E6%B7%B7%E5%90%88%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    检索策略（稠密-稀疏-混合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】从零搭建本地知识库问答系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91Advanced%20RAG%EF%BC%9A%E9%87%8D%E6%8E%92%E5%BA%8F%20%2B%20%E6%9F%A5%E8%AF%A2%E6%94%B9%E5%86%99/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】Advanced RAG：重排序 + 查询改写
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.6%20RAG%20%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB%EF%BC%88RAGAS%20%E6%A1%86%E6%9E%B6%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 评估体系（RAGAS 框架）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03_Function Calling MCP 与工具使用
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03_Function Calling MCP 与工具使用
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Calling 原理与协议
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Calling 原理与协议
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、核心概念
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、原理深讲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、原理深讲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 JSON Schema 工具定义规范与参数设计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 并行工具调用 vs 串行调用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-structured-output-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Structured Output 与 Function Calling 的关系与区别
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、工程视角：常见误区与最佳实践
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、延伸思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3.2%20MCP%20%E5%8D%8F%E8%AE%AE%E8%AF%A6%E8%A7%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP 协议详解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3.2.1%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】文件系统操作 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3.2.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】数据库查询 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】代码执行沙箱 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3.3%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%99%20LLM%20%E6%8E%A5%E5%85%A5%E6%90%9C%E7%B4%A2%20-%20%E8%AE%A1%E7%AE%97%E5%99%A8%20-%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】给 LLM 接入搜索-计算器-数据库工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3.4%20%E5%B7%A5%E5%85%B7%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%B8%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具可靠性与错误处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04_AI Agent 核心架构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04_AI Agent 核心架构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 定义：感知-规划-行动循环
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.2%20ReAct%20%E8%8C%83%E5%BC%8F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ReAct 范式实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.3%20Planning%20%E7%AD%96%E7%95%A5%EF%BC%88ToT%20-%20GoT%20-%20Plan-and-Execute%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planning 策略（ToT-GoT-Plan-and-Execute）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.4%20%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    记忆系统设计
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%94%A8%20LangGraph%20%E6%9E%84%E5%BB%BA%E6%9C%89%E7%8A%B6%E6%80%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】用 LangGraph 构建有状态 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05_Multi-Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05_Multi-Agent 系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多 Agent 协作模式（层级-对等-流水线）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.2%20AutoGen%20%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AutoGen 框架实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.3%20CrewAI%20%E8%A7%92%E8%89%B2%E5%88%86%E5%B7%A5%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrewAI 角色分工实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%90%AD%E5%BB%BA%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%2B%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%8F%8C%20Agent%20%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】搭建代码生成+审查的双 Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06_生产级落地关键技术
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06_生产级落地关键技术
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    流式输出与用户体验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.2%20%E6%88%90%E6%9C%AC%E6%8E%A7%E5%88%B6%E4%B8%8E%20Token%20%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成本控制与 Token 优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.3%20%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%88Prompt%20Cache%20-%20Semantic%20Cache%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缓存策略（Prompt Cache-Semantic Cache）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.4%20%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%B9%E9%BD%90%EF%BC%88Prompt%20Injection%20%E9%98%B2%E5%BE%A1%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安全与对齐（Prompt Injection 防御）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.5%20%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%EF%BC%88LangSmith%20-%20LangFuse%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    可观测性（LangSmith-LangFuse）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%9E%84%E5%BB%BA%E5%B8%A6%E7%9B%91%E6%8E%A7%E7%9A%84%E7%94%9F%E4%BA%A7%E7%BA%A7%20Agent%20%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】构建带监控的生产级 Agent 服务
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07_垂直场景实战项目
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07_垂直场景实战项目
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目一：AI 选股分析师（基于 TradingAgents）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.2%20%E9%A1%B9%E7%9B%AE%E4%BA%8C%EF%BC%9A%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E5%BA%93%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目二：企业知识库智能问答
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.3%20%E9%A1%B9%E7%9B%AE%E4%B8%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%20Agent%EF%BC%88Text-to-SQL%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目三：数据分析 Agent（Text-to-SQL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.4%20%E9%A1%B9%E7%9B%AE%E5%9B%9B%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目四：自动化工作流 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前深度学习时代（2000-2017）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.2%20Transformer%20%E9%9D%A9%E5%91%BD%EF%BC%882017-2019%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer 革命（2017-2019）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.3%20%E8%A7%84%E6%A8%A1%E5%AE%9A%E5%BE%8B%E4%B8%8E%E6%B6%8C%E7%8E%B0%E8%83%BD%E5%8A%9B%EF%BC%882020-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    规模定律与涌现能力（2020-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.4%20%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90%E4%B8%8E%20RLHF%20%E6%97%B6%E4%BB%A3%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指令对齐与 RLHF 时代（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.5%20%E5%BC%80%E6%BA%90%E7%94%9F%E6%80%81%E7%88%86%E5%8F%91%E4%B8%8E%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AB%9E%E8%B5%9B%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开源生态爆发与长上下文竞赛（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.6%20%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E8%8C%83%E5%BC%8F%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    推理模型范式（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.1%20%E5%89%8D%20LLM%20Agent%20%E6%97%B6%E4%BB%A3%EF%BC%88%E7%BA%A6%201960s-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前 LLM Agent 时代（约1960s-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.2%20LLM%20Agent%20%E8%90%8C%E8%8A%BD%E6%9C%9F%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Agent 萌芽期（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.3%20%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%8D%8F%E8%AE%AE%E7%9A%84%E8%A7%84%E8%8C%83%E5%8C%96%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    框架与协议的规范化（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.4%20Computer%20Use%20%E4%B8%8E%20GUI%20Agent%EF%BC%882024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computer Use 与 GUI Agent（2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.5%20Agentic%20AI%20%E8%B5%B0%E5%90%91%E7%94%9F%E4%BA%A7%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agentic AI 走向生产（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.1%20%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%EF%BC%9A%E4%BB%8E%20512%20Token%20%E5%88%B0%E6%97%A0%E9%99%90%E6%B5%81%E5%BC%8F%E8%AE%B0%E5%BF%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    上下文长度：从512 Token到无限流式记忆
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.2%20RAG%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%EF%BC%9A%E5%85%B3%E9%94%AE%E5%AD%97%E6%A3%80%E7%B4%A2%E5%88%B0%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%A2%9E%E5%BC%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 技术演进：关键字检索到知识图谱增强
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.3%20%E5%A4%9A%E6%A8%A1%E6%80%81%EF%BC%9A%E4%BB%8E%20CLIP%20%E5%88%B0%E5%85%A8%E6%A8%A1%E6%80%81%E7%BB%9F%E4%B8%80%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多模态：从CLIP到全模态统一模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.4%20%E9%AB%98%E6%95%88%E6%8E%A8%E7%90%86%EF%BC%9A%E4%BB%8E%E9%87%8F%E5%8C%96%E5%8E%8B%E7%BC%A9%E5%88%B0%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E8%8A%AF%E7%89%87%E7%94%9F%E6%80%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    高效推理：从量化压缩到推理加速芯片生态
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.5%20%E5%AF%B9%E9%BD%90%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%20RLHF%20%E5%88%B0%20DPO%20%E5%88%B0%E5%AE%AA%E6%B3%95%20AI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对齐技术：从RLHF到DPO到宪法AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.6%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%E5%85%A8%E5%8F%82%E6%95%B0%E5%88%B0%E6%9E%81%E4%BD%8E%E6%88%90%E6%9C%AC%E9%80%82%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术：从全参数到极低成本适配
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.1%20%E6%A8%A1%E5%9E%8B%E8%83%BD%E5%8A%9B%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4%EF%BC%882025-2030%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型能力演进预判（2025-2030）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.2%20Agent%20%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 架构演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.3%20%E6%8A%80%E6%9C%AF%E7%93%B6%E9%A2%88%E4%B8%8E%E5%BC%80%E6%94%BE%E6%80%A7%E6%8C%91%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术瓶颈与开放性挑战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.4%20%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E4%B8%8E%E7%94%9F%E6%80%81%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施与生态演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.5%20%E7%A4%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B8%8E%E7%9B%91%E7%AE%A1%E6%A0%BC%E5%B1%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    社会影响与监管格局
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    09_面试题真题
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    09_面试题真题
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/01_%E5%8E%9F%E7%90%86%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    原理题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/02_%E5%B7%A5%E7%A8%8B%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工程题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/03_%E8%AE%BE%E8%AE%A1%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    设计题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/04_%E8%A7%86%E9%87%8E%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    视野题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/05_%E5%BC%80%E6%94%BE%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开放题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10_附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10_附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    主流框架横向对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/B.%20%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%AF%BC%E8%88%AA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习资源导航
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/C.%20%E6%9C%AF%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、核心概念
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、原理深讲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、原理深讲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 JSON Schema 工具定义规范与参数设计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 并行工具调用 vs 串行调用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-structured-output-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Structured Output 与 Function Calling 的关系与区别
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、工程视角：常见误区与最佳实践
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、延伸思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="31-function-calling">3.1 Function Calling 原理与协议</h1>
+<h2 id="_1">一、核心概念</h2>
+<p>LLM 本质上是一个文本生成器——你给它文字，它还你文字。但真实的工程场景里，光靠文字远远不够：查一下当前股价、执行一条 SQL、发一封邮件，这些都需要和外部系统交互。最早的"解法"是在 Prompt 里写"请返回 JSON，我来解析"，然后用正则或 <code>json.loads</code> 硬扒。这条路走得很痛苦——模型可能加 markdown 代码块、可能字段名大小写不一致、可能在 JSON 里夹杂解释文字，解析逻辑脆得一碰就碎。</p>
+<p>Function Calling（2023 年 6 月 OpenAI 正式发布，后被各家跟进）从协议层解决了这个问题。它的本质不是"教模型调函数"，而是<strong>在模型输出和宿主程序之间建立一套结构化契约</strong>：开发者用 JSON Schema 声明"我有哪些工具、每个工具接收什么参数"，模型在需要时输出一个符合 Schema 的结构化调用请求，宿主程序执行后把结果还给模型，模型再继续生成。整个过程里，"执行"永远发生在宿主程序侧，模型只负责"决策调用什么、传什么参数"。</p>
+<p>这个设计有两个深远影响：一是解析可靠性大幅提升（模型针对 Schema 做了对齐训练）；二是工具调用从 Prompt Hack 升级为<strong>原生协议</strong>，框架、SDK、可观测性工具都可以围绕它标准化。</p>
+<hr />
+<h2 id="_2">二、原理深讲</h2>
+<h3 id="21-json-schema">2.1 JSON Schema 工具定义规范与参数设计</h3>
+<h4 id="_3">工程动机</h4>
+<p>模型需要知道三件事才能正确调用工具：<strong>叫什么名字、做什么用、接受哪些参数</strong>。JSON Schema 就是传递这三件事的载体。写得好，模型调用准确率高；写得糟，模型要么乱传参数，要么根本不知道该用哪个工具。</p>
+<h4 id="_4">核心机制</h4>
+<p>一个标准工具定义的结构如下（以 OpenAI 格式为例，其他厂商大同小异）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tool</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;get_stock_price&quot;</span><span class="p">,</span>          <span class="c1"># 工具名：动词_名词，清晰动作导向</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;查询指定股票代码的实时价格，仅支持 A 股和港股&quot;</span><span class="p">,</span>  <span class="c1"># 关键！模型靠描述决定用不用</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;symbol&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;股票代码，如 &#39;600519&#39;（A股）或 &#39;00700&#39;（港股）&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="s2">&quot;^[0-9]{5,6}$&quot;</span>   <span class="c1"># 可选：用正则约束格式</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;market&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;HK&quot;</span><span class="p">],</span>          <span class="c1"># 枚举值明确限定范围</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;市场类型&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">],</span>               <span class="c1"># 必填参数显式声明</span>
+            <span class="s2">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="n">false</span>          <span class="c1"># 禁止额外字段，防止幻觉参数</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="_5">工程建议</h4>
+<p><strong><code>description</code> 字段是核心，不是注释</strong>。模型路由工具的决策完全依赖 <code>name</code> + <code>description</code>，参数的 <code>description</code> 决定模型能否正确填值。几条高价值的写法原则：</p>
+<ul>
+<li><strong>工具描述写使用边界</strong>：不只写"能做什么"，还要写"不能做什么"或"适用范围"。例如"仅支持 A 股和港股"能防止模型拿美股代码来调用。</li>
+<li><strong>参数描述给示例</strong>：<code>"股票代码，如 '600519'（A股）"</code> 比 <code>"股票代码"</code> 的准确率提升显著。</li>
+<li><strong>枚举值优先于字符串</strong>：能用 <code>enum</code> 约束的字段就不要用开放 <code>string</code>，模型填错的概率大幅降低。</li>
+<li><strong><code>required</code> 必须精确</strong>：漏掉必填参数，模型可能传 <code>null</code>；把可选参数放进去，模型会强行编一个值。</li>
+</ul>
+<hr />
+<h3 id="22-vs">2.2 并行工具调用 vs 串行调用</h3>
+<h4 id="_6">工程动机</h4>
+<p>单次 Agent 任务往往需要多个工具。"查股价 → 查财报 → 查新闻"如果每次只调一个工具，每次都要走一个完整的 LLM 推理轮次，延迟叠加、成本叠加。并行工具调用（Parallel Tool Use）允许模型在一次响应里输出多个工具调用请求，宿主程序并发执行，再把所有结果一次性还给模型。</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as 用户
+    participant LLM as 模型
+    participant Host as 宿主程序
+    participant T1 as 工具1 (股价)
+    participant T2 as 工具2 (财报)
+    participant T3 as 工具3 (新闻)
+
+    U-&gt;&gt;LLM: "帮我分析 NVDA"
+
+    rect rgb(230, 245, 255)
+        note over LLM,T3: 并行调用模式（单轮）
+        LLM-&gt;&gt;Host: [call: get_price(NVDA), call: get_financials(NVDA), call: get_news(NVDA)]
+        Host-&gt;&gt;T1: 并发
+        Host-&gt;&gt;T2: 并发
+        Host-&gt;&gt;T3: 并发
+        T1--&gt;&gt;Host: $875.40
+        T2--&gt;&gt;Host: {revenue: 22B, ...}
+        T3--&gt;&gt;Host: ["收购消息", ...]
+        Host-&gt;&gt;LLM: [result1, result2, result3]
+    end
+
+    LLM-&gt;&gt;U: 综合分析报告</code></pre>
+<p>对比串行调用：同样三个工具，串行需要 3 轮 LLM 推理，假设每轮 1s，总延迟 ≥ 3s；并行只需 1 轮，总延迟 ≈ max(工具执行时间) + 1 次 LLM 推理。</p>
+<h4 id="_7">选型决策</h4>
+<table>
+<thead>
+<tr>
+<th>场景特征</th>
+<th>推荐模式</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工具间无依赖（如同时查多个数据源）</td>
+<td><strong>并行</strong></td>
+<td>延迟最小，成本最低</td>
+</tr>
+<tr>
+<td>工具 B 的入参依赖工具 A 的输出</td>
+<td><strong>串行</strong></td>
+<td>数据依赖不可并行</td>
+</tr>
+<tr>
+<td>工具有副作用（写入、发送消息）</td>
+<td><strong>串行</strong></td>
+<td>防止竞态条件，便于回滚</td>
+</tr>
+<tr>
+<td>工具有幂等性且相互独立</td>
+<td><strong>并行</strong></td>
+<td>可安全并发</td>
+</tr>
+<tr>
+<td>工具调用结果需要中间判断再决定下一步</td>
+<td><strong>串行</strong></td>
+<td>需要模型介入决策</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_8">代码层面处理</h4>
+<p>并行调用时，模型一次返回多个 <code>tool_calls</code>，宿主程序需要并发执行并将所有结果按 <code>tool_call_id</code> 对应地返回：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 伪代码：并发执行所有工具调用</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_tool_calls</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">):</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">execute_single_tool</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span> <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">tool_calls</span><span class="p">]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>          <span class="c1"># 并发执行</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;tool&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_call_id&quot;</span><span class="p">:</span> <span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">tc</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+    <span class="p">]</span>
+</code></pre></div>
+<hr />
+<h3 id="23-structured-output-function-calling">2.3 Structured Output 与 Function Calling 的关系与区别</h3>
+<h4 id="_9">常见混淆</h4>
+<p>两者都能让模型输出结构化 JSON，很多人把它们当成一回事——这是个高频踩坑点。</p>
+<p><strong>Function Calling</strong>：模型输出的是"我要调用某个工具、传某些参数"这个<strong>意图声明</strong>，后续需要宿主程序去真正执行这个工具。它的 Schema 描述的是工具的接口签名。</p>
+<p><strong>Structured Output</strong>（OpenAI 2024.08 发布）：模型直接输出符合你给定 JSON Schema 的<strong>最终内容</strong>，没有"工具执行"这一步。它解决的是"我不需要调外部接口，只是想让模型的输出有固定格式"的需求。</p>
+<pre class="mermaid"><code>graph LR
+    subgraph FC["Function Calling 流程"]
+        A1[用户请求] --&gt; B1[模型输出工具调用意图]
+        B1 --&gt; C1[宿主程序执行工具]
+        C1 --&gt; D1[结果返回模型]
+        D1 --&gt; E1[模型生成最终回答]
+    end
+
+    subgraph SO["Structured Output 流程"]
+        A2[用户请求] --&gt; B2[模型直接输出结构化 JSON]
+        B2 --&gt; C2[宿主程序解析使用]
+    end</code></pre>
+<h4 id="_10">选型对比</h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Function Calling</th>
+<th>Structured Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本质</strong></td>
+<td>工具调用意图声明</td>
+<td>格式化内容生成</td>
+</tr>
+<tr>
+<td><strong>是否需要外部执行</strong></td>
+<td>✅ 必须</td>
+<td>❌ 不需要</td>
+</tr>
+<tr>
+<td><strong>典型用途</strong></td>
+<td>查数据、执行操作、调 API</td>
+<td>信息提取、分类打标、生成报告</td>
+</tr>
+<tr>
+<td><strong>Schema 复杂度</strong></td>
+<td>中（工具参数）</td>
+<td>高（可描述复杂嵌套结构）</td>
+</tr>
+<tr>
+<td><strong>格式保证</strong></td>
+<td>较高（参数层面）</td>
+<td>极高（100% 符合 Schema）</td>
+</tr>
+<tr>
+<td><strong>支持厂商</strong></td>
+<td>几乎全部主流模型</td>
+<td>OpenAI / 部分开源模型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>决策口诀</strong>：需要调外部接口 → Function Calling；只需要让模型输出结构化文本 → Structured Output。</p>
+<p><strong>一个容易出错的场景</strong>：用 Function Calling 做信息提取（如"从这段文字中提取姓名、日期、金额"）。这完全不需要工具执行，用 Structured Output 更直接、更可靠、成本更低。但很多人习惯性地定义一个 <code>extract_info</code> 的假工具来绕路实现——这在 Structured Output 出现之前是无奈之举，现在是反模式。</p>
+<hr />
+<h2 id="_11">三、工程视角：常见误区与最佳实践</h2>
+<p><strong>误区一：工具描述写成 API 文档风格</strong> → <strong>正确做法</strong>：描述要面向模型的"理解"而非面向人类的"阅读"。模型判断"要不要用这个工具"依赖描述，所以要写清楚触发条件："当用户问到实时价格时使用，历史价格请用 <code>get_historical_price</code>"。在工具多（&gt;10个）时，这种边界描述能显著降低工具选错率。</p>
+<p><strong>误区二：把并行调用的工具结果顺序搞乱</strong> → <strong>正确做法</strong>：并行执行后，返回 <code>tool</code> 消息时必须通过 <code>tool_call_id</code> 和对应调用关联，而不是按执行完成顺序堆砌。顺序错乱会导致模型把 A 工具的结果当成 B 工具来解读，产生严重幻觉。务必维护 <code>tool_call_id → result</code> 的映射关系。</p>
+<p><strong>误区三：把 Structured Output 当成 Function Calling 的替代品</strong> → <strong>正确做法</strong>：认清两者的本质差异（见 2.3 节表格）。混用最典型的灾难场景：用 Structured Output 让模型"生成"一个查询语句然后自己"假装执行"——模型根本无法真正查数据库，输出的是幻觉 SQL 结果。</p>
+<p><strong>误区四：<code>additionalProperties</code> 不设为 <code>false</code></strong> → <strong>正确做法</strong>：在参数 Schema 里加上 <code>"additionalProperties": false</code>。不加的话，模型可能在参数里塞入不存在的字段（如自己发明一个 <code>currency</code> 参数），Pydantic 等校验框架会直接报错，或者这些幻觉参数被静默忽略后导致逻辑 bug。</p>
+<p><strong>误区五：在工具结果里返回大量无关信息</strong> → <strong>正确做法</strong>：工具返回值会占用上下文窗口，且模型倾向于把 Tool Result 里的内容当成"事实"。返回值应精简、结构化，去掉原始 HTML、日志、冗余字段。如果原始响应很大，在宿主程序侧先做过滤再返回模型，避免上下文污染和不必要的 Token 消耗。</p>
+<hr />
+<h2 id="_12">四、延伸思考</h2>
+<blockquote>
+<p>🤔 <strong>思考题一</strong>：随着模型上下文窗口越来越长（1M Token），是否意味着工具调用会逐渐被"把所有资料塞进上下文"所替代？Function Calling 的不可替代性边界在哪里？（提示：思考副作用操作、实时数据、成本三个维度）</p>
+<p>🤔 <strong>思考题二</strong>：当工具数量膨胀到 100+ 时，把全部工具定义一次性放进 <code>tools</code> 参数会带来什么问题？这和 RAG 的"检索"思想能否结合——即动态检索当前任务最相关的工具子集传给模型？这种"工具路由"架构会引入哪些新的工程复杂度？（Module 3.4 将展开讨论）</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.top", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

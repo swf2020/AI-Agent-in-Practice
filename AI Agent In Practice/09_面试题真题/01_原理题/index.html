@@ -1,0 +1,7105 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://swf2020.github.io/AI-Agent-in-Practice/AI%20Agent%20In%20Practice/09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/01_%E5%8E%9F%E7%90%86%E9%A2%98/">
+      
+      
+        <link rel="prev" href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.5%20%E7%A4%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B8%8E%E7%9B%91%E7%AE%A1%E6%A0%BC%E5%B1%80/">
+      
+      
+        <link rel="next" href="../02_%E5%B7%A5%E7%A8%8B%E9%A2%98/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>原理题 - AI Agent in Practice</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+
+      
+    
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+  });
+</script>
+
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#-" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="AI Agent in Practice" class="md-header__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent in Practice
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              原理题
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-tabs__link">
+          
+  
+  
+  00_写给读者
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-tabs__link">
+          
+  
+  
+  01_大模型基础与 API 实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-tabs__link">
+          
+  
+  
+  02_RAG（检索增强生成）
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.1%20Function%20Calling%20%E5%8E%9F%E7%90%86%E4%B8%8E%E5%8D%8F%E8%AE%AE/" class="md-tabs__link">
+          
+  
+  
+  03_Function Calling MCP 与工具使用
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-tabs__link">
+          
+  
+  
+  04_AI Agent 核心架构
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  05_Multi-Agent 系统
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-tabs__link">
+          
+  
+  
+  06_生产级落地关键技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  07_垂直场景实战项目
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  08_AI 大模型与 Agent 技术演进全景
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  09_面试题真题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-tabs__link">
+          
+  
+  
+  10_附录
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Agent in Practice" class="md-nav__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent in Practice
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    00_写给读者
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    00_写给读者
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习路线图
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01_大模型基础与 API 实战
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01_大模型基础与 API 实战
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM核心概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.1%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%E5%85%A8%E6%99%AF%E4%B8%8E%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术全景与选型决策
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.2%20LoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.3%20QLoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QLoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.4%20%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%86%E5%A4%87%E4%B8%8E%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数据工程：微调数据的准备与质量控制
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E7%94%A8%20QLoRA%20%E5%BE%AE%E8%B0%83%20Qwen2.5-7B%20%E6%8C%87%E4%BB%A4%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E5%BE%AE%E8%B0%83%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%AE%9E%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】微调效果评估与对比实验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.2.7%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%9F%BA%E4%BA%8E%20Unsloth%20%E7%9A%84%E9%AB%98%E6%95%88%E5%BE%AE%E8%B0%83%E5%8A%A0%E9%80%9F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】基于 Unsloth 的高效微调加速实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3%20Prompt%20Engineering%20%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Engineering 实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.1%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%20%2B%20%E5%AE%9E%E6%97%B6%E6%80%9D%E7%BB%B4%E9%93%BE%E5%8F%AF%E8%A7%86%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】流式输出 + 实时思维链可视化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%8F%90%E7%A4%BA%E8%AF%8D%E8%B0%83%E8%AF%95%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】构建一个提示词调试器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.3%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E8%B4%A8%E9%87%8F%E8%AF%84%E4%BC%B0%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】多语言翻译质量评估器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E5%9B%9B%E3%80%91%E8%87%AA%E5%8A%A8%E5%8C%96%20Prompt%20%E4%BC%98%E5%8C%96%E5%99%A8%EF%BC%88DSPy%20%E5%85%A5%E9%97%A8%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手四】自动化 Prompt 优化器（DSPy 入门）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%9F%E4%B8%80%E5%B0%81%E8%A3%85%E5%A4%9A%E6%A8%A1%E5%9E%8B%E8%B0%83%E7%94%A8%E5%B1%82/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】统一封装多模型调用层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02_RAG（检索增强生成）
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02_RAG（检索增强生成）
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 架构全景
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.2%20Embedding%20%E4%B8%8E%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding 与向量数据库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.3%20%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5%EF%BC%88%E7%A8%A0%E5%AF%86%20-%20%E7%A8%80%E7%96%8F%20-%20%E6%B7%B7%E5%90%88%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    检索策略（稠密-稀疏-混合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】从零搭建本地知识库问答系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91Advanced%20RAG%EF%BC%9A%E9%87%8D%E6%8E%92%E5%BA%8F%20%2B%20%E6%9F%A5%E8%AF%A2%E6%94%B9%E5%86%99/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】Advanced RAG：重排序 + 查询改写
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.6%20RAG%20%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB%EF%BC%88RAGAS%20%E6%A1%86%E6%9E%B6%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 评估体系（RAGAS 框架）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03_Function Calling MCP 与工具使用
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03_Function Calling MCP 与工具使用
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.1%20Function%20Calling%20%E5%8E%9F%E7%90%86%E4%B8%8E%E5%8D%8F%E8%AE%AE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Calling 原理与协议
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2%20MCP%20%E5%8D%8F%E8%AE%AE%E8%AF%A6%E8%A7%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP 协议详解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2.1%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】文件系统操作 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】数据库查询 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】代码执行沙箱 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.3%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%99%20LLM%20%E6%8E%A5%E5%85%A5%E6%90%9C%E7%B4%A2%20-%20%E8%AE%A1%E7%AE%97%E5%99%A8%20-%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】给 LLM 接入搜索-计算器-数据库工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.4%20%E5%B7%A5%E5%85%B7%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%B8%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具可靠性与错误处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04_AI Agent 核心架构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04_AI Agent 核心架构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 定义：感知-规划-行动循环
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.2%20ReAct%20%E8%8C%83%E5%BC%8F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ReAct 范式实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.3%20Planning%20%E7%AD%96%E7%95%A5%EF%BC%88ToT%20-%20GoT%20-%20Plan-and-Execute%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planning 策略（ToT-GoT-Plan-and-Execute）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.4%20%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    记忆系统设计
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%94%A8%20LangGraph%20%E6%9E%84%E5%BB%BA%E6%9C%89%E7%8A%B6%E6%80%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】用 LangGraph 构建有状态 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05_Multi-Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05_Multi-Agent 系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多 Agent 协作模式（层级-对等-流水线）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.2%20AutoGen%20%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AutoGen 框架实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.3%20CrewAI%20%E8%A7%92%E8%89%B2%E5%88%86%E5%B7%A5%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrewAI 角色分工实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%90%AD%E5%BB%BA%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%2B%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%8F%8C%20Agent%20%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】搭建代码生成+审查的双 Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06_生产级落地关键技术
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06_生产级落地关键技术
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    流式输出与用户体验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.2%20%E6%88%90%E6%9C%AC%E6%8E%A7%E5%88%B6%E4%B8%8E%20Token%20%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成本控制与 Token 优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.3%20%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%88Prompt%20Cache%20-%20Semantic%20Cache%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缓存策略（Prompt Cache-Semantic Cache）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.4%20%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%B9%E9%BD%90%EF%BC%88Prompt%20Injection%20%E9%98%B2%E5%BE%A1%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安全与对齐（Prompt Injection 防御）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.5%20%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%EF%BC%88LangSmith%20-%20LangFuse%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    可观测性（LangSmith-LangFuse）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%9E%84%E5%BB%BA%E5%B8%A6%E7%9B%91%E6%8E%A7%E7%9A%84%E7%94%9F%E4%BA%A7%E7%BA%A7%20Agent%20%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】构建带监控的生产级 Agent 服务
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07_垂直场景实战项目
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07_垂直场景实战项目
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目一：AI 选股分析师（基于 TradingAgents）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.2%20%E9%A1%B9%E7%9B%AE%E4%BA%8C%EF%BC%9A%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E5%BA%93%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目二：企业知识库智能问答
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.3%20%E9%A1%B9%E7%9B%AE%E4%B8%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%20Agent%EF%BC%88Text-to-SQL%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目三：数据分析 Agent（Text-to-SQL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.4%20%E9%A1%B9%E7%9B%AE%E5%9B%9B%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目四：自动化工作流 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前深度学习时代（2000-2017）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.2%20Transformer%20%E9%9D%A9%E5%91%BD%EF%BC%882017-2019%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer 革命（2017-2019）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.3%20%E8%A7%84%E6%A8%A1%E5%AE%9A%E5%BE%8B%E4%B8%8E%E6%B6%8C%E7%8E%B0%E8%83%BD%E5%8A%9B%EF%BC%882020-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    规模定律与涌现能力（2020-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.4%20%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90%E4%B8%8E%20RLHF%20%E6%97%B6%E4%BB%A3%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指令对齐与 RLHF 时代（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.5%20%E5%BC%80%E6%BA%90%E7%94%9F%E6%80%81%E7%88%86%E5%8F%91%E4%B8%8E%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AB%9E%E8%B5%9B%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开源生态爆发与长上下文竞赛（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.6%20%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E8%8C%83%E5%BC%8F%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    推理模型范式（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.1%20%E5%89%8D%20LLM%20Agent%20%E6%97%B6%E4%BB%A3%EF%BC%88%E7%BA%A6%201960s-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前 LLM Agent 时代（约1960s-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.2%20LLM%20Agent%20%E8%90%8C%E8%8A%BD%E6%9C%9F%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Agent 萌芽期（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.3%20%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%8D%8F%E8%AE%AE%E7%9A%84%E8%A7%84%E8%8C%83%E5%8C%96%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    框架与协议的规范化（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.4%20Computer%20Use%20%E4%B8%8E%20GUI%20Agent%EF%BC%882024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computer Use 与 GUI Agent（2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.5%20Agentic%20AI%20%E8%B5%B0%E5%90%91%E7%94%9F%E4%BA%A7%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agentic AI 走向生产（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.1%20%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%EF%BC%9A%E4%BB%8E%20512%20Token%20%E5%88%B0%E6%97%A0%E9%99%90%E6%B5%81%E5%BC%8F%E8%AE%B0%E5%BF%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    上下文长度：从512 Token到无限流式记忆
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.2%20RAG%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%EF%BC%9A%E5%85%B3%E9%94%AE%E5%AD%97%E6%A3%80%E7%B4%A2%E5%88%B0%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%A2%9E%E5%BC%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 技术演进：关键字检索到知识图谱增强
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.3%20%E5%A4%9A%E6%A8%A1%E6%80%81%EF%BC%9A%E4%BB%8E%20CLIP%20%E5%88%B0%E5%85%A8%E6%A8%A1%E6%80%81%E7%BB%9F%E4%B8%80%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多模态：从CLIP到全模态统一模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.4%20%E9%AB%98%E6%95%88%E6%8E%A8%E7%90%86%EF%BC%9A%E4%BB%8E%E9%87%8F%E5%8C%96%E5%8E%8B%E7%BC%A9%E5%88%B0%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E8%8A%AF%E7%89%87%E7%94%9F%E6%80%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    高效推理：从量化压缩到推理加速芯片生态
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.5%20%E5%AF%B9%E9%BD%90%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%20RLHF%20%E5%88%B0%20DPO%20%E5%88%B0%E5%AE%AA%E6%B3%95%20AI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对齐技术：从RLHF到DPO到宪法AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.6%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%E5%85%A8%E5%8F%82%E6%95%B0%E5%88%B0%E6%9E%81%E4%BD%8E%E6%88%90%E6%9C%AC%E9%80%82%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术：从全参数到极低成本适配
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.1%20%E6%A8%A1%E5%9E%8B%E8%83%BD%E5%8A%9B%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4%EF%BC%882025-2030%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型能力演进预判（2025-2030）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.2%20Agent%20%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 架构演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.3%20%E6%8A%80%E6%9C%AF%E7%93%B6%E9%A2%88%E4%B8%8E%E5%BC%80%E6%94%BE%E6%80%A7%E6%8C%91%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术瓶颈与开放性挑战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.4%20%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E4%B8%8E%E7%94%9F%E6%80%81%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施与生态演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.5%20%E7%A4%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B8%8E%E7%9B%91%E7%AE%A1%E6%A0%BC%E5%B1%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    社会影响与监管格局
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    09_面试题真题
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    09_面试题真题
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    原理题
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    原理题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#q12025-04-transformer-rnn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1：[来源:牛客][2025-04] Transformer 的自注意力机制是如何工作的？为什么比 RNN 更适合处理长序列？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q1：[来源:牛客][2025-04] Transformer 的自注意力机制是如何工作的？为什么比 RNN 更适合处理长序列？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2datawhale2025-03-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2：[来源:Datawhale][2025-03] 什么是位置编码？为什么在 Transformer 中它是必需的？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q2：[来源:Datawhale][2025-03] 什么是位置编码？为什么在 Transformer 中它是必需的？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q3datawhale2025-03-scaling-laws-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3：[来源:Datawhale][2025-03] 什么是 Scaling Laws？它对 LLM 研发有什么指导意义？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q3：[来源:Datawhale][2025-03] 什么是 Scaling Laws？它对 LLM 研发有什么指导意义？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q42025-04-mhamqagqa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4：[来源:牛客][2025-04] MHA、MQA、GQA 的区别是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q4：[来源:牛客][2025-04] MHA、MQA、GQA 的区别是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q52025-03-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5：[来源:牛客][2025-03] 什么是 LoRA？它的核心思路是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q5：[来源:牛客][2025-03] 什么是 LoRA？它的核心思路是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q62025-03-qlora-lora-nf4-int4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6：[来源:牛客][2025-03] QLoRA 相比 LoRA 的核心改进是什么？NF4 量化为何优于 INT4？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q6：[来源:牛客][2025-03] QLoRA 相比 LoRA 的核心改进是什么？NF4 量化为何优于 INT4？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q72025-03-lora-rank-rank8-rank64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7：[来源:牛客][2025-03] LoRA 的 rank 参数如何选择？rank=8 和 rank=64 的区别是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q7：[来源:牛客][2025-03] LoRA 的 rank 参数如何选择？rank=8 和 rank=64 的区别是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q82025-03-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8：[来源:牛客][2025-03] LoRA 微调后的权重如何合入原模型？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q8：[来源:牛客][2025-03] LoRA 微调后的权重如何合入原模型？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q92025-04-kv-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q9：[来源:牛客][2025-04] 大模型的 KV Cache 是什么？为什么能加速推理？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q9：[来源:牛客][2025-04] 大模型的 KV Cache 是什么？为什么能加速推理？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q102025-04-alibi-rope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q10：[来源:牛客][2025-04] 位置编码中的 ALiBi 是什么？与 RoPE 相比有什么特点？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q10：[来源:牛客][2025-04] 位置编码中的 ALiBi 是什么？与 RoPE 相比有什么特点？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q11datawhale2025-04-moe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q11：[来源:Datawhale][2025-04] 什么是混合专家模型（MoE）？它是如何在不显著增加推理成本的情况下扩大参数规模的？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q11：[来源:Datawhale][2025-04] 什么是混合专家模型（MoE）？它是如何在不显著增加推理成本的情况下扩大参数规模的？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q12datawhale2025-03-tokenizationbpe-wordpiece" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q12：[来源:Datawhale][2025-03] 什么是词元化（Tokenization）？BPE 和 WordPiece 有什么区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q12：[来源:Datawhale][2025-03] 什么是词元化（Tokenization）？BPE 和 WordPiece 有什么区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q132025-05-llm-greedybeam-searchtop-ktop-p" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q13：[来源:牛客][2025-05] LLM 推理阶段有哪些解码策略？Greedy、Beam Search、Top-K、Top-P 的优缺点是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q13：[来源:牛客][2025-05] LLM 推理阶段有哪些解码策略？Greedy、Beam Search、Top-K、Top-P 的优缺点是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q14datawhale2025-04-rlhf-dpo-rlhf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q14：[来源:Datawhale][2025-04] RLHF 流程的三个阶段是什么？DPO 与 RLHF 的区别和优势是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q14：[来源:Datawhale][2025-04] RLHF 流程的三个阶段是什么？DPO 与 RLHF 的区别和优势是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q152025-05-attention-multi-head-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q15：[来源:牛客][2025-05] Attention 的计算步骤是什么？Multi-head 中每个 head 为什么要降维？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q15：[来源:牛客][2025-05] Attention 的计算步骤是什么？Multi-head 中每个 head 为什么要降维？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q16datawhale2025-04-sft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q16：[来源:Datawhale][2025-04] SFT（有监督微调）的数据集格式是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q16：[来源:Datawhale][2025-04] SFT（有监督微调）的数据集格式是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q172025-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q17：[来源:牛客][2025-04] 生成式大模型为什么生成的文本比较丰富不死板？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q17：[来源:牛客][2025-04] 生成式大模型为什么生成的文本比较丰富不死板？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_49" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q18datawhale2025-04-emergent-abilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q18：[来源:Datawhale][2025-04] 什么是"涌现能力"（Emergent Abilities）？它在什么规模下出现？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q18：[来源:Datawhale][2025-04] 什么是&#34;涌现能力&#34;（Emergent Abilities）？它在什么规模下出现？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q19datawhale2025-05-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q19：[来源:Datawhale][2025-05] ReAct 框架的工作原理是什么？如何将思维链和行动结合？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q19：[来源:Datawhale][2025-05] ReAct 框架的工作原理是什么？如何将思维链和行动结合？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_55" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q202025-04-agent-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q20：[来源:牛客][2025-04] Agent 如何学会调用外部工具？Function Calling 的原理是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q20：[来源:牛客][2025-04] Agent 如何学会调用外部工具？Function Calling 的原理是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_58" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_59" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q21datawhale2025-04-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q21：[来源:Datawhale][2025-04] 如何为 Agent 设计短期记忆和长期记忆系统？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q21：[来源:Datawhale][2025-04] 如何为 Agent 设计短期记忆和长期记忆系统？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q22datawhale2025-04-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q22：[来源:Datawhale][2025-04] 如何全面评估 RAG 系统的性能？检索和生成阶段分别用什么指标？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q22：[来源:Datawhale][2025-04] 如何全面评估 RAG 系统的性能？检索和生成阶段分别用什么指标？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_66" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q23datawhale2025-05-lost-in-the-middle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q23：[来源:Datawhale][2025-05] 什么是"Lost in the Middle"问题？如何缓解？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q23：[来源:Datawhale][2025-05] 什么是&#34;Lost in the Middle&#34;问题？如何缓解？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_69" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q242026-04-mcpmodel-context-protocol-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q24：[来源:知乎/卡码笔记][2026-04] MCP（Model Context Protocol）和 Function Calling 有什么本质区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q24：[来源:知乎/卡码笔记][2026-04] MCP（Model Context Protocol）和 Function Calling 有什么本质区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_70" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_72" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q252026-04-a2aagent-to-agent-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q25：[来源:知乎/卡码笔记][2026-04] A2A（Agent-to-Agent）协议是什么？和 MCP 的关系是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q25：[来源:知乎/卡码笔记][2026-04] A2A（Agent-to-Agent）协议是什么？和 MCP 的关系是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_74" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_75" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q262026-04-skills-system-promptfew-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q26：[来源:知乎/卡码笔记][2026-04] Skills 是什么？和 System Prompt、Few-shot 有什么区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q26：[来源:知乎/卡码笔记][2026-04] Skills 是什么？和 System Prompt、Few-shot 有什么区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_76" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_77" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_78" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2753aicsdn2026-04-loradorapissa-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q27：[来源:53AI/CSDN][2026-04] LoRA+、DoRA、PiSSA 等进阶方法与基础 LoRA 的差异是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q27：[来源:53AI/CSDN][2026-04] LoRA+、DoRA、PiSSA 等进阶方法与基础 LoRA 的差异是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_79" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_80" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2853aicsdn2026-04-catastrophic-forgetting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q28：[来源:53AI/CSDN][2026-04] 什么是 Catastrophic Forgetting（灾难性遗忘）？微调中如何缓解？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q28：[来源:53AI/CSDN][2026-04] 什么是 Catastrophic Forgetting（灾难性遗忘）？微调中如何缓解？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_82" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_%E5%B7%A5%E7%A8%8B%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工程题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_%E8%AE%BE%E8%AE%A1%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    设计题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_%E8%A7%86%E9%87%8E%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    视野题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_%E5%BC%80%E6%94%BE%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开放题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10_附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10_附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    主流框架横向对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/B.%20%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%AF%BC%E8%88%AA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习资源导航
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/C.%20%E6%9C%AF%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#q12025-04-transformer-rnn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1：[来源:牛客][2025-04] Transformer 的自注意力机制是如何工作的？为什么比 RNN 更适合处理长序列？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q1：[来源:牛客][2025-04] Transformer 的自注意力机制是如何工作的？为什么比 RNN 更适合处理长序列？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2datawhale2025-03-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2：[来源:Datawhale][2025-03] 什么是位置编码？为什么在 Transformer 中它是必需的？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q2：[来源:Datawhale][2025-03] 什么是位置编码？为什么在 Transformer 中它是必需的？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q3datawhale2025-03-scaling-laws-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3：[来源:Datawhale][2025-03] 什么是 Scaling Laws？它对 LLM 研发有什么指导意义？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q3：[来源:Datawhale][2025-03] 什么是 Scaling Laws？它对 LLM 研发有什么指导意义？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q42025-04-mhamqagqa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4：[来源:牛客][2025-04] MHA、MQA、GQA 的区别是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q4：[来源:牛客][2025-04] MHA、MQA、GQA 的区别是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q52025-03-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5：[来源:牛客][2025-03] 什么是 LoRA？它的核心思路是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q5：[来源:牛客][2025-03] 什么是 LoRA？它的核心思路是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q62025-03-qlora-lora-nf4-int4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6：[来源:牛客][2025-03] QLoRA 相比 LoRA 的核心改进是什么？NF4 量化为何优于 INT4？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q6：[来源:牛客][2025-03] QLoRA 相比 LoRA 的核心改进是什么？NF4 量化为何优于 INT4？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q72025-03-lora-rank-rank8-rank64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7：[来源:牛客][2025-03] LoRA 的 rank 参数如何选择？rank=8 和 rank=64 的区别是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q7：[来源:牛客][2025-03] LoRA 的 rank 参数如何选择？rank=8 和 rank=64 的区别是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q82025-03-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8：[来源:牛客][2025-03] LoRA 微调后的权重如何合入原模型？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q8：[来源:牛客][2025-03] LoRA 微调后的权重如何合入原模型？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q92025-04-kv-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q9：[来源:牛客][2025-04] 大模型的 KV Cache 是什么？为什么能加速推理？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q9：[来源:牛客][2025-04] 大模型的 KV Cache 是什么？为什么能加速推理？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q102025-04-alibi-rope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q10：[来源:牛客][2025-04] 位置编码中的 ALiBi 是什么？与 RoPE 相比有什么特点？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q10：[来源:牛客][2025-04] 位置编码中的 ALiBi 是什么？与 RoPE 相比有什么特点？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q11datawhale2025-04-moe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q11：[来源:Datawhale][2025-04] 什么是混合专家模型（MoE）？它是如何在不显著增加推理成本的情况下扩大参数规模的？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q11：[来源:Datawhale][2025-04] 什么是混合专家模型（MoE）？它是如何在不显著增加推理成本的情况下扩大参数规模的？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q12datawhale2025-03-tokenizationbpe-wordpiece" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q12：[来源:Datawhale][2025-03] 什么是词元化（Tokenization）？BPE 和 WordPiece 有什么区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q12：[来源:Datawhale][2025-03] 什么是词元化（Tokenization）？BPE 和 WordPiece 有什么区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q132025-05-llm-greedybeam-searchtop-ktop-p" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q13：[来源:牛客][2025-05] LLM 推理阶段有哪些解码策略？Greedy、Beam Search、Top-K、Top-P 的优缺点是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q13：[来源:牛客][2025-05] LLM 推理阶段有哪些解码策略？Greedy、Beam Search、Top-K、Top-P 的优缺点是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q14datawhale2025-04-rlhf-dpo-rlhf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q14：[来源:Datawhale][2025-04] RLHF 流程的三个阶段是什么？DPO 与 RLHF 的区别和优势是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q14：[来源:Datawhale][2025-04] RLHF 流程的三个阶段是什么？DPO 与 RLHF 的区别和优势是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q152025-05-attention-multi-head-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q15：[来源:牛客][2025-05] Attention 的计算步骤是什么？Multi-head 中每个 head 为什么要降维？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q15：[来源:牛客][2025-05] Attention 的计算步骤是什么？Multi-head 中每个 head 为什么要降维？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q16datawhale2025-04-sft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q16：[来源:Datawhale][2025-04] SFT（有监督微调）的数据集格式是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q16：[来源:Datawhale][2025-04] SFT（有监督微调）的数据集格式是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q172025-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q17：[来源:牛客][2025-04] 生成式大模型为什么生成的文本比较丰富不死板？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q17：[来源:牛客][2025-04] 生成式大模型为什么生成的文本比较丰富不死板？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_49" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q18datawhale2025-04-emergent-abilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q18：[来源:Datawhale][2025-04] 什么是"涌现能力"（Emergent Abilities）？它在什么规模下出现？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q18：[来源:Datawhale][2025-04] 什么是&#34;涌现能力&#34;（Emergent Abilities）？它在什么规模下出现？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q19datawhale2025-05-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q19：[来源:Datawhale][2025-05] ReAct 框架的工作原理是什么？如何将思维链和行动结合？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q19：[来源:Datawhale][2025-05] ReAct 框架的工作原理是什么？如何将思维链和行动结合？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_55" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q202025-04-agent-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q20：[来源:牛客][2025-04] Agent 如何学会调用外部工具？Function Calling 的原理是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q20：[来源:牛客][2025-04] Agent 如何学会调用外部工具？Function Calling 的原理是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_58" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_59" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q21datawhale2025-04-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q21：[来源:Datawhale][2025-04] 如何为 Agent 设计短期记忆和长期记忆系统？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q21：[来源:Datawhale][2025-04] 如何为 Agent 设计短期记忆和长期记忆系统？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q22datawhale2025-04-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q22：[来源:Datawhale][2025-04] 如何全面评估 RAG 系统的性能？检索和生成阶段分别用什么指标？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q22：[来源:Datawhale][2025-04] 如何全面评估 RAG 系统的性能？检索和生成阶段分别用什么指标？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_66" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q23datawhale2025-05-lost-in-the-middle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q23：[来源:Datawhale][2025-05] 什么是"Lost in the Middle"问题？如何缓解？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q23：[来源:Datawhale][2025-05] 什么是&#34;Lost in the Middle&#34;问题？如何缓解？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_69" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q242026-04-mcpmodel-context-protocol-function-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q24：[来源:知乎/卡码笔记][2026-04] MCP（Model Context Protocol）和 Function Calling 有什么本质区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q24：[来源:知乎/卡码笔记][2026-04] MCP（Model Context Protocol）和 Function Calling 有什么本质区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_70" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_72" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q252026-04-a2aagent-to-agent-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q25：[来源:知乎/卡码笔记][2026-04] A2A（Agent-to-Agent）协议是什么？和 MCP 的关系是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q25：[来源:知乎/卡码笔记][2026-04] A2A（Agent-to-Agent）协议是什么？和 MCP 的关系是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_74" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_75" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q262026-04-skills-system-promptfew-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q26：[来源:知乎/卡码笔记][2026-04] Skills 是什么？和 System Prompt、Few-shot 有什么区别？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q26：[来源:知乎/卡码笔记][2026-04] Skills 是什么？和 System Prompt、Few-shot 有什么区别？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_76" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_77" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_78" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2753aicsdn2026-04-loradorapissa-lora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q27：[来源:53AI/CSDN][2026-04] LoRA+、DoRA、PiSSA 等进阶方法与基础 LoRA 的差异是什么？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q27：[来源:53AI/CSDN][2026-04] LoRA+、DoRA、PiSSA 等进阶方法与基础 LoRA 的差异是什么？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_79" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_80" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解答思路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2853aicsdn2026-04-catastrophic-forgetting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q28：[来源:53AI/CSDN][2026-04] 什么是 Catastrophic Forgetting（灾难性遗忘）？微调中如何缓解？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q28：[来源:53AI/CSDN][2026-04] 什么是 Catastrophic Forgetting（灾难性遗忘）？微调中如何缓解？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_82" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        考察点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考答案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="-">原理题 - 面试题解答</h1>
+<blockquote>
+<p>生成日期：2026-05-05 | 共 28 题
+来源：牛客 / 知乎 / Datawhale / 火山引擎 / 各大厂面经等
+<strong>2026-05-05 更新：新增 8 题，删除 8 题偏算法深度内容（RoPE/PPO KL/Reward Hacking/VLM/CLIP/ZeRO/AMP/PPO 显存）</strong></p>
+</blockquote>
+<hr />
+<h2 id="q12025-04-transformer-rnn">Q1：[来源:牛客][2025-04] Transformer 的自注意力机制是如何工作的？为什么比 RNN 更适合处理长序列？</h2>
+<h3 id="_1">考察点</h3>
+<p>对 Transformer 核心架构的理解深度，以及对比传统序列模型的优势分析能力。</p>
+<h3 id="_2">解答思路</h3>
+<ol>
+<li>解释 Self-Attention 的计算流程：Q/K/V 矩阵 → 点积 → Softmax → 加权求和</li>
+<li>对比 RNN 的顺序依赖，强调并计算能力和 O(1) 路径长度</li>
+<li>补充 Multi-Head 的设计意义</li>
+</ol>
+<h3 id="_3">参考答案</h3>
+<p>Self-Attention 的核心思想是让序列中每个位置都能"看到"所有其他位置，通过计算 Query 和 Key 的点积得到注意力权重，再用权重对 Value 加权求和。具体步骤：(1) 输入经过线性变换得到 Q、K、V 三个矩阵；(2) 计算 Q·K^T / sqrt(d_k) 得到注意力分数矩阵；(3) Softmax 归一化得到概率分布；(4) 用概率分布加权 V 得到输出。</p>
+<p>相比 RNN，Self-Attention 有三大优势：
+- <strong>并行计算</strong>：RNN 必须按时间步顺序计算，Attention 可一次性算完所有位置关系
+- <strong>路径长度 O(1)</strong>：RNN 中相距 n 步的两个 token 需要 n 次传递才能建立联系，Attention 只需一步
+- <strong>全局感受野</strong>：每个位置同时关注所有位置，不会像 RNN 那样因梯度消失/爆炸而遗忘远处信息</p>
+<p><strong>加分项：</strong> 提到计算复杂度问题——Self-Attention 的计算复杂度是 O(n²)，在超长序列场景下可用 Linear Attention、Flash Attention 或稀疏 Attention 优化。</p>
+<hr />
+<h2 id="q2datawhale2025-03-transformer">Q2：[来源:Datawhale][2025-03] 什么是位置编码？为什么在 Transformer 中它是必需的？</h2>
+<h3 id="_4">考察点</h3>
+<p>理解 Transformer 架构中位置信息的处理方式。</p>
+<h3 id="_5">解答思路</h3>
+<ol>
+<li>解释 Self-Attention 的排列不变性（置换输入不改变输出）</li>
+<li>介绍几种位置编码方案</li>
+<li>对比优缺点</li>
+</ol>
+<h3 id="_6">参考答案</h3>
+<p>Self-Attention 对输入序列的排列是<strong>不变的</strong>——如果把输入 token 的顺序打乱，注意力计算结果完全一样。这导致模型无法区分"我爱编程"和"编程爱我"。因此必须显式注入位置信息。</p>
+<p>主流位置编码方案：
+- <strong>正弦位置编码（原始 Transformer）</strong>：用不同频率的正弦/余弦函数编码位置，支持外推到训练时未见过的序列长度
+- <strong>可学习位置编码（BERT/ViT）</strong>：随机初始化 + 训练中学习，简单但无法外推
+- <strong>RoPE（旋转位置编码，主流选择）</strong>：将位置信息编码为旋转矩阵，通过 Q/K 的旋转变换实现，具有优秀的长度外推能力，被 LLaMA、Qwen 等模型广泛采用
+- <strong>ALiBi</strong>：在注意力分数上直接加与距离成比例的惩罚项，无需嵌入位置向量，外推能力极强</p>
+<p><strong>加分项：</strong> 提到 RoPE 的数学本质是将绝对位置编码转化为相对位置的旋转操作，兼具绝对和相对位置编码的优点。</p>
+<hr />
+<h2 id="q3datawhale2025-03-scaling-laws-llm">Q3：[来源:Datawhale][2025-03] 什么是 Scaling Laws？它对 LLM 研发有什么指导意义？</h2>
+<h3 id="_7">考察点</h3>
+<p>对大模型训练基本规律的理解。</p>
+<h3 id="_8">解答思路</h3>
+<ol>
+<li>解释 Kaplan 2020 原始 Scaling Laws</li>
+<li>介绍 Chinchilla 定律的修正</li>
+<li>说明对工程实践的指导价值</li>
+</ol>
+<h3 id="_9">参考答案</h3>
+<p>Scaling Laws 描述了模型性能（Loss）与计算量（C）、数据集大小（D）、参数量（N）之间的幂律关系：L ∝ C^{-α}。</p>
+<p><strong>Kaplan et al. (2020)</strong> 发现：增大模型、增加数据、提升算力都能带来可预测的性能提升，且三者存在最优比例关系 N_optimal ∝ C^{0.5}。</p>
+<p><strong>Chinchilla 定律 (Hoffmann et al., 2022)</strong> 修正：最优训练配置下，参数量和训练 token 数应<strong>等比例增长</strong>。例如，70B 参数模型应匹配约 1.4T token 进行训练，而非 Kaplan 预测的更小数据量。</p>
+<p><strong>工程指导意义：</strong>
+- 预算有限时：与其训练一个 100B 大模型，不如训练多个 7B 模型并组合使用
+- 数据量是瓶颈：高质量数据不足时，盲目增大模型参数会导致过拟合
+- 合成数据价值：当自然语言数据接近枯竭时，合成数据成为突破 Scaling Laws 上限的关键</p>
+<hr />
+<h2 id="q42025-04-mhamqagqa">Q4：[来源:牛客][2025-04] MHA、MQA、GQA 的区别是什么？</h2>
+<h3 id="_10">考察点</h3>
+<p>对注意力机制变种的工程理解。</p>
+<h3 id="_11">解答思路</h3>
+<ol>
+<li>定义三种 Attention 模式</li>
+<li>对比 KV Cache 大小和计算速度</li>
+<li>说明各自适用场景</li>
+</ol>
+<h3 id="_12">参考答案</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>Q 头数</th>
+<th>KV 头数</th>
+<th>KV Cache 大小</th>
+<th>推理速度</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MHA</strong> (Multi-Head)</td>
+<td>H</td>
+<td>H</td>
+<td>H × d_kv</td>
+<td>基准</td>
+<td>最佳</td>
+</tr>
+<tr>
+<td><strong>MQA</strong> (Multi-Query)</td>
+<td>H</td>
+<td>1</td>
+<td>d_kv</td>
+<td>~3x 快</td>
+<td>略有下降</td>
+</tr>
+<tr>
+<td><strong>GQA</strong> (Grouped-Query)</td>
+<td>H</td>
+<td>G (1&lt;G&lt;H)</td>
+<td>G × d_kv</td>
+<td>~2x 快</td>
+<td>接近 MHA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MHA</strong>：每个 Query 头有独立的 K/V，效果最好但 KV Cache 大，推理阶段显存占用高。</p>
+<p><strong>MQA</strong>：所有 Query 头共享一组 KV，KV Cache 减少 H 倍，显著加速推理，但多头表达能力受限，质量略有下降。</p>
+<p><strong>GQA</strong>：折中方案，将 H 个 Query 头分为 G 组，每组共享一组 KV。LLaMA-2 70B 和 Qwen 系列均采用 GQA，在推理速度和效果之间取得良好平衡。</p>
+<hr />
+<h2 id="q52025-03-lora">Q5：[来源:牛客][2025-03] 什么是 LoRA？它的核心思路是什么？</h2>
+<h3 id="_13">考察点</h3>
+<p>对参数高效微调技术的理解。</p>
+<h3 id="_14">解答思路</h3>
+<ol>
+<li>解释 LoRA 的低秩分解假设</li>
+<li>说明训练和推理时的权重合并</li>
+<li>对比全量微调的优势</li>
+</ol>
+<h3 id="_15">参考答案</h3>
+<p>LoRA（Low-Rank Adaptation）基于一个核心假设：模型在适应新任务时的权重更新具有<strong>低内在秩</strong>。</p>
+<p>具体做法：冻结预训练权重 W_0，在其旁边注入可训练的低秩矩阵 ΔW = B·A，其中 A ∈ R^{r×d}，B ∈ R^{d'×r}，r ≪ d。前向传播变为：h = W_0x + ΔWx = W_0x + BAx。</p>
+<p><strong>关键优势：</strong>
+- <strong>参数量极少</strong>：r=8 时，可训练参数仅为全量微调的 ~0.01%
+- <strong>零推理延迟</strong>：训练后将 BA 合并回 W_0，推理开销为零
+- <strong>多任务切换</strong>：不同任务只需替换 ΔW，W_0 可复用
+- <strong>显存友好</strong>：7B 模型在单卡 A100 上即可训练</p>
+<p><strong>加分项：</strong> 提到 LoRA 通常只加在 Attention 层的 Q 和 V 投影矩阵上，因为这些矩阵负责"理解"和"生成"信息，是最需要适配的部分。后续研究表明加入 MLP 层也可带来小幅提升。</p>
+<hr />
+<h2 id="q62025-03-qlora-lora-nf4-int4">Q6：[来源:牛客][2025-03] QLoRA 相比 LoRA 的核心改进是什么？NF4 量化为何优于 INT4？</h2>
+<h3 id="_16">考察点</h3>
+<p>对量化与微调结合技术的深入理解。</p>
+<h3 id="_17">解答思路</h3>
+<ol>
+<li>解释 QLoRA 的三要素：NF4、双重量化、分页优化器</li>
+<li>对比 NF4 和 INT4 的精度差异</li>
+<li>说明显存节省的具体数字</li>
+</ol>
+<h3 id="_18">参考答案</h3>
+<p>QLoRA 在 LoRA 基础上引入三项创新：</p>
+<p><strong>1. NF4（Normal Float 4-bit）量化：</strong> 将基座权重量化为 4-bit。NF4 不是均匀量化（如 INT4 的 [-8,7]），而是根据正态分布的分位数函数来设计量化级别——权重矩阵的值通常接近正态分布，NF4 在均值附近分配更多量化级别，在尾部稀疏区域分配较少级别，信息损失更小。</p>
+<p><strong>2. 双重量化（Double Quantization）：</strong> 对量化常数（每个 block 的 absmax）也进行 8-bit 量化，进一步节省显存。</p>
+<p><strong>3. 分页优化器（Paged Optimizers）：</strong> 利用 NVIDIA 统一内存机制，在 GPU 显存不足时自动将优化器状态溢出到 CPU 内存，防止 OOM。</p>
+<p><strong>显存对比：</strong> 65B 模型全量微调需 ~780GB，LoRA 需 ~78GB，QLoRA 仅需 ~48GB（单张 A100 即可训练）。</p>
+<hr />
+<h2 id="q72025-03-lora-rank-rank8-rank64">Q7：[来源:牛客][2025-03] LoRA 的 rank 参数如何选择？rank=8 和 rank=64 的区别是什么？</h2>
+<h3 id="_19">考察点</h3>
+<p>对 LoRA 超参数调优的实践经验。</p>
+<h3 id="_20">解答思路</h3>
+<ol>
+<li>解释 rank 的物理含义</li>
+<li>给出不同任务类型的推荐值</li>
+<li>说明 rank 与 alpha 的关系</li>
+</ol>
+<h3 id="_21">参考答案</h3>
+<p>rank（r）决定了可训练矩阵 ΔW 的表达能力。r 越大，模型能学到的任务特定知识越多，但参数量和显存也随之增加。</p>
+<p><strong>经验法则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>任务类型</th>
+<th>推荐 rank</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指令微调（风格适配）</td>
+<td>8-16</td>
+<td>主要学习指令格式和语气，变化量小</td>
+</tr>
+<tr>
+<td>领域适配（医疗/法律）</td>
+<td>16-32</td>
+<td>需要学习新领域的专业术语和知识</td>
+</tr>
+<tr>
+<td>复杂推理（数学/代码）</td>
+<td>32-64</td>
+<td>需要更强的表达能力捕捉复杂模式</td>
+</tr>
+</tbody>
+</table>
+<p><strong>rank=8 vs rank=64：</strong>
+- 参数量差异：64/8 = 8 倍
+- 效果差异：简单任务两者差距极小（&lt;1%）；复杂任务 rank=64 可能有 2-5% 的提升
+- 显存差异：优化器状态随 rank 线性增长</p>
+<p><strong>alpha 与 rank 的关系：</strong> LoRA 的缩放系数通常为 alpha = 2×r 或 alpha = r。alpha 越大，LoRA 更新对原始权重的影响越大。</p>
+<hr />
+<h2 id="q82025-03-lora">Q8：[来源:牛客][2025-03] LoRA 微调后的权重如何合入原模型？</h2>
+<h3 id="_22">考察点</h3>
+<p>对 LoRA 推理优化的理解。</p>
+<h3 id="_23">解答思路</h3>
+<ol>
+<li>解释合并的数学操作</li>
+<li>说明合并后的推理优势</li>
+<li>提到不合并的场景</li>
+</ol>
+<h3 id="_24">参考答案</h3>
+<p>训练完成后，将低秩矩阵 BA 加回到原始权重：W_merged = W_0 + BA。</p>
+<p>由于 A ∈ R^{r×d}，B ∈ R^{d'×r}，它们的乘积 BA ∈ R^{d'×d} 与 W_0 维度相同，可以直接相加。</p>
+<p><strong>合并的优势：</strong>
+- <strong>零推理开销</strong>：合并后只需一次矩阵乘法，无需额外计算
+- <strong>内存复用</strong>：可以加载合并后的模型，无需同时持有 W_0 和 ΔW
+- <strong>兼容性</strong>：合并后的模型就是标准格式，任何推理框架都可直接加载</p>
+<p><strong>不合并的场景：</strong>
+- 多 LoRA 服务化（vLLM LoRA）：多个 LoRA 适配器共享同一基座模型，动态加载不同 ΔW
+- 持续微调：保留 W_0 以便后续继续训练新适配器</p>
+<p><strong>加分项：</strong> 提到 HuggingFace <code>PeftModel.merge_and_unload()</code> 方法，以及 vLLM 的 LoRA 热加载方案可在不重启服务的情况下切换适配器。</p>
+<hr />
+<h2 id="q92025-04-kv-cache">Q9：[来源:牛客][2025-04] 大模型的 KV Cache 是什么？为什么能加速推理？</h2>
+<h3 id="_25">考察点</h3>
+<p>对 LLM 推理优化的深入理解。</p>
+<h3 id="_26">解答思路</h3>
+<ol>
+<li>解释自回归生成的重复计算问题</li>
+<li>说明 KV Cache 的存储内容和工作机制</li>
+<li>量化加速效果</li>
+</ol>
+<h3 id="_27">参考答案</h3>
+<p>在自回归生成中，每一步都需要将当前 token 连同之前所有 token 一起送入模型。如果不缓存，第 n 步需要对前 n 个 token 重新计算所有层的 K 和 V 矩阵。</p>
+<p><strong>KV Cache 的做法：</strong> 将之前已经计算过的 token 的 K 和 V 矩阵缓存起来，每一步只需计算新增 token 的 K/V，然后拼接到缓存后面。这样避免了 O(n²) 的重复 Attention 计算。</p>
+<p><strong>加速效果：</strong>
+- 无缓存时，生成 n 个 token 的总计算量为 O(n³)
+- 有缓存时，总计算量降为 O(n²)
+- 实际推理中，KV Cache 可减少 50-70% 的计算量，首 token 延迟不变，但后续每个 token 生成速度显著提升</p>
+<p><strong>代价：</strong> 显存占用增加。7B 模型在 2048 长度上下文下，KV Cache 约需 ~1-2GB 显存。</p>
+<hr />
+<h2 id="q102025-04-alibi-rope">Q10：[来源:牛客][2025-04] 位置编码中的 ALiBi 是什么？与 RoPE 相比有什么特点？</h2>
+<h3 id="_28">考察点</h3>
+<p>对不同位置编码方案的理解和对比能力。</p>
+<h3 id="_29">解答思路</h3>
+<ol>
+<li>解释 ALiBi 的核心机制</li>
+<li>对比 RoPE 的优缺点</li>
+<li>说明适用场景</li>
+</ol>
+<h3 id="_30">参考答案</h3>
+<p>ALiBi（Attention with Linear Biases）不向输入中注入位置信息，而是在注意力分数上直接加上一个与 token 间距离成线性比例的惩罚值：score(q_i, k_j) += m · (i - j)，其中 m 是固定的斜率。</p>
+<p><strong>对比 RoPE：</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>ALiBi</th>
+<th>RoPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实现方式</td>
+<td>注意力分数上加偏置</td>
+<td>Q/K 向量旋转变换</td>
+</tr>
+<tr>
+<td>外推能力</td>
+<td>极强（天然线性外推）</td>
+<td>好（需配合 YaRN）</td>
+</tr>
+<tr>
+<td>训练效率</td>
+<td>稍慢</td>
+<td>快</td>
+</tr>
+<tr>
+<td>采用情况</td>
+<td>MPT、BLOOM</td>
+<td>LLaMA、Qwen、DeepSeek</td>
+</tr>
+<tr>
+<td>推理开销</td>
+<td>几乎为零</td>
+<td>极小（旋转变换）</td>
+</tr>
+</tbody>
+</table>
+<p>ALiBi 的优势在于超长上下文场景下外推能力最强，训练到 2K 长度的模型可以很好地推理 8K 甚至更长的序列。劣势是效果略逊于 RoPE。</p>
+<hr />
+<h2 id="q11datawhale2025-04-moe">Q11：[来源:Datawhale][2025-04] 什么是混合专家模型（MoE）？它是如何在不显著增加推理成本的情况下扩大参数规模的？</h2>
+<h3 id="_31">考察点</h3>
+<p>对 MoE 架构的理解。</p>
+<h3 id="_32">解答思路</h3>
+<ol>
+<li>解释 MoE 的路由机制和专家网络</li>
+<li>说明稀疏激活的原理</li>
+<li>对比密集模型的优劣</li>
+</ol>
+<h3 id="_33">参考答案</h3>
+<p>MoE（Mixture of Experts）的核心思想：模型包含多个"专家"网络（通常是 FFN 层），每个输入只被路由到少数几个专家进行处理。</p>
+<p><strong>工作原理：</strong> 在每层中设置一个路由器（Router），根据输入 token 的特征决定激活哪 K 个专家（K 通常为 1-2，远小于专家总数 N）。其余专家不激活、不参与计算。</p>
+<p><strong>关键优势：</strong>
+- <strong>总参数大</strong>：Mixtral 8x7B 有 46.7B 参数，但每次前向传播只激活 12.9B（2/8 × 46.7B）
+- <strong>推理成本可控</strong>：实际计算量等同于较小的密集模型
+- <strong>训练效率高</strong>：不同专家可在不同数据子集上 specialization</p>
+<p><strong>劣势：</strong>
+- 显存占用大（需要加载所有专家权重）
+- 路由负载不均衡可能导致部分专家训练不充分
+- 部署时需要更大显存的 GPU</p>
+<p><strong>加分项：</strong> 提到 DeepSeek-V2 采用更细粒度的 MoE 设计，将 FFN 和 Attention 都 MoE 化，实现了 236B 参数但仅激活 21B 的高效模型。</p>
+<hr />
+<h2 id="q12datawhale2025-03-tokenizationbpe-wordpiece">Q12：[来源:Datawhale][2025-03] 什么是词元化（Tokenization）？BPE 和 WordPiece 有什么区别？</h2>
+<h3 id="_34">考察点</h3>
+<p>对 LLM 输入预处理的理解。</p>
+<h3 id="_35">解答思路</h3>
+<ol>
+<li>解释 Tokenization 的目的</li>
+<li>对比 BPE 和 WordPiece 的合并策略</li>
+<li>说明对模型性能的影响</li>
+</ol>
+<h3 id="_36">参考答案</h3>
+<p>Tokenization 将原始文本切分为模型可处理的离散单元（token）。目标是在词汇表大小和序列长度之间取得平衡。</p>
+<p><strong>BPE（Byte-Pair Encoding）：</strong>
+- 从字符级词汇表开始，迭代合并出现频率最高的字符/子词对
+- 能处理任意 Unicode 字符（包括 emoji）
+- GPT 系列、LLaMA、Qwen 等采用</p>
+<p><strong>WordPiece：</strong>
+- 类似 BPE，但合并时最大化语言模型的似然增益（而非简单频率）
+- 倾向于合并成有意义的词根
+- BERT、T5 等采用</p>
+<p><strong>对比：</strong> BPE 更通用（支持多语言字符），WordPiece 更注重语义完整性。现代模型大多选择 BPE 或其变体（如 SentencePiece）。</p>
+<hr />
+<h2 id="q132025-05-llm-greedybeam-searchtop-ktop-p">Q13：[来源:牛客][2025-05] LLM 推理阶段有哪些解码策略？Greedy、Beam Search、Top-K、Top-P 的优缺点是什么？</h2>
+<h3 id="_37">考察点</h3>
+<p>对 LLM 生成机制的理解深度。</p>
+<h3 id="_38">解答思路</h3>
+<ol>
+<li>分别解释四种策略</li>
+<li>对比确定性和多样性</li>
+<li>给出适用场景建议</li>
+</ol>
+<h3 id="_39">参考答案</h3>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>原理</th>
+<th>确定性</th>
+<th>多样性</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Greedy</strong></td>
+<td>每步选概率最高的 token</td>
+<td>完全确定</td>
+<td>无</td>
+<td>分类、结构化输出</td>
+</tr>
+<tr>
+<td><strong>Beam Search</strong></td>
+<td>维护 k 个候选序列，选总概率最高的</td>
+<td>近似确定</td>
+<td>低</td>
+<td>翻译、摘要</td>
+</tr>
+<tr>
+<td><strong>Top-K</strong></td>
+<td>从概率最高的 k 个 token 中采样</td>
+<td>随机</td>
+<td>高</td>
+<td>创意生成、对话</td>
+</tr>
+<tr>
+<td><strong>Top-P</strong></td>
+<td>从累计概率达到 p 的最小 token 集合中采样</td>
+<td>随机</td>
+<td>自适应</td>
+<td>对话、创意写作</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Top-P vs Top-K 的关键区别：</strong> Top-K 固定候选数量，当模型很自信时（某个 token 概率 0.95）仍会从 k 个中随机选；Top-P 是动态的，自信时集合小、不确定时集合大，更灵活。</p>
+<p><strong>生产实践建议：</strong>
+- 代码生成：Temperature=0.1 + Top-P=0.95
+- 创意写作：Temperature=0.8 + Top-P=0.9
+- 结构化输出：Temperature=0 + Greedy</p>
+<hr />
+<h2 id="q14datawhale2025-04-rlhf-dpo-rlhf">Q14：[来源:Datawhale][2025-04] RLHF 流程的三个阶段是什么？DPO 与 RLHF 的区别和优势是什么？</h2>
+<h3 id="_40">考察点</h3>
+<p>对大模型对齐技术的理解。</p>
+<h3 id="_41">解答思路</h3>
+<ol>
+<li>解释 RLHF 三阶段流程</li>
+<li>介绍 DPO 的核心创新</li>
+<li>对比两种方法的工程代价</li>
+</ol>
+<h3 id="_42">参考答案</h3>
+<p><strong>RLHF 三阶段：</strong></p>
+<ol>
+<li><strong>SFT（Supervised Fine-Tuning）</strong>：用高质量人工标注数据微调基座模型，使其具备基本的指令遵循能力</li>
+<li><strong>RM（Reward Model）训练</strong>：让标注员对 SFT 模型的多个输出进行排序，训练一个奖励模型来预测偏好</li>
+<li><strong>PPO 优化</strong>：用 PPO 算法训练策略模型，最大化 RM 给出的奖励，同时用 KL 散度惩罚防止偏离 SFT 模型太远</li>
+</ol>
+<p><strong>DPO（Direct Preference Optimization）的核心创新：</strong> 将 PPO 的 RL 优化问题转化为一个<strong>直接的分类损失函数</strong>，无需训练单独的 Reward Model，也不需要 PPO 的复杂超参调优。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>RLHF (PPO)</th>
+<th>DPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实现复杂度</td>
+<td>高（需要 RM + PPO 训练循环）</td>
+<td>低（标准 SFT 流程即可）</td>
+</tr>
+<tr>
+<td>计算资源</td>
+<td>需要多个模型同时训练</td>
+<td>只需一个模型</td>
+</tr>
+<tr>
+<td>超参敏感性</td>
+<td>高（KL 系数、PPO clip 等）</td>
+<td>低（主要是 temperature）</td>
+</tr>
+<tr>
+<td>效果</td>
+<td>略优</td>
+<td>接近</td>
+</tr>
+</tbody>
+</table>
+<p><strong>加分项：</strong> 提到 GRPO（Group Relative Policy Optimization）是 DeepSeek-R1 采用的方法，相比 PPO 省去了 Value Network，通过组内归一化替代 critic，进一步降低了训练复杂度。</p>
+<hr />
+<h2 id="q152025-05-attention-multi-head-head">Q15：[来源:牛客][2025-05] Attention 的计算步骤是什么？Multi-head 中每个 head 为什么要降维？</h2>
+<h3 id="_43">考察点</h3>
+<p>对 Attention 机制实现细节的掌握。</p>
+<h3 id="_44">解答思路</h3>
+<ol>
+<li>逐步拆解 Attention 计算</li>
+<li>解释 Multi-head 的降维原因</li>
+<li>说明计算效率考量</li>
+</ol>
+<h3 id="_45">参考答案</h3>
+<p><strong>Attention 计算步骤：</strong>
+1. 线性变换：Q = XW_Q, K = XW_K, V = XW_V
+2. 点积计算：Q · K^T，得到 n×n 的注意力分数矩阵
+3. 缩放：除以 sqrt(d_k)（防止大值导致 Softmax 梯度消失）
+4. Softmax：每行归一化为概率分布
+5. 加权求和：softmax(score) · V</p>
+<p><strong>Multi-head 中降维原因：</strong> 如果每个 head 都保持完整维度 d_model，H 个 head 的计算量是单头的 H 倍。因此将每个 head 的维度降为 d_model/H，这样所有 head 的总计算量与单头相当，但获得了多个"视角"的信息提取能力。</p>
+<hr />
+<h2 id="q16datawhale2025-04-sft">Q16：[来源:Datawhale][2025-04] SFT（有监督微调）的数据集格式是什么？</h2>
+<h3 id="_46">考察点</h3>
+<p>对大模型微调数据准备的理解。</p>
+<h3 id="_47">解答思路</h3>
+<ol>
+<li>说明主流数据格式</li>
+<li>解释各字段含义</li>
+<li>给出示例</li>
+</ol>
+<h3 id="_48">参考答案</h3>
+<p>主流 SFT 数据格式有三种：</p>
+<p><strong>Alpaca 格式（最常用）：</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;instruction&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;解释量子计算&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;量子计算是一种...&quot;</span><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>ChatML 格式（对话场景）：</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;system&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;你是AI助手&quot;</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;你好&quot;</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;你好！有什么我可以帮助的？&quot;</span><span class="p">}</span>
+<span class="p">]}</span>
+</code></pre></div></p>
+<p><strong>ShareGPT 格式（多轮对话）：</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;conversations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;human&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;你好&quot;</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;你好！...&quot;</span><span class="p">}</span>
+<span class="p">]}</span>
+</code></pre></div></p>
+<p>选择哪种格式取决于训练框架的支持。HuggingFace TRL 库支持 ChatML 和 ShareGPT，Unsloth 支持所有三种格式。</p>
+<hr />
+<h2 id="q172025-04">Q17：[来源:牛客][2025-04] 生成式大模型为什么生成的文本比较丰富不死板？</h2>
+<h3 id="_49">考察点</h3>
+<p>对 LLM 生成机制原理的理解。</p>
+<h3 id="_50">解答思路</h3>
+<ol>
+<li>解释概率分布和采样策略</li>
+<li>说明温度参数的作用</li>
+<li>提到训练数据多样性</li>
+</ol>
+<h3 id="_51">参考答案</h3>
+<p>LLM 的生成本质上是<strong>条件概率分布</strong>：给定前文，模型为下一个 token 预测一个概率分布。丰富性来自三个方面：</p>
+<ol>
+<li><strong>概率采样而非确定性选择</strong>：即使某个 token 概率最高，采样策略（Top-P、Top-K）允许选择其他高概率 token，带来表达的多样性</li>
+<li><strong>温度参数（Temperature）</strong>：T&gt;1 使分布更均匀（更多样化），T&lt;1 使分布更尖锐（更确定），通过调节温度可以控制生成文本的创造力</li>
+<li><strong>训练数据的多样性</strong>：LLM 在万亿 token 的多样化语料上训练，学习了丰富的表达方式和语言风格</li>
+</ol>
+<p><strong>复读机问题：</strong> 当 Temperature=0 或使用 Greedy 时，相同前文总是输出相同后续，导致复读。这是因为模型在训练数据中见过大量重复模式。</p>
+<hr />
+<h2 id="q18datawhale2025-04-emergent-abilities">Q18：[来源:Datawhale][2025-04] 什么是"涌现能力"（Emergent Abilities）？它在什么规模下出现？</h2>
+<h3 id="_52">考察点</h3>
+<p>对大模型规模效应的理解。</p>
+<h3 id="_53">解答思路</h3>
+<ol>
+<li>定义涌现能力</li>
+<li>举例说明</li>
+<li>讨论争议</li>
+</ol>
+<h3 id="_54">参考答案</h3>
+<p>涌现能力指模型在小规模时不具备，但当参数量达到某个阈值后<strong>突然获得</strong>的能力。这些能力在训练数据中并未显式教授，而是模型从大规模数据中"自发"学习的结果。</p>
+<p><strong>经典例子：</strong>
+- 思维链推理（CoT）：只有当模型达到数十 B 参数时，"Let's think step by step" 才能有效触发推理
+- 代码生成：小规模模型只能补全单行代码，大规模模型能生成完整函数
+- 跨语言迁移：未显式训练的翻译能力在大规模时自然出现</p>
+<p><strong>出现规模：</strong> Wei et al. (2022) 发现涌现通常在 ~10B 参数以上开始出现，在 ~100B 时更加明显。但这存在争议——有些研究认为涌现是评估指标的离散性造成的"错觉"，当用连续指标评估时，能力是渐进增长的而非突变的。</p>
+<hr />
+<h2 id="q19datawhale2025-05-react">Q19：[来源:Datawhale][2025-05] ReAct 框架的工作原理是什么？如何将思维链和行动结合？</h2>
+<h3 id="_55">考察点</h3>
+<p>对 Agent 核心范式的理解。</p>
+<h3 id="_56">解答思路</h3>
+<ol>
+<li>解释 ReAct 的 Thought-Action-Observation 循环</li>
+<li>说明与传统 CoT 的区别</li>
+<li>给出执行流程示例</li>
+</ol>
+<h3 id="_57">参考答案</h3>
+<p>ReAct（Reason + Act）的核心思想：让模型在推理过程中<strong>交替进行思考和行动</strong>，而非一次性生成完整答案。</p>
+<p><strong>循环流程：</strong>
+1. <strong>Thought（思考）</strong>：模型分析当前状态，决定下一步需要什么信息或操作
+2. <strong>Action（行动）</strong>：模型调用外部工具（搜索、计算、API 等）获取信息
+3. <strong>Observation（观察）</strong>：工具返回执行结果
+4. 回到 Thought，基于 Observation 继续推理，直到得出最终答案</p>
+<p><strong>示例：</strong>
+<div class="highlight"><pre><span></span><code>Q: 苹果公司的创始人出生在哪一年？
+Thought: 我需要先知道苹果公司的创始人是谁。让我搜索一下。
+Action: Search[&quot;苹果公司 创始人&quot;]
+Observation: 史蒂夫·乔布斯、史蒂夫·沃兹尼亚克、罗恩·韦恩
+Thought: 创始人是史蒂夫·乔布斯，现在我需要查他的出生年份。
+Action: Search[&quot;史蒂夫·乔布斯 出生年份&quot;]
+Observation: 1955 年 2 月 24 日
+Answer: 1955 年
+</code></pre></div></p>
+<p><strong>加分项：</strong> 提到 ReAct 的失败模式——模型可能"幻觉"不存在的 Action（幻觉行动），或在 Action 返回意外结果时陷入死循环。</p>
+<hr />
+<h2 id="q202025-04-agent-function-calling">Q20：[来源:牛客][2025-04] Agent 如何学会调用外部工具？Function Calling 的原理是什么？</h2>
+<h3 id="_58">考察点</h3>
+<p>对工具调用机制的理解。</p>
+<h3 id="_59">解答思路</h3>
+<ol>
+<li>解释 Function Calling 的训练方式</li>
+<li>说明 JSON Schema 的作用</li>
+<li>对比微调 vs 提示词方法</li>
+</ol>
+<h3 id="_60">参考答案</h3>
+<p><strong>Function Calling 的原理：</strong> 模型在预训练阶段见过大量"函数调用"模式，在微调阶段进一步学习了结构化输出的能力。当用户提供工具定义（JSON Schema）时，模型通过以下步骤决定调用哪个工具：</p>
+<ol>
+<li><strong>意图理解</strong>：模型分析用户输入，判断是否需要调用外部工具</li>
+<li><strong>工具匹配</strong>：根据工具的名称、描述和参数定义，选择最合适的工具</li>
+<li><strong>参数提取</strong>：从用户输入中提取工具所需的参数值</li>
+<li><strong>结构化输出</strong>：以 JSON 格式返回工具调用信息</li>
+</ol>
+<p><strong>训练方式：</strong>
+- <strong>提示词方法</strong>：在 system prompt 中提供工具描述，依赖模型的 in-context learning 能力
+- <strong>微调方法</strong>：用工具调用数据集对模型进行 SFT，使其更可靠地输出正确的工具调用格式</p>
+<p>现代模型（GPT-4、Claude、Qwen）已原生支持 Function Calling，无需微调即可在提示词中定义工具。</p>
+<hr />
+<h2 id="q21datawhale2025-04-agent">Q21：[来源:Datawhale][2025-04] 如何为 Agent 设计短期记忆和长期记忆系统？</h2>
+<h3 id="_61">考察点</h3>
+<p>对 Agent 记忆架构的理解。</p>
+<h3 id="_62">解答思路</h3>
+<ol>
+<li>定义短期和长期记忆</li>
+<li>说明各自的存储方案</li>
+<li>提到检索策略</li>
+</ol>
+<h3 id="_63">参考答案</h3>
+<p><strong>短期记忆（对话上下文）：</strong>
+- 存储在上下文窗口中，直接作为对话历史传递给模型
+- 管理策略：滑动窗口裁剪（只保留最近 N 轮）、摘要压缩（用 LLM 将历史压缩为概要）、重要性保留（只保留关键信息）
+- 限制：受上下文窗口大小限制（通常 4K-128K token）</p>
+<p><strong>长期记忆（持久化知识）：</strong>
+- 存储在向量数据库中，通过检索按需加载
+- 写入时机：对话中的关键事实、用户偏好、任务状态
+- 检索策略：时间衰减权重 + 语义相关性混合排序
+- 前沿实践：MemGPT 使用分层存储，将"活跃"记忆放在上下文窗口，"休眠"记忆存储在向量库中按需召回</p>
+<p><strong>加分项：</strong> 提到记忆系统的质量比数量更重要——无差别记录所有对话会导致噪声淹没关键信息，应在写入时进行重要性过滤和去重。</p>
+<hr />
+<h2 id="q22datawhale2025-04-rag">Q22：[来源:Datawhale][2025-04] 如何全面评估 RAG 系统的性能？检索和生成阶段分别用什么指标？</h2>
+<h3 id="_64">考察点</h3>
+<p>对 RAG 评估体系的理解。</p>
+<h3 id="_65">解答思路</h3>
+<ol>
+<li>分别说明检索和生成阶段的评估</li>
+<li>介绍 RAGAS 四大指标</li>
+<li>给出实操建议</li>
+</ol>
+<h3 id="_66">参考答案</h3>
+<p><strong>检索阶段评估：</strong>
+- <strong>Hit Rate</strong>：正确答案所在的文档是否在前 K 个检索结果中
+- <strong>MRR（Mean Reciprocal Rank）</strong>：正确答案在结果中的排名倒数均值
+- <strong>NDCG</strong>：考虑排名权重的相关性指标
+- <strong>Context Precision（RAGAS）</strong>：检索到的上下文中与问题相关的内容占比</p>
+<p><strong>生成阶段评估：</strong>
+- <strong>Faithfulness（RAGAS）</strong>：生成答案是否忠实于检索到的上下文，衡量幻觉程度
+- <strong>Answer Relevancy（RAGAS）</strong>：答案与问题的相关程度
+- <strong>Context Recall（RAGAS）</strong>：参考答案中的信息有多少在检索到的上下文中出现
+- <strong>LLM-as-Judge</strong>：用 GPT-4 等强模型对答案进行整体评分</p>
+<p><strong>实操建议：</strong> 构建 100-500 条黄金 QA 数据集，每次系统改动后自动跑评估回归测试，防止效果退化。</p>
+<hr />
+<h2 id="q23datawhale2025-05-lost-in-the-middle">Q23：[来源:Datawhale][2025-05] 什么是"Lost in the Middle"问题？如何缓解？</h2>
+<h3 id="_67">考察点</h3>
+<p>对长上下文 LLM 行为特征的理解。</p>
+<h3 id="_68">解答思路</h3>
+<ol>
+<li>定义 Lost in the Middle 现象</li>
+<li>解释原因</li>
+<li>给出缓解策略</li>
+</ol>
+<h3 id="_69">参考答案</h3>
+<p>Lost in the Middle 指 LLM 在长上下文中更容易利用开头和结尾的信息，而<strong>忽略中间部分</strong>内容的现象（Liu et al., 2023）。</p>
+<p><strong>原因：</strong> 注意力权重在序列两端天然更强，中间位置的 token 获得的注意力相对较少。位置编码在长距离下的精度衰减也是因素之一。</p>
+<p><strong>对 RAG 的影响：</strong> 如果把多个检索片段拼接成上下文，关键信息放在中间段落时，模型很可能"视而不见"。</p>
+<p><strong>缓解策略：</strong>
+- <strong>重排序</strong>：将最相关的文档片段放在上下文开头和结尾
+- <strong>减少上下文长度</strong>：只保留最相关的 3-5 个片段，而非堆砌 20+ 个
+- <strong>结构化输入</strong>：用明确的标记（如 <code>[Context 1]</code>, <code>[Context 2]</code>）分隔不同片段
+- <strong>多轮生成</strong>：先让模型总结各片段要点，再基于总结生成答案</p>
+<hr />
+<h2 id="q242026-04-mcpmodel-context-protocol-function-calling">Q24：[来源:知乎/卡码笔记][2026-04] MCP（Model Context Protocol）和 Function Calling 有什么本质区别？</h2>
+<h3 id="_70">考察点</h3>
+<p>对 2026 年最新工具调用标准 MCP 的理解深度，以及与已有 Function Calling 机制的对比分析能力。</p>
+<h3 id="_71">解答思路</h3>
+<ol>
+<li>解释 Function Calling 的本质：LLM 原生能力，模型直接输出结构化调用指令</li>
+<li>解释 MCP 的本质：标准化通信协议，定义了 Client-Server 之间的交互规范</li>
+<li>从架构、部署、生态三个维度对比</li>
+</ol>
+<h3 id="_72">参考答案</h3>
+<p><strong>Function Calling 的本质：</strong> 是 LLM 的<strong>内置能力</strong>——模型在训练时学习了结构化输出模式，能根据用户输入和工具描述（JSON Schema）生成工具调用指令。它不涉及通信协议，只是模型的一种输出格式。流程：用户输入 → LLM 决定调用工具 → 输出 JSON → 宿主程序解析 JSON → 执行工具 → 结果返回 LLM。</p>
+<p><strong>MCP 的本质：</strong> 是一个<strong>通信协议标准</strong>——定义了 AI 应用（Client）与工具服务（Server）之间如何通过 JSON-RPC 进行通信。它解决了 Function Calling 在规模化时的工程痛点：每个工具都需要手动编写适配代码，10 个工具就要写 10 套对接逻辑。</p>
+<p><strong>核心差异对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Function Calling</th>
+<th>MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>LLM 输出格式</td>
+<td>工具通信协议标准</td>
+</tr>
+<tr>
+<td>实现</td>
+<td>依赖模型训练</td>
+<td>标准化接口，任何模型可用</td>
+</tr>
+<tr>
+<td>工具接入</td>
+<td>每次新增工具需改代码</td>
+<td>实现 MCP Server 即可，零代码改动</td>
+</tr>
+<tr>
+<td>发现能力</td>
+<td>工具描述写在 Prompt 里</td>
+<td>支持动态工具发现（tools/list）</td>
+</tr>
+<tr>
+<td>生态</td>
+<td>各模型厂商各自实现</td>
+<td>一次接入，跨模型复用</td>
+</tr>
+<tr>
+<td>权限管理</td>
+<td>由宿主程序自行处理</td>
+<td>协议层支持鉴权和沙箱隔离</td>
+</tr>
+</tbody>
+</table>
+<p><strong>生产实践建议：</strong> 1-5 个工具场景用 Function Calling 足够简单；10+ 工具或需要跨项目复用时，MCP 的工程优势显著。</p>
+<p><strong>加分项：</strong> 提到 MCP 基于 JSON-RPC 2.0 协议，支持 stdio 和 SSE 两种传输方式。stdio 适合本地进程间通信，SSE 适合远程服务调用。MCP 还支持 Resources（获取上下文数据）和 Prompts（预定义交互模板）两种能力，不仅是工具调用。</p>
+<hr />
+<h2 id="q252026-04-a2aagent-to-agent-mcp">Q25：[来源:知乎/卡码笔记][2026-04] A2A（Agent-to-Agent）协议是什么？和 MCP 的关系是什么？</h2>
+<h3 id="_73">考察点</h3>
+<p>对 2026 年新兴 Agent 通信标准的了解，以及协议间的互补关系分析。</p>
+<h3 id="_74">解答思路</h3>
+<ol>
+<li>定义 A2A 协议的目的和解决的问题</li>
+<li>对比 MCP（Client-Server 工具调用）和 A2A（Agent 间对等通信）</li>
+<li>说明两者如何协同工作</li>
+</ol>
+<h3 id="_75">参考答案</h3>
+<p><strong>A2A 协议：</strong> Google 主导推出的 Agent 间通信标准，定义了<strong>独立的 AI Agent 之间如何发现和协作</strong>。它解决的是 MCP 无法覆盖的场景——两个独立的 Agent 服务（可能属于不同组织、运行在不同基础设施上）需要跨网络进行任务委托和结果交换。</p>
+<p><strong>MCP 与 A2A 的关系：互补而非替代。</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>MCP</th>
+<th>A2A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通信模式</td>
+<td>Client-Server（主从）</td>
+<td>Agent-to-Agent（对等）</td>
+</tr>
+<tr>
+<td>信任边界</td>
+<td>同一应用内部</td>
+<td>跨应用、跨组织</td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>Agent 调用内部工具（数据库、API）</td>
+<td>Agent A 委托 Agent B 完成子任务</td>
+</tr>
+<tr>
+<td>身份验证</td>
+<td>进程内或 API Key</td>
+<td>需要跨域身份认证</td>
+</tr>
+<tr>
+<td>工具发现</td>
+<td>tools/list</td>
+<td>AgentCard 发布能力声明</td>
+</tr>
+</tbody>
+</table>
+<p><strong>比喻：</strong> MCP 像是"公司内部的工作流程"（你调用公司的打印机、数据库），A2A 像是"公司之间的商务合作"（你的公司委托另一家公司提供服务）。</p>
+<p><strong>为什么 MCP 解决不了 A2A 的问题：</strong>
+- MCP 假设 Server 是受信任的工具服务，不具备 Agent 的自主决策能力
+- A2A 需要支持任务委派、进度回调、部分结果返回等复杂交互
+- A2A 需要处理跨域安全、服务发现、能力协商等分布式系统问题</p>
+<p><strong>加分项：</strong> 提到 2026 年的趋势是 MCP + A2A 组合使用——Agent 通过 MCP 管理内部工具，通过 A2A 与外部 Agent 协作，形成完整的 Agentic 生态。</p>
+<hr />
+<h2 id="q262026-04-skills-system-promptfew-shot">Q26：[来源:知乎/卡码笔记][2026-04] Skills 是什么？和 System Prompt、Few-shot 有什么区别？</h2>
+<h3 id="_76">考察点</h3>
+<p>对 Agent 能力扩展机制的理解，以及不同知识注入方式的适用场景判断。</p>
+<h3 id="_77">解答思路</h3>
+<ol>
+<li>定义 Skills 的概念和存储形式</li>
+<li>对比 System Prompt、Few-shot、Skills 的差异</li>
+<li>说明各自的适用场景</li>
+</ol>
+<h3 id="_78">参考答案</h3>
+<p><strong>Skills 的本质：</strong> 是 Agent 的<strong>可复用能力包</strong>——通常以 Markdown 文件形式定义，包含场景描述、触发条件、可用工具、执行步骤和约束规则。当用户输入匹配 Skills 的触发条件时，Agent 自动加载该 Skill 的完整上下文，获得特定领域的专业能力。</p>
+<p><strong>三者对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>System Prompt</th>
+<th>Few-shot</th>
+<th>Skills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内容</td>
+<td>角色设定 + 全局规则</td>
+<td>输入-输出示例</td>
+<td>完整的能力定义（触发+工具+步骤）</td>
+</tr>
+<tr>
+<td>加载时机</td>
+<td>会话开始时一次性加载</td>
+<td>作为 Prompt 示例嵌入</td>
+<td>按触发条件动态加载</td>
+</tr>
+<tr>
+<td>作用域</td>
+<td>整个会话</td>
+<td>仅影响当前请求的生成</td>
+<td>激活后影响后续多步执行</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>静态，修改需重启</td>
+<td>静态</td>
+<td>动态，可按需启用/禁用</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>较小（几百 token）</td>
+<td>中等（每个示例 100-500 token）</td>
+<td>较大（可达数千 token）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>适用场景：</strong>
+- System Prompt：定义 Agent 的"人格"和全局行为准则
+- Few-shot：纠正模型的输出格式或风格偏好
+- Skills：赋予 Agent 完成特定领域任务的完整能力（如"邮件处理 Skill"包含邮件解析、模板匹配、发送工具调用等一整套流程）</p>
+<p><strong>安全风险：</strong> Skills 没有进程隔离——如果 Skill 文件被篡改，Agent 会忠实地执行恶意指令。因此需要 Skill 的版本控制、签名验证和权限审查。</p>
+<hr />
+<h2 id="q2753aicsdn2026-04-loradorapissa-lora">Q27：[来源:53AI/CSDN][2026-04] LoRA+、DoRA、PiSSA 等进阶方法与基础 LoRA 的差异是什么？</h2>
+<h3 id="_79">考察点</h3>
+<p>对参数高效微调技术前沿发展的跟踪，以及不同 LoRA 变体的选型能力。</p>
+<h3 id="_80">解答思路</h3>
+<ol>
+<li>简述每种方法的核心创新</li>
+<li>对比效果和复杂度</li>
+<li>给出选型建议</li>
+</ol>
+<h3 id="_81">参考答案</h3>
+<p><strong>LoRA+：</strong> 对 LoRA 的 A 矩阵和 B 矩阵使用<strong>不同的学习率</strong>（B 矩阵学习率是 A 的 16 倍）。理论基础：B 矩阵的梯度范数远大于 A，统一学习率会导致 B 更新过快。效果：训练速度提升 2 倍，最终效果提升 0.5-1%。</p>
+<p><strong>DoRA（Weight-Decomposed Low-Rank Adaptation）：</strong> 将权重分解为<strong>幅度（magnitude）和方向（direction）</strong>两个分量，分别进行适配。公式：W = m · V / ||V||，其中 m 是可训练的幅度向量，V 是低秩方向矩阵。优势：比 LoRA 更接近全量微调的效果，特别是在复杂推理任务上。</p>
+<p><strong>PiSSA（Principal Singular Values and Vectors Adaptation）：</strong> 用 <strong>SVD 分解初始化</strong> LoRA 的 A 和 B 矩阵，而非随机初始化。保留预训练权重的主要奇异值和奇异向量，使 LoRA 从一开始就沿着最重要的方向学习。优势：收敛速度更快（通常少 30-50% 训练步数），最终效果更好。</p>
+<p><strong>对比总结：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>核心创新</th>
+<th>训练速度</th>
+<th>效果提升</th>
+<th>实现复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LoRA</td>
+<td>低秩矩阵注入</td>
+<td>基准</td>
+<td>基准</td>
+<td>低</td>
+</tr>
+<tr>
+<td>LoRA+</td>
+<td>差异化学习率</td>
+<td>2x 快</td>
+<td>+0.5-1%</td>
+<td>低</td>
+</tr>
+<tr>
+<td>DoRA</td>
+<td>幅度-方向分解</td>
+<td>1x</td>
+<td>+1-2%</td>
+<td>中</td>
+</tr>
+<tr>
+<td>PiSSA</td>
+<td>SVD 初始化</td>
+<td>收敛更快</td>
+<td>+1-2%</td>
+<td>中</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选型建议：</strong> 简单任务 LoRA+ 性价比最高；复杂推理任务选 DoRA 或 PiSSA；追求极致效果的可以用 DoRA+PiSSA 组合。</p>
+<hr />
+<h2 id="q2853aicsdn2026-04-catastrophic-forgetting">Q28：[来源:53AI/CSDN][2026-04] 什么是 Catastrophic Forgetting（灾难性遗忘）？微调中如何缓解？</h2>
+<h3 id="_82">考察点</h3>
+<p>对大模型微调中经典问题的理解和解决方案积累。</p>
+<h3 id="_83">参考答案</h3>
+<p>Catastrophic Forgetting 指模型在学习新任务时，<strong>遗忘之前学到的知识</strong>的现象。根本原因：神经网络的所有参数在训练新数据时被更新，旧知识对应的权重被覆盖。</p>
+<p><strong>缓解策略：</strong></p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>原理</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rehearsal Buffer</strong></td>
+<td>保留一部分旧数据，每次训练时混合新旧样本一起训练</td>
+<td>持续学习/增量微调</td>
+</tr>
+<tr>
+<td><strong>LoRA/PEFT</strong></td>
+<td>冻结基座权重，只训练少量新增参数，不破坏原始知识</td>
+<td>任何微调场景</td>
+</tr>
+<tr>
+<td><strong>弹性权重固化（EWC）</strong></td>
+<td>对重要参数施加更大的正则化约束，防止其大幅变化</td>
+<td>多任务学习</td>
+</tr>
+<tr>
+<td><strong>学习率衰减</strong></td>
+<td>使用极低学习率（1e-5 以下），避免参数剧烈变化</td>
+<td>领域适配</td>
+</tr>
+<tr>
+<td><strong>梯度裁剪</strong></td>
+<td>限制单步梯度幅度，防止过大的参数更新</td>
+<td>所有微调</td>
+</tr>
+</tbody>
+</table>
+<p><strong>生产实践：</strong> LoRA/QLoRA 是缓解灾难性遗忘最简单有效方案——冻结的基座权重不会被修改，旧知识天然保留。如果需要多任务，只需保存多个 LoRA 适配器并在推理时切换。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.top", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

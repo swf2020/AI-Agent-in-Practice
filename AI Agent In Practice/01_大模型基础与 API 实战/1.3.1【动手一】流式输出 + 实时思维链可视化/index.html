@@ -1,0 +1,4752 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://swf2020.github.io/AI-Agent-in-Practice/AI%20Agent%20In%20Practice/01_%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%20API%20%E5%AE%9E%E6%88%98/1.3.1%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%20%2B%20%E5%AE%9E%E6%97%B6%E6%80%9D%E7%BB%B4%E9%93%BE%E5%8F%AF%E8%A7%86%E5%8C%96/">
+      
+      
+        <link rel="prev" href="../1.3%20Prompt%20Engineering%20%E5%AE%9E%E6%88%98/">
+      
+      
+        <link rel="next" href="../1.3.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%8F%90%E7%A4%BA%E8%AF%8D%E8%B0%83%E8%AF%95%E5%99%A8/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>【动手一】流式输出 + 实时思维链可视化 - AI Agent in Practice</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+
+      
+    
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+  });
+</script>
+
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="AI Agent in Practice" class="md-header__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent in Practice
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              【动手一】流式输出 + 实时思维链可视化
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-tabs__link">
+          
+  
+  
+  00_写给读者
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-tabs__link">
+          
+  
+  
+  01_大模型基础与 API 实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-tabs__link">
+          
+  
+  
+  02_RAG（检索增强生成）
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.1%20Function%20Calling%20%E5%8E%9F%E7%90%86%E4%B8%8E%E5%8D%8F%E8%AE%AE/" class="md-tabs__link">
+          
+  
+  
+  03_Function Calling MCP 与工具使用
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-tabs__link">
+          
+  
+  
+  04_AI Agent 核心架构
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  05_Multi-Agent 系统
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-tabs__link">
+          
+  
+  
+  06_生产级落地关键技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  07_垂直场景实战项目
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-tabs__link">
+          
+  
+  
+  08_AI 大模型与 Agent 技术演进全景
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/01_%E5%8E%9F%E7%90%86%E9%A2%98/" class="md-tabs__link">
+          
+  
+  
+  09_面试题真题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-tabs__link">
+          
+  
+  
+  10_附录
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Agent in Practice" class="md-nav__button md-logo" aria-label="AI Agent in Practice" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent in Practice
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    00_写给读者
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    00_写给读者
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00_%E5%86%99%E7%BB%99%E8%AF%BB%E8%80%85/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习路线图
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01_大模型基础与 API 实战
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    01_大模型基础与 API 实战
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.1%20LLM%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM核心概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.1%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%E5%85%A8%E6%99%AF%E4%B8%8E%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术全景与选型决策
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.2%20LoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.3%20QLoRA%20%E5%8E%9F%E7%90%86%E7%B2%BE%E8%AE%B2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QLoRA 原理精讲
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.4%20%E6%95%B0%E6%8D%AE%E5%B7%A5%E7%A8%8B%EF%BC%9A%E5%BE%AE%E8%B0%83%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%86%E5%A4%87%E4%B8%8E%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数据工程：微调数据的准备与质量控制
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E7%94%A8%20QLoRA%20%E5%BE%AE%E8%B0%83%20Qwen2.5-7B%20%E6%8C%87%E4%BB%A4%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】用 QLoRA 微调 Qwen2.5-7B 指令模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E5%BE%AE%E8%B0%83%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%AE%9E%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】微调效果评估与对比实验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.2.7%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%9F%BA%E4%BA%8E%20Unsloth%20%E7%9A%84%E9%AB%98%E6%95%88%E5%BE%AE%E8%B0%83%E5%8A%A0%E9%80%9F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】基于 Unsloth 的高效微调加速实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.3%20Prompt%20Engineering%20%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Engineering 实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】流式输出 + 实时思维链可视化
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】流式输出 + 实时思维链可视化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实验目标
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        架构总览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        环境准备
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step 实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step 实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-chunk-ttft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1：理解 chunk 结构与 TTFT 测量
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2corepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2：核心流解析器（core.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3rich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3：终端版——Rich 双栏实时渲染
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4streamlit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4：Streamlit 网页版
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5：对比实验——量化感受三种模式差异
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完整运行验证
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常见报错与解决方案
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        扩展练习（可选）
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.3.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%8F%90%E7%A4%BA%E8%AF%8D%E8%B0%83%E8%AF%95%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】构建一个提示词调试器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.3.3%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%89%E3%80%91%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E8%B4%A8%E9%87%8F%E8%AF%84%E4%BC%B0%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】多语言翻译质量评估器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.3.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E5%9B%9B%E3%80%91%E8%87%AA%E5%8A%A8%E5%8C%96%20Prompt%20%E4%BC%98%E5%8C%96%E5%99%A8%EF%BC%88DSPy%20%E5%85%A5%E9%97%A8%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手四】自动化 Prompt 优化器（DSPy 入门）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%9F%E4%B8%80%E5%B0%81%E8%A3%85%E5%A4%9A%E6%A8%A1%E5%9E%8B%E8%B0%83%E7%94%A8%E5%B1%82/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】统一封装多模型调用层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02_RAG（检索增强生成）
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    02_RAG（检索增强生成）
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.1%20RAG%20%E6%9E%B6%E6%9E%84%E5%85%A8%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 架构全景
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.2%20Embedding%20%E4%B8%8E%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding 与向量数据库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.3%20%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5%EF%BC%88%E7%A8%A0%E5%AF%86%20-%20%E7%A8%80%E7%96%8F%20-%20%E6%B7%B7%E5%90%88%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    检索策略（稠密-稀疏-混合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】从零搭建本地知识库问答系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91Advanced%20RAG%EF%BC%9A%E9%87%8D%E6%8E%92%E5%BA%8F%20%2B%20%E6%9F%A5%E8%AF%A2%E6%94%B9%E5%86%99/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】Advanced RAG：重排序 + 查询改写
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%89/2.6%20RAG%20%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB%EF%BC%88RAGAS%20%E6%A1%86%E6%9E%B6%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 评估体系（RAGAS 框架）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03_Function Calling MCP 与工具使用
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    03_Function Calling MCP 与工具使用
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.1%20Function%20Calling%20%E5%8E%9F%E7%90%86%E4%B8%8E%E5%8D%8F%E8%AE%AE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Calling 原理与协议
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2%20MCP%20%E5%8D%8F%E8%AE%AE%E8%AF%A6%E8%A7%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP 协议详解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2.1%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%B8%80%E3%80%91%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手一】文件系统操作 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.2.2%20%E3%80%90%E5%8A%A8%E6%89%8B%E4%BA%8C%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%20MCP%20Server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手二】数据库查询 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手三】代码执行沙箱 MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.3%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%BB%99%20LLM%20%E6%8E%A5%E5%85%A5%E6%90%9C%E7%B4%A2%20-%20%E8%AE%A1%E7%AE%97%E5%99%A8%20-%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】给 LLM 接入搜索-计算器-数据库工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_Function%20Calling%20MCP%20%E4%B8%8E%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/3.4%20%E5%B7%A5%E5%85%B7%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%B8%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具可靠性与错误处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04_AI Agent 核心架构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    04_AI Agent 核心架构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.1%20Agent%20%E5%AE%9A%E4%B9%89%EF%BC%9A%E6%84%9F%E7%9F%A5-%E8%A7%84%E5%88%92-%E8%A1%8C%E5%8A%A8%E5%BE%AA%E7%8E%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 定义：感知-规划-行动循环
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.2%20ReAct%20%E8%8C%83%E5%BC%8F%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ReAct 范式实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.3%20Planning%20%E7%AD%96%E7%95%A5%EF%BC%88ToT%20-%20GoT%20-%20Plan-and-Execute%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planning 策略（ToT-GoT-Plan-and-Execute）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.4%20%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    记忆系统设计
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_AI%20Agent%20%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84/4.5%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E7%94%A8%20LangGraph%20%E6%9E%84%E5%BB%BA%E6%9C%89%E7%8A%B6%E6%80%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】用 LangGraph 构建有状态 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05_Multi-Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    05_Multi-Agent 系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.1%20%E5%A4%9A%20Agent%20%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%B1%82%E7%BA%A7%20-%20%E5%AF%B9%E7%AD%89%20-%20%E6%B5%81%E6%B0%B4%E7%BA%BF%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多 Agent 协作模式（层级-对等-流水线）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.2%20AutoGen%20%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AutoGen 框架实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.3%20CrewAI%20%E8%A7%92%E8%89%B2%E5%88%86%E5%B7%A5%E5%AE%9E%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CrewAI 角色分工实战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_Multi-Agent%20%E7%B3%BB%E7%BB%9F/5.4%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%90%AD%E5%BB%BA%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%2B%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%8F%8C%20Agent%20%E7%B3%BB%E7%BB%9F/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】搭建代码生成+审查的双 Agent 系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06_生产级落地关键技术
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    06_生产级落地关键技术
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.1%20%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA%E4%B8%8E%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    流式输出与用户体验
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.2%20%E6%88%90%E6%9C%AC%E6%8E%A7%E5%88%B6%E4%B8%8E%20Token%20%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成本控制与 Token 优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.3%20%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%88Prompt%20Cache%20-%20Semantic%20Cache%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缓存策略（Prompt Cache-Semantic Cache）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.4%20%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%B9%E9%BD%90%EF%BC%88Prompt%20Injection%20%E9%98%B2%E5%BE%A1%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安全与对齐（Prompt Injection 防御）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.5%20%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%EF%BC%88LangSmith%20-%20LangFuse%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    可观测性（LangSmith-LangFuse）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_%E7%94%9F%E4%BA%A7%E7%BA%A7%E8%90%BD%E5%9C%B0%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF/6.6%20%E3%80%90%E5%8A%A8%E6%89%8B%E3%80%91%E6%9E%84%E5%BB%BA%E5%B8%A6%E7%9B%91%E6%8E%A7%E7%9A%84%E7%94%9F%E4%BA%A7%E7%BA%A7%20Agent%20%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    【动手】构建带监控的生产级 Agent 服务
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07_垂直场景实战项目
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    07_垂直场景实战项目
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.1%20%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9AAI%20%E9%80%89%E8%82%A1%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88%E5%9F%BA%E4%BA%8E%20TradingAgents%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目一：AI 选股分析师（基于 TradingAgents）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.2%20%E9%A1%B9%E7%9B%AE%E4%BA%8C%EF%BC%9A%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E5%BA%93%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目二：企业知识库智能问答
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.3%20%E9%A1%B9%E7%9B%AE%E4%B8%89%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%20Agent%EF%BC%88Text-to-SQL%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目三：数据分析 Agent（Text-to-SQL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_%E5%9E%82%E7%9B%B4%E5%9C%BA%E6%99%AF%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/7.4%20%E9%A1%B9%E7%9B%AE%E5%9B%9B%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%20Agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目四：自动化工作流 Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    08_AI 大模型与 Agent 技术演进全景
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.1%20%E5%89%8D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%97%B6%E4%BB%A3%EF%BC%882000-2017%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前深度学习时代（2000-2017）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.2%20Transformer%20%E9%9D%A9%E5%91%BD%EF%BC%882017-2019%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer 革命（2017-2019）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.3%20%E8%A7%84%E6%A8%A1%E5%AE%9A%E5%BE%8B%E4%B8%8E%E6%B6%8C%E7%8E%B0%E8%83%BD%E5%8A%9B%EF%BC%882020-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    规模定律与涌现能力（2020-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.4%20%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90%E4%B8%8E%20RLHF%20%E6%97%B6%E4%BB%A3%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指令对齐与 RLHF 时代（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.5%20%E5%BC%80%E6%BA%90%E7%94%9F%E6%80%81%E7%88%86%E5%8F%91%E4%B8%8E%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AB%9E%E8%B5%9B%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开源生态爆发与长上下文竞赛（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.1.6%20%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E8%8C%83%E5%BC%8F%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    推理模型范式（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.1%20%E5%89%8D%20LLM%20Agent%20%E6%97%B6%E4%BB%A3%EF%BC%88%E7%BA%A6%201960s-2022%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前 LLM Agent 时代（约1960s-2022）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.2%20LLM%20Agent%20%E8%90%8C%E8%8A%BD%E6%9C%9F%EF%BC%882022-2023%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Agent 萌芽期（2022-2023）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.3%20%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%8D%8F%E8%AE%AE%E7%9A%84%E8%A7%84%E8%8C%83%E5%8C%96%EF%BC%882023-2024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    框架与协议的规范化（2023-2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.4%20Computer%20Use%20%E4%B8%8E%20GUI%20Agent%EF%BC%882024%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computer Use 与 GUI Agent（2024）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.2.5%20Agentic%20AI%20%E8%B5%B0%E5%90%91%E7%94%9F%E4%BA%A7%EF%BC%882024-2025%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agentic AI 走向生产（2024-2025）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.1%20%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%EF%BC%9A%E4%BB%8E%20512%20Token%20%E5%88%B0%E6%97%A0%E9%99%90%E6%B5%81%E5%BC%8F%E8%AE%B0%E5%BF%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    上下文长度：从512 Token到无限流式记忆
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.2%20RAG%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%EF%BC%9A%E5%85%B3%E9%94%AE%E5%AD%97%E6%A3%80%E7%B4%A2%E5%88%B0%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%A2%9E%E5%BC%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RAG 技术演进：关键字检索到知识图谱增强
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.3%20%E5%A4%9A%E6%A8%A1%E6%80%81%EF%BC%9A%E4%BB%8E%20CLIP%20%E5%88%B0%E5%85%A8%E6%A8%A1%E6%80%81%E7%BB%9F%E4%B8%80%E6%A8%A1%E5%9E%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    多模态：从CLIP到全模态统一模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.4%20%E9%AB%98%E6%95%88%E6%8E%A8%E7%90%86%EF%BC%9A%E4%BB%8E%E9%87%8F%E5%8C%96%E5%8E%8B%E7%BC%A9%E5%88%B0%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E8%8A%AF%E7%89%87%E7%94%9F%E6%80%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    高效推理：从量化压缩到推理加速芯片生态
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.5%20%E5%AF%B9%E9%BD%90%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%20RLHF%20%E5%88%B0%20DPO%20%E5%88%B0%E5%AE%AA%E6%B3%95%20AI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对齐技术：从RLHF到DPO到宪法AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.3.6%20%E5%BE%AE%E8%B0%83%E6%8A%80%E6%9C%AF%EF%BC%9A%E4%BB%8E%E5%85%A8%E5%8F%82%E6%95%B0%E5%88%B0%E6%9E%81%E4%BD%8E%E6%88%90%E6%9C%AC%E9%80%82%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微调技术：从全参数到极低成本适配
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.1%20%E6%A8%A1%E5%9E%8B%E8%83%BD%E5%8A%9B%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4%EF%BC%882025-2030%EF%BC%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型能力演进预判（2025-2030）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.2%20Agent%20%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 架构演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.3%20%E6%8A%80%E6%9C%AF%E7%93%B6%E9%A2%88%E4%B8%8E%E5%BC%80%E6%94%BE%E6%80%A7%E6%8C%91%E6%88%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术瓶颈与开放性挑战
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.4%20%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E4%B8%8E%E7%94%9F%E6%80%81%E6%BC%94%E8%BF%9B%E9%A2%84%E5%88%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施与生态演进预判
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_AI%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%8E%20Agent%20%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%85%A8%E6%99%AF/8.5.5%20%E7%A4%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B8%8E%E7%9B%91%E7%AE%A1%E6%A0%BC%E5%B1%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    社会影响与监管格局
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    09_面试题真题
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    09_面试题真题
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/01_%E5%8E%9F%E7%90%86%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    原理题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/02_%E5%B7%A5%E7%A8%8B%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工程题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/03_%E8%AE%BE%E8%AE%A1%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    设计题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/04_%E8%A7%86%E9%87%8E%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    视野题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_%E9%9D%A2%E8%AF%95%E9%A2%98%E7%9C%9F%E9%A2%98/05_%E5%BC%80%E6%94%BE%E9%A2%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开放题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10_附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10_附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/A.%20%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    主流框架横向对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/B.%20%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%AF%BC%E8%88%AA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习资源导航
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_%E9%99%84%E5%BD%95/C.%20%E6%9C%AF%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    术语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实验目标
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        架构总览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        环境准备
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step 实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step 实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-chunk-ttft" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1：理解 chunk 结构与 TTFT 测量
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2corepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2：核心流解析器（core.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3rich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3：终端版——Rich 双栏实时渲染
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4streamlit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4：Streamlit 网页版
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5：对比实验——量化感受三种模式差异
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完整运行验证
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常见报错与解决方案
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        扩展练习（可选）
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">【动手一】流式输出 + 实时思维链可视化</h1>
+<h2 id="_2">实验目标</h2>
+<p>完成本节后，你将能够：</p>
+<ol>
+<li><strong>工程化实现 Streaming API</strong>：掌握 OpenAI 兼容 SDK 的流式调用方式，理解 chunk 结构与 TTFT（首 token 延迟）的测量方法，能将其封装成生产可用的工具函数。</li>
+<li><strong>构建实时 CoT 可视化界面</strong>：通过终端版（Rich）和网页版（Streamlit）两种方案，让模型"边思考边展示"，直观感受 token 逐步生成的过程。</li>
+<li><strong>理解 CoT 的工程本质</strong>：通过对比"直接回答 vs CoT Prompt vs DeepSeek 推理模型"三种模式，建立对推理过程的量化认知，而不只是知道"CoT 有效"这个结论。</li>
+</ol>
+<p>核心学习点：<strong>Streaming 不只是用户体验优化，它是理解模型推理过程的观测窗口。</strong></p>
+<hr />
+<h2 id="_3">架构总览</h2>
+<pre class="mermaid"><code>graph TD
+    A[用户输入 Prompt] --&gt; B{选择模式}
+    B --&gt;|CoT Prompt| C[OpenAI 兼容模型&lt;br/&gt;stream=True]
+    B --&gt;|DeepSeek 推理| D[deepseek-reasoner&lt;br/&gt;reasoning_content 字段]
+
+    C --&gt; E[StreamParser&lt;br/&gt;实时解析 &lt;think&gt; 标签]
+    D --&gt; F[StreamParser&lt;br/&gt;解析 reasoning_content / content]
+
+    E --&gt; G[StreamChunk 生成器&lt;br/&gt;chunk_type: thinking / answer]
+    F --&gt; G
+
+    G --&gt; H{渲染目标}
+    H --&gt;|终端版| I[Rich Live&lt;br/&gt;双栏 Panel 实时刷新]
+    H --&gt;|网页版| J[Streamlit&lt;br/&gt;双列布局 + 侧边栏指标]
+
+    I --&gt; K[指标收集&lt;br/&gt;TTFT / Token速率 / 时间戳]
+    J --&gt; K
+
+    K --&gt; L[对比实验报告&lt;br/&gt;思考速度曲线]</code></pre>
+<p>数据流的核心是一个<strong>有状态的流解析器</strong>（StreamParser）：它逐 token 消费原始流，识别 <code>&lt;think&gt;</code> 或 <code>&lt;thinking&gt;</code> 标签边界，将每个 chunk 标注类型后向上游 yield。终端版和网页版共享同一套解析逻辑，只是渲染层不同——这是工程上应该做的正确分层。</p>
+<hr />
+<h2 id="_4">环境准备</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建虚拟环境（uv）</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.11
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># Windows: .venv\Scripts\activate</span>
+
+<span class="c1"># 安装依赖</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>openai&gt;<span class="o">=</span><span class="m">1</span>.0.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>python-dotenv&gt;<span class="o">=</span><span class="m">1</span>.0.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>rich&gt;<span class="o">=</span><span class="m">13</span>.0.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>streamlit&gt;<span class="o">=</span><span class="m">1</span>.28.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>pytest&gt;<span class="o">=</span><span class="m">7</span>.0.0
+</code></pre></div>
+<blockquote>
+<p><strong>Colab 用户</strong>：<code>!pip install openai python-dotenv rich streamlit pytest</code>，Colab 中 Streamlit 需要配合 <code>pyngrok</code> 做端口转发，步骤见 Step 4 末尾说明。</p>
+</blockquote>
+<p>项目目录结构：</p>
+<div class="highlight"><pre><span></span><code>1.3.1_动手一_流式输出 + 实时思维链可视化/
+├── core_config.py        # 模型注册表（DeepSeek/Qwen/GPT-4o 统一管理）
+├── core.py               # 流解析核心逻辑（被终端版和网页版共享）
+├── main.py               # 主入口（终端模式）
+├── step1_raw_stream.py   # Step 1 原始 chunk 结构演示
+├── terminal_app.py       # 终端版（Rich）
+├── web_app.py            # 网页版（Streamlit）
+├── experiment.py         # 三模式对比实验
+├── smoke_test.py         # 最小验证脚本
+├── test_cot.py           # CoT 功能快速验证
+├── requirements.txt      # 依赖清单
+├── .env.example          # 环境变量模板
+└── tests/
+    └── test_main.py      # pytest 冒烟测试
+</code></pre></div>
+<p><code>.env</code> 文件（复制 <code>.env.example</code> 后填写）：</p>
+<div class="highlight"><pre><span></span><code><span class="nv">DEEPSEEK_API_KEY</span><span class="o">=</span>your_deepseek_api_key_here
+<span class="nv">DASHSCOPE_API_KEY</span><span class="o">=</span>your_dashscope_api_key_here
+<span class="nv">OPENAI_API_KEY</span><span class="o">=</span>your_openai_api_key_here<span class="w">   </span><span class="c1"># 可选</span>
+</code></pre></div>
+<hr />
+<h2 id="step-by-step">Step-by-Step 实现</h2>
+<h3 id="step-1-chunk-ttft">Step 1：理解 chunk 结构与 TTFT 测量</h3>
+<p><strong>目标</strong>：先裸调 SDK，搞清楚流式响应的数据结构，并测量两个核心指标：TTFT（Time To First Token）和完整响应时间。这是一切后续封装的基础——不理解原始结构，封装出来的代码迟早翻车。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># step1_raw_stream.py</span>
+<span class="c1"># 演示原始 chunk 结构，独立可运行</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_openai_client</span><span class="p">,</span> <span class="n">get_default_model</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">get_openai_client</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">get_default_model</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">inspect_stream</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    打印每个 chunk 的原始结构，用于理解 SDK 返回格式。</span>
+<span class="sd">    生产代码不需要这么做，这里纯粹是学习用途。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prompt: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">first_token_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">full_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+
+        <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">first_token_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">first_token_time</span> <span class="o">=</span> <span class="n">now</span>
+            <span class="n">ttft</span> <span class="o">=</span> <span class="n">first_token_time</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚡ TTFT: </span><span class="si">{</span><span class="n">ttft</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">full_text</span> <span class="o">+=</span> <span class="n">delta</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">total_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">generation_time</span> <span class="o">=</span> <span class="n">total_time</span> <span class="o">-</span> <span class="p">(</span><span class="n">first_token_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="k">if</span> <span class="n">first_token_time</span> <span class="k">else</span> <span class="n">total_time</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📊 统计&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   总耗时:     </span><span class="si">{</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   TTFT:       </span><span class="si">{</span><span class="n">ttft</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   生成耗时:   </span><span class="si">{</span><span class="n">generation_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   估算 tokens:</span><span class="si">{</span><span class="n">token_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Token/s:    </span><span class="si">{</span><span class="n">token_count</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">generation_time</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">inspect_stream</span><span class="p">(</span><span class="s2">&quot;1+1等于几？用一句话回答。&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>chunk.choices[0].delta.content</code> 是增量内容，每次可能是一个字、一个词甚至半个词（BPE 切法决定的）。<code>None</code> 表示流结束，⚠️ 不判断 None 直接拼接会 TypeError。</li>
+<li>TTFT 是衡量用户感知响应速度的核心指标，通常 1-2 秒内是可接受范围。超过 3 秒用户会明显感到卡顿。</li>
+<li>⚠️ <code>flush=True</code> 是终端实时输出的关键，Python 的 stdout 默认是行缓冲，不加这个参数字符会攒到换行才打印。</li>
+<li><code>get_openai_client()</code> 和 <code>get_default_model()</code> 从 <code>core_config.py</code> 统一读取配置，支持 DeepSeek、Qwen、GPT-4o 一键切换。</li>
+</ul>
+<hr />
+<h3 id="step-2corepy">Step 2：核心流解析器（<code>core.py</code>）</h3>
+<p><strong>目标</strong>：将原始流封装成一个带类型标注的 <code>StreamChunk</code> 生成器，同时处理 XML 标签的实时识别。这个模块是整个实验的核心，终端版和网页版都依赖它，所以设计要干净。</p>
+<p>设计决策说明：为什么用 XML 标签而不是 Markdown？因为 XML 标签是<strong>单字节顺序匹配</strong>的，可以在流中实时检测，而 Markdown 的 <code>```</code> 代码块需要等三个反引号全到才能确认，实时解析更麻烦。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># core.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">流式 CoT 解析核心模块。</span>
+<span class="sd">支持多种模型和推理模式：</span>
+<span class="sd">  1. CoT Prompt 模式（通用）：通过 &lt;think&gt;...&lt;/think&gt; 标签区分思考与回答</span>
+<span class="sd">  2. DeepSeek 推理模型：使用 deepseek-reasoner 原生推理能力</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_api_key</span><span class="p">,</span> <span class="n">get_base_url</span><span class="p">,</span> <span class="n">get_litellm_id</span><span class="p">,</span> <span class="n">ACTIVE_MODEL_KEY</span><span class="p">,</span> <span class="n">MODEL_REGISTRY</span>
+
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ChunkType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">THINKING</span> <span class="o">=</span> <span class="s2">&quot;thinking&quot;</span>  <span class="c1"># 推理过程（灰显）</span>
+    <span class="n">ANSWER</span> <span class="o">=</span> <span class="s2">&quot;answer&quot;</span>      <span class="c1"># 最终回答（高亮）</span>
+    <span class="n">META</span> <span class="o">=</span> <span class="s2">&quot;meta&quot;</span>          <span class="c1"># 元信息（如速率）</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StreamChunk</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;单个流式 chunk 的标准化结构。&quot;&quot;&quot;</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">chunk_type</span><span class="p">:</span> <span class="n">ChunkType</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_openai_client</span><span class="p">(</span><span class="n">model_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;根据 core_config 配置返回正确配置的 OpenAI 客户端。&quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">model_key</span> <span class="ow">or</span> <span class="n">ACTIVE_MODEL_KEY</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">MODEL_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cfg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">OpenAI</span><span class="p">()</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">get_api_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="n">get_base_url</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">OpenAI</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_default_model</span><span class="p">(</span><span class="n">model_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;根据 core_config 返回默认模型名称（SDK 用，去掉 provider 前缀）。&quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">model_key</span> <span class="ow">or</span> <span class="n">ACTIVE_MODEL_KEY</span>
+    <span class="n">litellm_id</span> <span class="o">=</span> <span class="n">get_litellm_id</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="c1"># OpenAI SDK 不需要 &quot;provider/&quot; 前缀，去掉它</span>
+    <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">litellm_id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">litellm_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">litellm_id</span>
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  模式一：CoT Prompt（OpenAI 兼容接口）</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+
+<span class="n">COT_SYSTEM_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">你是一个严谨的推理助手。</span>
+
+<span class="s2">在回答任何问题时，请严格遵循以下格式：</span>
+<span class="s2">1. 先在 &lt;think&gt; 标签内写出完整的推理过程（可以有多个步骤）</span>
+<span class="s2">2. 再在 &lt;answer&gt; 标签内给出最终答案（简洁清晰）</span>
+
+<span class="s2">格式示例：</span>
+<span class="s2">&lt;think&gt;</span>
+<span class="s2">首先分析题目...</span>
+<span class="s2">然后考虑...</span>
+<span class="s2">因此得出...</span>
+<span class="s2">&lt;/think&gt;</span>
+<span class="s2">&lt;answer&gt;</span>
+<span class="s2">最终答案是...</span>
+<span class="s2">&lt;/answer&gt;</span>
+
+<span class="s2">注意：两个标签都必须出现，不要省略推理过程。&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stream_cot_prompt</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StreamChunk</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    使用 CoT System Prompt 驱动流式输出，实时解析 &lt;think&gt; 标签。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prompt: 用户问题</span>
+<span class="sd">        model:  任何 OpenAI 兼容模型名称，默认根据 ACTIVE_MODEL_KEY 自动选择</span>
+<span class="sd">        temperature: 采样温度，推理任务建议 0.3-0.7</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        StreamChunk，chunk_type 区分 thinking 和 answer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">get_openai_client</span><span class="p">()</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="n">get_default_model</span><span class="p">()</span>
+
+    <span class="n">accumulated</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">processed_up_to</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">COT_SYSTEM_PROMPT</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">},</span>
+        <span class="p">],</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">accumulated</span> <span class="o">+=</span> <span class="n">delta</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;think&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">:</span>
+            <span class="n">think_start</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;think&gt;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;think&gt;&quot;</span><span class="p">)</span>
+            <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">think_start</span>
+            <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;/think&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">:</span>
+            <span class="n">think_end</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;/think&gt;&quot;</span><span class="p">)</span>
+            <span class="n">remaining_think</span> <span class="o">=</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:</span><span class="n">think_end</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">remaining_think</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">remaining_think</span><span class="p">,</span> <span class="n">chunk_type</span><span class="o">=</span><span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">)</span>
+            <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">think_end</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;/think&gt;&quot;</span><span class="p">)</span>
+            <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;answer&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:]:</span>
+            <span class="n">answer_tag_pos</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">,</span> <span class="n">processed_up_to</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">)</span>
+            <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">answer_tag_pos</span>
+
+        <span class="n">new_content</span> <span class="o">=</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:]</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;/think&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/answer&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;think&gt;&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">new_content</span><span class="p">:</span>
+                <span class="n">new_content</span> <span class="o">=</span> <span class="n">new_content</span><span class="p">[:</span><span class="n">new_content</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">)]</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">new_content</span><span class="p">:</span>
+            <span class="n">chunk_type</span> <span class="o">=</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span> <span class="k">if</span> <span class="n">in_thinking</span> <span class="k">else</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">ANSWER</span>
+            <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">new_content</span><span class="p">,</span> <span class="n">chunk_type</span><span class="o">=</span><span class="n">chunk_type</span><span class="p">)</span>
+            <span class="n">processed_up_to</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_content</span><span class="p">)</span>
+
+
+<span class="c1"># ─────────────────────────────────────────────</span>
+<span class="c1">#  模式二：DeepSeek 推理模型</span>
+<span class="c1"># ─────────────────────────────────────────────</span>
+
+<span class="n">DEEPSEEK_THINKING_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">你现在进入了深度推理模式。请按照以下严格的格式输出：</span>
+
+<span class="s2">**思考阶段**：在 &lt;thinking&gt; 和 &lt;/thinking&gt; 标签之间详细记录你的推理过程，包括：</span>
+<span class="s2">- 问题分析和理解</span>
+<span class="s2">- 关键假设和前提条件</span>
+<span class="s2">- 逐步推理步骤</span>
+<span class="s2">- 可能的验证方法</span>
+
+<span class="s2">**回答阶段**：在 &lt;answer&gt; 和 &lt;/answer&gt; 标签之间给出最终答案，确保：</span>
+<span class="s2">- 答案简洁明了</span>
+<span class="s2">- 直接回应用户问题</span>
+<span class="s2">- 使用自然友好的语言</span>
+
+<span class="s2">例如：</span>
+<span class="s2">&lt;thinking&gt;</span>
+<span class="s2">用户问的是一个数学问题...</span>
+<span class="s2">首先我需要理解题目...</span>
+<span class="s2">然后应用相关公式...</span>
+<span class="s2">验证计算结果...</span>
+<span class="s2">&lt;/thinking&gt;</span>
+<span class="s2">&lt;answer&gt;</span>
+<span class="s2">最终答案是：XXX</span>
+<span class="s2">&lt;/answer&gt;</span>
+
+<span class="s2">严格按照此格式输出，不要省略任何标签！&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stream_extended_thinking</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">budget_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span>
+    <span class="n">use_reasoner</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StreamChunk</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DeepSeek 思考链推理。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prompt:       用户问题</span>
+<span class="sd">        budget_tokens: 分配给思考过程的最大 token 数（越大推理越充分）</span>
+<span class="sd">        use_reasoner:  True 时使用 deepseek-reasoner 推理模型，</span>
+<span class="sd">                      False 时使用普通 chat 模型 + 系统提示词开启思考模式</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        StreamChunk，chunk_type=thinking 对应思考过程，answer 对应最终回复</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">get_openai_client</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">use_reasoner</span><span class="p">:</span>
+        <span class="c1"># 使用 DeepSeek 推理模型（deepseek-reasoner）</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">&quot;deepseek-reasoner&quot;</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span>
+            <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="s1">&#39;reasoning_content&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delta</span><span class="o">.</span><span class="n">reasoning_content</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">delta</span><span class="o">.</span><span class="n">reasoning_content</span><span class="p">,</span>
+                    <span class="n">chunk_type</span><span class="o">=</span><span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delta</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+                    <span class="n">chunk_type</span><span class="o">=</span><span class="n">ChunkType</span><span class="o">.</span><span class="n">ANSWER</span><span class="p">,</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 使用普通 chat 模型，通过系统提示词开启思考模式</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">get_default_model</span><span class="p">()</span>
+
+        <span class="n">accumulated</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">processed_up_to</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">},</span>
+            <span class="p">],</span>
+            <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">accumulated</span> <span class="o">+=</span> <span class="n">delta</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;thinking&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">:</span>
+                <span class="n">think_start</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;thinking&gt;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;thinking&gt;&quot;</span><span class="p">)</span>
+                <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">think_start</span>
+                <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;/thinking&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">:</span>
+                <span class="n">think_end</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;/thinking&gt;&quot;</span><span class="p">)</span>
+                <span class="n">remaining_think</span> <span class="o">=</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:</span><span class="n">think_end</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">remaining_think</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">remaining_think</span><span class="p">,</span> <span class="n">chunk_type</span><span class="o">=</span><span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">)</span>
+                <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">think_end</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;/thinking&gt;&quot;</span><span class="p">)</span>
+                <span class="n">in_thinking</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_thinking</span> <span class="ow">and</span> <span class="s2">&quot;&lt;answer&gt;&quot;</span> <span class="ow">in</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:]:</span>
+                <span class="n">answer_tag_pos</span> <span class="o">=</span> <span class="n">accumulated</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">,</span> <span class="n">processed_up_to</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">)</span>
+                <span class="n">processed_up_to</span> <span class="o">=</span> <span class="n">answer_tag_pos</span>
+
+            <span class="n">new_content</span> <span class="o">=</span> <span class="n">accumulated</span><span class="p">[</span><span class="n">processed_up_to</span><span class="p">:]</span>
+
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;/thinking&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;/answer&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;answer&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;thinking&gt;&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">new_content</span><span class="p">:</span>
+                    <span class="n">new_content</span> <span class="o">=</span> <span class="n">new_content</span><span class="p">[:</span><span class="n">new_content</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">)]</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">new_content</span><span class="p">:</span>
+                <span class="n">chunk_type</span> <span class="o">=</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span> <span class="k">if</span> <span class="n">in_thinking</span> <span class="k">else</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">ANSWER</span>
+                <span class="k">yield</span> <span class="n">StreamChunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">new_content</span><span class="p">,</span> <span class="n">chunk_type</span><span class="o">=</span><span class="n">chunk_type</span><span class="p">)</span>
+                <span class="n">processed_up_to</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_content</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><strong>状态机解析</strong>是这里最重要的设计。流式解析 XML 不能等待整个响应，必须维护 <code>in_thinking</code> 状态，每收到一个 chunk 就更新状态边界。⚠️ 标签可能被切成两个 chunk（如一个 chunk 结尾是 <code>&lt;thi</code>，下一个 chunk 开头是 <code>nk&gt;</code>），所以必须在 <code>accumulated</code> 累积缓冲区上做检测，而不是在单个 <code>delta</code> 上做。</li>
+<li><code>processed_up_to</code> 指针避免了重复 yield 同一段内容。这是流式解析中非常容易犯的错误。</li>
+<li><strong>两种推理机制的本质区别</strong>：<code>use_reasoner=True</code> 时使用 deepseek-reasoner 模型，通过 <code>delta.reasoning_content</code> 字段直接获取模型原生推理内容；<code>use_reasoner=False</code> 时使用普通 chat 模型，通过 <code>DEEPSEEK_THINKING_PROMPT</code> 系统提示词引导模型输出 <code>&lt;thinking&gt;</code> 标签包裹的推理过程。前者是模型真实的内部推理，后者是被 Prompt 引导的"可见思维链"。</li>
+<li><code>core_config.py</code> 统一管理所有模型配置，修改 <code>ACTIVE_MODEL_KEY</code> 即可全局切换模型，无需改动任何业务代码。</li>
+</ul>
+<hr />
+<h3 id="step-3rich">Step 3：终端版——Rich 双栏实时渲染</h3>
+<p><strong>目标</strong>：用 <code>rich.live.Live</code> 实现终端内不闪烁的双栏实时刷新，并在右下角展示实时 Token/s 指标。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># terminal_app.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">终端版思维链可视化。</span>
+<span class="sd">运行方式：python terminal_app.py</span>
+<span class="sd">支持 DeepSeek、Qwen 或 OpenAI 模型。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.columns</span><span class="w"> </span><span class="kn">import</span> <span class="n">Columns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.live</span><span class="w"> </span><span class="kn">import</span> <span class="n">Live</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChunkType</span><span class="p">,</span> <span class="n">StreamChunk</span><span class="p">,</span> <span class="n">stream_cot_prompt</span><span class="p">,</span> <span class="n">stream_extended_thinking</span>
+
+<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_terminal</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">use_extended_thinking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    在终端中实时渲染思维链，返回本次调用的统计数据。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prompt:                用户问题</span>
+<span class="sd">        use_extended_thinking: True 时使用 DeepSeek 推理模型</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        统计字典：ttft / total_time / token_count / tokens_per_sec</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">thinking_text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;dim cyan&quot;</span><span class="p">)</span>
+    <span class="n">answer_text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold white&quot;</span><span class="p">)</span>
+
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ttft&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;total_time&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;token_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;thinking_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;answer_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_layout</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Columns</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;每次 Live 刷新时重新构建布局。&quot;&quot;&quot;</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="n">tps</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;token_count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="n">stat_text</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;⏱ </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;⚡ TTFT: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;ttft&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s  &quot;</span> <span class="k">if</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;ttft&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;⏱ </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s  &quot;</span>
+        <span class="p">)</span>
+        <span class="n">stat_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;🔢 </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;token_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> tokens  📈 </span><span class="si">{</span><span class="n">tps</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> tok/s&quot;</span>
+
+        <span class="k">return</span> <span class="n">Columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">Panel</span><span class="p">(</span>
+                    <span class="n">thinking_text</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;🧠 [dim]思考过程[/dim]&quot;</span><span class="p">,</span>
+                    <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;dim cyan&quot;</span><span class="p">,</span>
+                    <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">Panel</span><span class="p">(</span>
+                    <span class="n">answer_text</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;✅ [bold green]最终回答[/bold green]&quot;</span><span class="p">,</span>
+                    <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+                    <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">equal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">stream_fn</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">stream_extended_thinking</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">use_reasoner</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_extended_thinking</span>
+        <span class="k">else</span> <span class="n">stream_cot_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">Live</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="n">console</span><span class="p">,</span> <span class="n">refresh_per_second</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">transient</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">live</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream_fn</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;ttft&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;ttft&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">start_time</span>
+
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;token_count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;thinking_tokens&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">thinking_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;answer_tokens&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">answer_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+            <span class="n">live</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">build_layout</span><span class="p">())</span>
+
+    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="k">return</span> <span class="n">stats</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="s2">&quot;[bold]实时思维链可视化 · 终端版[/bold]&quot;</span><span class="p">)</span>
+
+    <span class="n">prompts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;一个农夫有17只羊，除了9只其余都死了，还剩几只？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="s2">&quot;小明有72块糖，要平均分给9个朋友，每人能分到几块？如果又来了3个朋友，重新分配后每人能分到几块？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;3&quot;</span><span class="p">:</span> <span class="s2">&quot;一列火车从A城出发，以90km/h的速度行驶。另一列火车同时从B城出发，以60km/h的速度相向而行。AB两城距离450km，两列火车何时相遇？&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">选择测试题（直接输入问题或选择编号）：&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prompts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">user_input</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_input</span><span class="p">,</span> <span class="n">user_input</span><span class="p">)</span>
+
+    <span class="n">use_et</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">使用 DeepSeek 推理模型？(y/N): &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">run_terminal</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">use_extended_thinking</span><span class="o">=</span><span class="n">use_et</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="s2">&quot;📊 本次统计&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  TTFT:           </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;ttft&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  总耗时:         </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  总 token 数:    </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;token_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  思考 tokens:    </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;thinking_tokens&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  回答 tokens:    </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;answer_tokens&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;token_count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_time&quot;</span><span class="p">]</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  平均速率:       </span><span class="si">{</span><span class="n">tps</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> tok/s&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>Live(transient=False)</code> 表示退出后保留最终状态在终端，如果是进度条类场景可以设 <code>True</code> 让它消失。</li>
+<li>⚠️ <code>rich.Text.append()</code> 是<strong>增量追加</strong>，不是替换整个 Text 对象。每次 Live 刷新不需要重建 Text，直接追加 delta 内容即可，这是性能关键。如果每次都新建 Text 对象，会导致整个面板闪烁。</li>
+<li><code>refresh_per_second=20</code> 是实验后得到的较优值：人眼在 ≥15fps 感觉流畅，20fps 足够平滑且 CPU 占用不高（每次刷新约 5ms 渲染时间）。</li>
+</ul>
+<hr />
+<h3 id="step-4streamlit">Step 4：Streamlit 网页版</h3>
+<p><strong>目标</strong>：构建网页端可视化界面，包含双列思维链展示、实时 Token/s 侧边栏指标，以及模式切换功能。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># web_app.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Streamlit 网页版思维链可视化。</span>
+<span class="sd">运行方式：streamlit run web_app.py</span>
+<span class="sd">支持 DeepSeek、Qwen 或 OpenAI 模型，包括 DeepSeek 推理模型。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">streamlit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">st</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkType</span><span class="p">,</span>
+    <span class="n">get_default_model</span><span class="p">,</span>
+    <span class="n">stream_cot_prompt</span><span class="p">,</span>
+    <span class="n">stream_extended_thinking</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span>
+    <span class="n">page_title</span><span class="o">=</span><span class="s2">&quot;实时思维链可视化&quot;</span><span class="p">,</span>
+    <span class="n">page_icon</span><span class="o">=</span><span class="s2">&quot;🔍&quot;</span><span class="p">,</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;wide&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">st</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;🔍 实时思维链可视化&quot;</span><span class="p">)</span>
+<span class="n">st</span><span class="o">.</span><span class="n">caption</span><span class="p">(</span><span class="s2">&quot;让模型「思考」变得可见 · Streaming + CoT 实战&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="p">:</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="s2">&quot;⚙️ 配置&quot;</span><span class="p">)</span>
+
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">radio</span><span class="p">(</span>
+        <span class="s2">&quot;推理模式&quot;</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CoT Prompt（通用）&quot;</span><span class="p">,</span> <span class="s2">&quot;DeepSeek 推理模型&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;CoT Prompt：通过 System Prompt 引导模型输出带标签的推理过程</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;DeepSeek 推理模型：使用 DeepSeek 原生推理能力，思考过程不可被 Prompt 干预&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;CoT Prompt（通用）&quot;</span><span class="p">:</span>
+        <span class="n">model_options</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;DeepSeek Chat&quot;</span><span class="p">:</span> <span class="s2">&quot;deepseek-chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DeepSeek Reasoner (推理更强)&quot;</span><span class="p">:</span> <span class="s2">&quot;deepseek-reasoner&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Qwen (通义千问)&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-plus&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;GPT-4o&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">selected_model</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span>
+            <span class="s2">&quot;模型&quot;</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">model_options</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_options</span><span class="p">[</span><span class="n">selected_model</span><span class="p">]</span>
+        <span class="n">budget_tokens</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;deepseek-reasoner&quot;</span>
+        <span class="n">budget_tokens</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">slider</span><span class="p">(</span>
+            <span class="s2">&quot;思考预算（tokens）&quot;</span><span class="p">,</span>
+            <span class="n">min_value</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+            <span class="n">max_value</span><span class="o">=</span><span class="mi">64000</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;分配给模型思考过程的最大 token 数。越大推理越充分，但延迟和成本同步增加。&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">st</span><span class="o">.</span><span class="n">divider</span><span class="p">()</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="s2">&quot;📊 实时指标&quot;</span><span class="p">)</span>
+    <span class="n">metric_ttft</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+    <span class="n">metric_tps</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+    <span class="n">metric_tokens</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+
+<span class="n">EXAMPLE_PROMPTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;🧮 数学推理&quot;</span><span class="p">:</span> <span class="s2">&quot;小明有72块糖，要平均分给9个朋友。后来又来了3个朋友，重新分配后每人能分到几块？&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;🔍 逻辑题&quot;</span><span class="p">:</span> <span class="s2">&quot;一个盒子里有红球和蓝球共20个。红球比蓝球多4个。红球和蓝球各有几个？&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;🚂 应用题&quot;</span><span class="p">:</span> <span class="s2">&quot;一列火车从A城出发，以90km/h速度行驶。同时另一列从B城以60km/h相向而行。AB距450km，几小时后相遇？&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;📝 自定义&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">selected</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;选择示例题目&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">EXAMPLE_PROMPTS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="n">default_prompt</span> <span class="o">=</span> <span class="n">EXAMPLE_PROMPTS</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">text_area</span><span class="p">(</span>
+    <span class="s2">&quot;输入你的问题&quot;</span><span class="p">,</span>
+    <span class="n">value</span><span class="o">=</span><span class="n">default_prompt</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;输入任意推理题目...&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">col_btn</span><span class="p">,</span> <span class="n">col_stop</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="k">with</span> <span class="n">col_btn</span><span class="p">:</span>
+    <span class="n">start_btn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;▶ 开始推理&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="n">use_container_width</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">start_btn</span> <span class="ow">and</span> <span class="n">prompt</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+    <span class="n">col_think</span><span class="p">,</span> <span class="n">col_answer</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">gap</span><span class="o">=</span><span class="s2">&quot;medium&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">col_think</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="s2">&quot;🧠 思考过程&quot;</span><span class="p">)</span>
+        <span class="n">think_placeholder</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">col_answer</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="s2">&quot;✅ 最终回答&quot;</span><span class="p">)</span>
+        <span class="n">answer_placeholder</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+
+    <span class="n">think_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">answer_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">ttft</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;CoT Prompt（通用）&quot;</span><span class="p">:</span>
+        <span class="n">stream_gen</span> <span class="o">=</span> <span class="n">stream_cot_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stream_gen</span> <span class="o">=</span> <span class="n">stream_extended_thinking</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">budget_tokens</span><span class="o">=</span><span class="n">budget_tokens</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream_gen</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">ttft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ttft</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="n">metric_ttft</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="s2">&quot;⚡ TTFT&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ttft</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+        <span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="n">tps</span> <span class="o">=</span> <span class="n">token_count</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">:</span>
+            <span class="n">think_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">think_placeholder</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">think_text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">answer_placeholder</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">answer_text</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">token_count</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">metric_tps</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="s2">&quot;📈 Token/s&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tps</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">metric_tokens</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="s2">&quot;🔢 Token 数&quot;</span><span class="p">,</span> <span class="n">token_count</span><span class="p">)</span>
+
+    <span class="n">total_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">metric_tps</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="s2">&quot;📈 Token/s&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">token_count</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">total_time</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">metric_tokens</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="s2">&quot;🔢 Token 数&quot;</span><span class="p">,</span> <span class="n">token_count</span><span class="p">)</span>
+
+    <span class="n">st</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ 推理完成 · 总耗时 </span><span class="si">{</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s · </span><span class="si">{</span><span class="n">token_count</span><span class="si">}</span><span class="s2"> tokens&quot;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">start_btn</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">prompt</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;请先输入问题&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>st.empty()</code> 是 Streamlit 流式更新的核心：先占位，然后在循环里反复调用 <code>.markdown()</code> 或 <code>.code()</code> 更新内容，Streamlit 会 diff 后只更新变化部分，不会全页刷新。</li>
+<li>⚠️ 侧边栏指标每 10 个 token 更新一次而不是每个 token 都更新，原因是 Streamlit 的每次 <code>st.metric()</code> 调用都会触发 UI 消息，频率过高会导致前端渲染队列积压，出现肉眼可见的卡顿。</li>
+<li>思考区用 <code>st.code()</code> 而回答区用 <code>st.markdown()</code>，视觉上形成"草稿纸 vs 正式回答"的区分，这是个小但有效的 UX 设计。</li>
+<li>模型选择支持 DeepSeek Chat/Reasoner、Qwen、GPT-4o，通过下拉框切换。推理模式下固定使用 deepseek-reasoner。</li>
+<li>Colab 运行方式同前：<code>streamlit run</code> + <code>pyngrok</code> 端口转发。</li>
+</ul>
+<hr />
+<h3 id="step-5">Step 5：对比实验——量化感受三种模式差异</h3>
+<p><strong>目标</strong>：用同一道推理题，横向对比"直接回答"、"CoT Prompt"、"DeepSeek 思考模式"三种模式，收集指标并打印对比报告。这个实验会让你对 CoT 产生量化认知，而不只是"感觉有用"。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># experiment.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">三模式对比实验：直接回答 / CoT Prompt / DeepSeek 思考模式</span>
+<span class="sd">运行方式：python experiment.py</span>
+<span class="sd">支持 DeepSeek、Qwen 或 OpenAI 模型。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkType</span><span class="p">,</span>
+    <span class="n">get_default_model</span><span class="p">,</span>
+    <span class="n">get_openai_client</span><span class="p">,</span>
+    <span class="n">stream_cot_prompt</span><span class="p">,</span>
+    <span class="n">stream_extended_thinking</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">get_openai_client</span><span class="p">()</span>
+<span class="n">default_model</span> <span class="o">=</span> <span class="n">get_default_model</span><span class="p">()</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExperimentResult</span><span class="p">:</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">ttft</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">total_time</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">token_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">thinking_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">answer_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tokens_per_sec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_direct_answer</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExperimentResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;无 CoT 的直接回答，作为 baseline。&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="n">default_model</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">ttft</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">full_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">ttft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ttft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">full_text</span> <span class="o">+=</span> <span class="n">delta</span>
+        <span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">ExperimentResult</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;直接回答（无 CoT）&quot;</span><span class="p">,</span>
+        <span class="n">answer</span><span class="o">=</span><span class="n">full_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">ttft</span><span class="o">=</span><span class="n">ttft</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">total_time</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span>
+        <span class="n">token_count</span><span class="o">=</span><span class="n">token_count</span><span class="p">,</span>
+        <span class="n">answer_tokens</span><span class="o">=</span><span class="n">token_count</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_cot_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExperimentResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CoT Prompt 模式。&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="n">default_model</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">ttft</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">think_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">answer_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">thinking_tokens</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream_cot_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ttft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ttft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">:</span>
+            <span class="n">think_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">thinking_tokens</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+
+    <span class="k">return</span> <span class="n">ExperimentResult</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;CoT Prompt（&lt;think&gt; 标签）&quot;</span><span class="p">,</span>
+        <span class="n">answer</span><span class="o">=</span><span class="n">answer_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">ttft</span><span class="o">=</span><span class="n">ttft</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">total_time</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span>
+        <span class="n">token_count</span><span class="o">=</span><span class="n">token_count</span><span class="p">,</span>
+        <span class="n">thinking_tokens</span><span class="o">=</span><span class="n">thinking_tokens</span><span class="p">,</span>
+        <span class="n">answer_tokens</span><span class="o">=</span><span class="n">token_count</span> <span class="o">-</span> <span class="n">thinking_tokens</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_extended_thinking</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExperimentResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DeepSeek 思考模式（通过系统提示词开启思考）。&quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">ttft</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">think_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">answer_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">thinking_tokens</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream_extended_thinking</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">budget_tokens</span><span class="o">=</span><span class="n">budget</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ttft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ttft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">:</span>
+            <span class="n">think_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">thinking_tokens</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer_text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+
+    <span class="k">return</span> <span class="n">ExperimentResult</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;DeepSeek 思考模式（&lt;thinking&gt; 标签）&quot;</span><span class="p">,</span>
+        <span class="n">answer</span><span class="o">=</span><span class="n">answer_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="n">ttft</span><span class="o">=</span><span class="n">ttft</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">total_time</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span>
+        <span class="n">token_count</span><span class="o">=</span><span class="n">token_count</span><span class="p">,</span>
+        <span class="n">thinking_tokens</span><span class="o">=</span><span class="n">thinking_tokens</span><span class="p">,</span>
+        <span class="n">answer_tokens</span><span class="o">=</span><span class="n">token_count</span> <span class="o">-</span> <span class="n">thinking_tokens</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">print_comparison</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ExperimentResult</span><span class="p">],</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;打印横向对比报告。&quot;&quot;&quot;</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[bold]对比实验报告[/bold]&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[dim]问题：</span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">[/dim]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[bold]</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">[/bold]&quot;</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  答案：[green]</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">answer</span><span class="p">[:</span><span class="mi">200</span><span class="p">]</span><span class="si">}</span><span class="s2">[/green]&quot;</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;📊 性能指标对比&quot;</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header_style</span><span class="o">=</span><span class="s2">&quot;bold magenta&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;指标&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;TTFT（首 token）&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ttft</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;总耗时&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;总 tokens&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">token_count</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;思考 tokens&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">thinking_tokens</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;回答 tokens&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">answer_tokens</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;Token/s&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">tokens_per_sec</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="n">fn</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">questions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;小张每天能生产120个零件，小李每天能生产80个。工厂需要1200个零件，两人一起工作几天能完成？如果小张请假2天，总共需要几天？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;一个水池有进水管和出水管。进水管单独开8小时注满，出水管单独开12小时排完。如果同时打开两管，几小时能注满？&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">questions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[bold]实验题目：[/bold]</span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[dim]使用模型：</span><span class="si">{</span><span class="n">default_model</span><span class="si">}</span><span class="s2">[/dim]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[dim]正在运行三种模式（每次约 10-30 秒）...[/dim]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[bold]1/3[/bold] 直接回答...&quot;</span><span class="p">)</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_direct_answer</span><span class="p">(</span><span class="n">question</span><span class="p">))</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;   ✓ 完成</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[bold]2/3[/bold] CoT Prompt...&quot;</span><span class="p">)</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_cot_prompt</span><span class="p">(</span><span class="n">question</span><span class="p">))</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;   ✓ 完成</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[bold]3/3[/bold] DeepSeek 思考模式...&quot;</span><span class="p">)</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_extended_thinking</span><span class="p">(</span><span class="n">question</span><span class="p">))</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;   ✓ 完成</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">print_comparison</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">question</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="_5">完整运行验证</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># smoke_test.py</span>
+<span class="c1"># 最小验证示例，单文件可直接运行</span>
+<span class="c1"># 支持 DeepSeek、Qwen 或 OpenAI</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_openai_client</span><span class="p">,</span> <span class="n">get_default_model</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">get_openai_client</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">get_default_model</span><span class="p">()</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;1+1=？只回答数字&quot;</span><span class="p">}],</span>
+        <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;预期 &#39;2&#39;，得到 &#39;</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ 基础流式调用正常，回答：</span><span class="si">{</span><span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChunkType</span><span class="p">,</span> <span class="n">stream_cot_prompt</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stream_cot_prompt</span><span class="p">(</span><span class="s2">&quot;1+1=？请先写出思考过程再给出答案&quot;</span><span class="p">))</span>
+<span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">chunk_type</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">}</span>
+<span class="k">assert</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span> <span class="ow">in</span> <span class="n">types</span><span class="p">,</span> <span class="s2">&quot;未检测到 thinking 块，检查 System Prompt&quot;</span>
+<span class="k">assert</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">ANSWER</span> <span class="ow">in</span> <span class="n">types</span><span class="p">,</span> <span class="s2">&quot;未检测到 answer 块，检查 XML 标签解析&quot;</span>
+<span class="n">think_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">THINKING</span><span class="p">)</span>
+<span class="n">answer_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">chunk_type</span> <span class="o">==</span> <span class="n">ChunkType</span><span class="o">.</span><span class="n">ANSWER</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ CoT 解析正常：thinking=</span><span class="si">{</span><span class="n">think_len</span><span class="si">}</span><span class="s2"> chars，answer=</span><span class="si">{</span><span class="n">answer_len</span><span class="si">}</span><span class="s2"> chars&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🎉 所有验证通过，可以运行 terminal_app.py 或 web_app.py&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>预期输出：
+<div class="highlight"><pre><span></span><code>✅ 基础流式调用正常，回答：&#39;2&#39;
+✅ CoT 解析正常：thinking=187 chars，answer=12 chars
+
+🎉 所有验证通过，可以运行 terminal_app.py 或 web_app.py
+</code></pre></div></p>
+<hr />
+<h2 id="_6">常见报错与解决方案</h2>
+<table>
+<thead>
+<tr>
+<th>报错信息</th>
+<th>原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AuthenticationError: Incorrect API key</code></td>
+<td><code>.env</code> 未加载或 Key 格式错误</td>
+<td>确认 <code>.env</code> 在当前目录；检查 <code>load_dotenv()</code> 调用位置；确认 <code>DEEPSEEK_API_KEY</code> 或 <code>DASHSCOPE_API_KEY</code> 已正确设置</td>
+</tr>
+<tr>
+<td><code>thinking</code> 内容为空或极短</td>
+<td>思考预算过低（&lt; 2000）或题目太简单</td>
+<td>将 <code>budget_tokens</code> 调到 4000 以上；复杂题目建议 8000+</td>
+</tr>
+<tr>
+<td>Streamlit 页面刷新但内容不更新</td>
+<td><code>st.empty()</code> 的引用在循环外被覆盖</td>
+<td>确保 <code>think_placeholder</code> 和 <code>answer_placeholder</code> 在循环开始前只创建一次，在循环内调用 <code>.markdown()</code></td>
+</tr>
+<tr>
+<td>Rich 终端出现乱码或方块字符</td>
+<td>终端不支持 Unicode 或 emoji</td>
+<td>设置终端编码：<code>export PYTHONIOENCODING=utf-8</code>；Windows 下用 <code>chcp 65001</code></td>
+</tr>
+<tr>
+<td><code>RateLimitError: Rate limit reached</code></td>
+<td>并发实验时触发 API 限速</td>
+<td>在 <code>experiment.py</code> 的三次调用之间加 <code>time.sleep(2)</code>；或申请提升 Tier</td>
+</tr>
+<tr>
+<td><code>thinking</code> 与 <code>answer</code> 内容混杂</td>
+<td>标签被切分到两个 chunk</td>
+<td>这是 <code>accumulated</code> 缓冲区设计解决的问题；确保使用 <code>core.py</code> 的解析函数而不是自己裸解析 delta</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_7">扩展练习（可选）</h2>
+<ol>
+<li>
+<p>🟡 <strong>中等：思考速度热力图</strong><br />
+   修改 <code>core.py</code>，在 <code>StreamChunk</code> 中记录每个 chunk 到达的时间戳（已有 <code>timestamp</code> 字段）。用 matplotlib 绘制 x 轴为 token 序号、y 轴为相邻 chunk 时间间隔的折线图。观察模型在哪个推理步骤前"停顿"最久——通常是从一个逻辑阶段切换到下一个阶段时（如从"分析题意"切换到"开始计算"）。</p>
+</li>
+<li>
+<p>🔴 <strong>困难：FastAPI SSE 生产级流式服务</strong><br />
+   将 <code>stream_cot_prompt</code> 封装成 FastAPI 的 <code>StreamingResponse</code>，使用 SSE（Server-Sent Events）格式推送数据；再用纯 HTML + JavaScript 的 <code>EventSource</code> API 接收并渲染。这是真实生产环境的架构：后端推流、前端消费，两者解耦。参考格式：
+   <div class="highlight"><pre><span></span><code>data: {&quot;content&quot;: &quot;首先&quot;, &quot;type&quot;: &quot;thinking&quot;}\n\n
+data: {&quot;content&quot;: &quot;分析&quot;, &quot;type&quot;: &quot;thinking&quot;}\n\n
+data: [DONE]\n\n
+</code></pre></div>
+   完成后，你就拥有了一个与 ChatGPT 流式接口原理完全相同的服务。</p>
+</li>
+</ol>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.top", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
