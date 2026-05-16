@@ -1,5 +1,5 @@
 """
-三模式对比实验：直接回答 / CoT Prompt / Extended Thinking
+三模式对比实验：直接回答 / CoT Prompt / DeepSeek 思考模式（Prompt 驱动）
 运行方式：python experiment.py
 支持 DeepSeek、Qwen 或 OpenAI 模型。
 """
@@ -21,6 +21,10 @@ from core import (
 console = Console()
 client = get_openai_client()
 default_model = get_default_model()
+
+# [Fix #12] 思考模式默认预算：4000 tokens 适合中等复杂度推理题，
+# 题目简单时可降到 2000，复杂推理建议 8000+
+DEFAULT_THINKING_BUDGET = 4000
 
 
 @dataclass
@@ -103,7 +107,7 @@ def run_cot_prompt(prompt: str, model: str = None) -> ExperimentResult:
     )
 
 
-def run_extended_thinking(prompt: str, budget: int = 4000) -> ExperimentResult:
+def run_extended_thinking(prompt: str, budget: int = DEFAULT_THINKING_BUDGET) -> ExperimentResult:
     """DeepSeek 思考模式（通过系统提示词开启思考）。"""
     start = time.perf_counter()
     ttft = None
@@ -185,7 +189,8 @@ def main() -> None:
     results.append(run_cot_prompt(question))
     console.print("   ✓ 完成\n")
 
-    console.print("[bold]3/3[/bold] Extended Thinking...")
+    # [Fix #9] 文案与函数行为一致：此处走 Prompt 驱动模式（非原生 reasoner）
+    console.print("[bold]3/3[/bold] DeepSeek 思考模式（Prompt 驱动）...")
     results.append(run_extended_thinking(question))
     console.print("   ✓ 完成\n")
 

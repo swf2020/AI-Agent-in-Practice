@@ -38,7 +38,8 @@ with st.sidebar:
     if mode == "CoT Prompt（通用）":
         model_options = {
             "DeepSeek Chat": "deepseek-chat",
-            "DeepSeek Reasoner (推理更强)": "deepseek-reasoner",
+            # [Fix #8] deepseek-reasoner 在 CoT Prompt 模式下不会返回原生推理内容，
+            # 已移除该选项；如需使用原生推理，请切换到 "DeepSeek 推理模型" 模式
             "Qwen (通义千问)": "qwen-plus",
             "GPT-4o": "gpt-4o",
         }
@@ -107,7 +108,8 @@ if start_btn and prompt.strip():
     if mode == "CoT Prompt（通用）":
         stream_gen = stream_cot_prompt(prompt, model=model)
     else:
-        stream_gen = stream_extended_thinking(prompt, budget_tokens=budget_tokens)
+        # [Fix #4] 明确传递 use_reasoner=True，使用 DeepSeek 原生推理能力
+        stream_gen = stream_extended_thinking(prompt, budget_tokens=budget_tokens, use_reasoner=True)
 
     for chunk in stream_gen:
         now = time.perf_counter()

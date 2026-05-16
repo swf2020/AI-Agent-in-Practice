@@ -44,6 +44,11 @@ def get_openai_client(model_key: str | None = None):
     if api_key:
         return OpenAI(api_key=api_key, base_url=base_url)
     else:
+        # [Fix #6] API Key 缺失时给出明确的错误提示，帮助学习者快速定位问题
+        env_var = MODEL_REGISTRY[key].get("api_key_env", "API_KEY")
+        print(f"⚠️  未检测到 {key} 的 API Key")
+        print(f"   请设置环境变量：export {env_var}='your-key'")
+        print(f"   或创建 .env 文件并确保 load_dotenv() 已调用")
         return OpenAI()
 
 
@@ -58,6 +63,71 @@ def get_default_model(model_key: str | None = None):
 
 
 # ─────────────────────────────────────────────
+#  通用流解析器（被两种模式共享）
+# ─────────────────────────────────────────────
+
+def _parse_tagged_stream(
+    stream,
+    think_tag: str = "think",
+    answer_tag: str = "answer",
+) -> Generator[StreamChunk, None, None]:
+    """
+    通用标签流解析器。逐 chunk 消费原始流，识别 XML 标签边界，
+    将每个 chunk 标注类型（THINKING / ANSWER）后 yield。
+
+    标签检测采用 accumulated 缓冲区累积策略，
+    防止标签被切分到两个 chunk 中导致漏检。
+    """
+    open_think = f"<{think_tag}>"
+    close_think = f"</{think_tag}>"
+    open_answer = f"<{answer_tag}>"
+    close_answer = f"</{answer_tag}>"
+
+    # 检测优先级：闭合标签优先于开放标签，避免将闭合标签误认为内容
+    tag_set = [close_think, close_answer, open_answer, open_think]
+
+    accumulated = ""
+    in_thinking = False
+    processed_up_to = 0
+
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if not delta:
+            continue
+
+        accumulated += delta
+
+        if not in_thinking and open_think in accumulated:
+            think_start = accumulated.index(open_think) + len(open_think)
+            processed_up_to = think_start
+            in_thinking = True
+
+        if in_thinking and close_think in accumulated:
+            think_end = accumulated.index(close_think)
+            remaining_think = accumulated[processed_up_to:think_end]
+            if remaining_think:
+                yield StreamChunk(content=remaining_think, chunk_type=ChunkType.THINKING)
+            processed_up_to = think_end + len(close_think)
+            in_thinking = False
+
+        if not in_thinking and open_answer in accumulated[processed_up_to:]:
+            answer_tag_pos = accumulated.index(open_answer, processed_up_to) + len(open_answer)
+            processed_up_to = answer_tag_pos
+
+        new_content = accumulated[processed_up_to:]
+
+        for tag in tag_set:
+            if tag in new_content:
+                new_content = new_content[:new_content.index(tag)]
+                break
+
+        if new_content:
+            chunk_type = ChunkType.THINKING if in_thinking else ChunkType.ANSWER
+            yield StreamChunk(content=new_content, chunk_type=chunk_type)
+            processed_up_to += len(new_content)
+
+
+# ─────────────────────────────────────────────
 #  模式一：CoT Prompt（OpenAI 兼容接口）
 # ─────────────────────────────────────────────
 
@@ -69,7 +139,7 @@ COT_SYSTEM_PROMPT = """\
 2. 再在 <answer> 标签内给出最终答案（简洁清晰）
 
 格式示例：
-</think>
+<think>
 首先分析题目...
 然后考虑...
 因此得出...
@@ -83,7 +153,7 @@ COT_SYSTEM_PROMPT = """\
 
 def stream_cot_prompt(
     prompt: str,
-    model: str = None,
+    model: str | None = None,  # [Fix #11] 类型注解修正
     temperature: float = 0.6,
 ) -> Generator[StreamChunk, None, None]:
     """
@@ -100,10 +170,6 @@ def stream_cot_prompt(
     client = get_openai_client()
     model = model or get_default_model()
 
-    accumulated = ""
-    in_thinking = False
-    processed_up_to = 0
-
     stream = client.chat.completions.create(
         model=model,
         messages=[
@@ -114,41 +180,8 @@ def stream_cot_prompt(
         temperature=temperature,
     )
 
-    for chunk in stream:
-        delta = chunk.choices[0].delta.content
-        if not delta:
-            continue
-
-        accumulated += delta
-
-        if not in_thinking and "<think>" in accumulated:
-            think_start = accumulated.index("<think>") + len("<think>")
-            processed_up_to = think_start
-            in_thinking = True
-
-        if in_thinking and "</think>" in accumulated:
-            think_end = accumulated.index("</think>")
-            remaining_think = accumulated[processed_up_to:think_end]
-            if remaining_think:
-                yield StreamChunk(content=remaining_think, chunk_type=ChunkType.THINKING)
-            processed_up_to = think_end + len("</think>")
-            in_thinking = False
-
-        if not in_thinking and "<answer>" in accumulated[processed_up_to:]:
-            answer_tag_pos = accumulated.index("<answer>", processed_up_to) + len("<answer>")
-            processed_up_to = answer_tag_pos
-
-        new_content = accumulated[processed_up_to:]
-
-        for tag in ["</think>", "</answer>", "<answer>", "<think>"]:
-            if tag in new_content:
-                new_content = new_content[:new_content.index(tag)]
-                break
-
-        if new_content:
-            chunk_type = ChunkType.THINKING if in_thinking else ChunkType.ANSWER
-            yield StreamChunk(content=new_content, chunk_type=chunk_type)
-            processed_up_to += len(new_content)
+    # [Fix #5] 使用通用解析器，与 stream_extended_thinking 共享逻辑
+    yield from _parse_tagged_stream(stream, think_tag="think", answer_tag="answer")
 
 
 # ─────────────────────────────────────────────
@@ -185,7 +218,7 @@ DEEPSEEK_THINKING_PROMPT = """\
 
 def stream_extended_thinking(
     prompt: str,
-    budget_tokens: int = 8000,
+    budget_tokens: int = 8000,  # [Fix #2] budget_tokens 现在实际控制 max_tokens
     use_reasoner: bool = False,
 ) -> Generator[StreamChunk, None, None]:
     """
@@ -194,6 +227,7 @@ def stream_extended_thinking(
     Args:
         prompt:       用户问题
         budget_tokens: 分配给思考过程的最大 token 数（越大推理越充分）
+                      [Fix #2] 此参数现在会实际传递给 API 的 max_tokens
         use_reasoner:  True 时使用 deepseek-reasoner 推理模型，
                       False 时使用普通 chat 模型 + 系统提示词开启思考模式
 
@@ -208,7 +242,7 @@ def stream_extended_thinking(
             model="deepseek-reasoner",
             messages=[{"role": "user", "content": prompt}],
             stream=True,
-            max_tokens=16000,
+            max_tokens=budget_tokens,  # [Fix #2] 使用 budget_tokens 而非硬编码值
         )
 
         for chunk in stream:
@@ -227,52 +261,18 @@ def stream_extended_thinking(
         # 使用普通 chat 模型，通过系统提示词开启思考模式
         model = get_default_model()
 
-        accumulated = ""
-        in_thinking = False
-        processed_up_to = 0
-
         stream = client.chat.completions.create(
             model=model,
             messages=[
+                # [Fix #3] 添加 DEEPSEEK_THINKING_PROMPT 作为 System Prompt，
+                # 引导模型按 <thinking>/<answer> 标签格式输出
+                {"role": "system", "content": DEEPSEEK_THINKING_PROMPT},
                 {"role": "user", "content": prompt},
             ],
             stream=True,
             temperature=0.4,
-            max_tokens=16000,
+            max_tokens=budget_tokens,  # [Fix #2] 使用 budget_tokens 而非硬编码值
         )
 
-        for chunk in stream:
-            delta = chunk.choices[0].delta.content
-            if not delta:
-                continue
-
-            accumulated += delta
-
-            if not in_thinking and "<thinking>" in accumulated:
-                think_start = accumulated.index("<thinking>") + len("<thinking>")
-                processed_up_to = think_start
-                in_thinking = True
-
-            if in_thinking and "</thinking>" in accumulated:
-                think_end = accumulated.index("</thinking>")
-                remaining_think = accumulated[processed_up_to:think_end]
-                if remaining_think:
-                    yield StreamChunk(content=remaining_think, chunk_type=ChunkType.THINKING)
-                processed_up_to = think_end + len("</thinking>")
-                in_thinking = False
-
-            if not in_thinking and "<answer>" in accumulated[processed_up_to:]:
-                answer_tag_pos = accumulated.index("<answer>", processed_up_to) + len("<answer>")
-                processed_up_to = answer_tag_pos
-
-            new_content = accumulated[processed_up_to:]
-
-            for tag in ["</thinking>", "</answer>", "<answer>", "<thinking>"]:
-                if tag in new_content:
-                    new_content = new_content[:new_content.index(tag)]
-                    break
-
-            if new_content:
-                chunk_type = ChunkType.THINKING if in_thinking else ChunkType.ANSWER
-                yield StreamChunk(content=new_content, chunk_type=chunk_type)
-                processed_up_to += len(new_content)
+        # [Fix #5] 使用通用解析器，与 stream_cot_prompt 共享逻辑
+        yield from _parse_tagged_stream(stream, think_tag="thinking", answer_tag="answer")
