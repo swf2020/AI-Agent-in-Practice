@@ -1,5 +1,6 @@
 """全局配置：模型注册表与定价信息"""
 import os
+import warnings                            # [Fix #10] 用于 API Key 未设置时的教学提示
 from typing import TypedDict
 
 
@@ -59,7 +60,16 @@ def get_api_key(model_key: str | None = None) -> str | None:
     """从环境变量读取指定模型的 API Key"""
     key = model_key or ACTIVE_MODEL_KEY
     env_var = MODEL_REGISTRY[key]["api_key_env"]
-    return os.environ.get(env_var) if env_var else None
+    if env_var is None:
+        return None
+    result = os.environ.get(env_var)
+    # [Fix #10] 教学性提示：API Key 未设置时给出操作指引
+    if result is None:
+        warnings.warn(
+            f"⚠️  未检测到环境变量 {env_var}（模型: {key}），"
+            f"请运行: export {env_var}='***' 或在 .env 文件中配置"
+        )
+    return result
 
 
 def get_base_url(model_key: str | None = None) -> str | None:
