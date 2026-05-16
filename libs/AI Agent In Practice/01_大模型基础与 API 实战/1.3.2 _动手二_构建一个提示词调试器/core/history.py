@@ -105,7 +105,9 @@ def load_history(use_cache: bool = True) -> pd.DataFrame:
     if use_cache and _history_cache is not None and _cache_timestamp == current_mtime:
         return _history_cache
 
-    rows = []
+    # [Fix #4] 先收集 score_update 记录，后续合并到实验行
+    score_map: dict[tuple[str, str], int] = {}
+    rows: list[dict] = []
     with open(HISTORY_FILE, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
@@ -114,6 +116,13 @@ def load_history(use_cache: bool = True) -> pd.DataFrame:
             try:
                 record = json.loads(line)
             except json.JSONDecodeError:
+                continue
+
+            # 收集评分更新记录（先跳过，稍后合并）
+            if record.get("type") == "score_update":
+                rid = record.get("target_run_id", "")
+                for model, score in record.get("scores", {}).items():
+                    score_map[(rid, model)] = score
                 continue
 
             if "results" not in record:
@@ -127,7 +136,9 @@ def load_history(use_cache: bool = True) -> pd.DataFrame:
                     "耗时(s)": result["latency"],
                     "Tokens": result["total_tokens"],
                     "费用($)": result["estimated_cost"],
-                    "评分": result["score"] if result["score"] != -1 else "—",
+                    # [Fix #4] 优先使用 score_update 中的评分，否则使用原始评分
+                    _score = score_map.get((record["run_id"], result["model"]), result["score"])
+                    "评分": _score if _score != -1 else "—",
                     "User Prompt 预览": record["params"]["user_prompt"][:40] + "...",
                     "备注": record.get("notes", ""),
                 })
