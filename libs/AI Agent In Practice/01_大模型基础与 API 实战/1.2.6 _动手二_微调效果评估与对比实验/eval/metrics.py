@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+import torch                                  # [Fix #9] 顶部统一导入，与 inference.py 一致
 from bert_score import score as bert_score_fn
 from rouge_score import rouge_scorer
 
@@ -96,7 +97,7 @@ def compute_bert_score(
         model_type=model_type,
         lang="zh",
         verbose=False,
-        device="cuda" if __import__("torch").cuda.is_available() else "cpu",
+        device="cuda" if torch.cuda.is_available() else "cpu",  # [Fix #9] 使用顶部 import 的 torch
     )
     return BertScoreResult(
         precision=float(P.mean()),
