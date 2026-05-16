@@ -34,7 +34,7 @@ class RAGAnswer:
 
 
 def get_llm_client(model_key: str = "DeepSeek-V3"):
-    """获取 LLM 客户端（支持 DeepSeek 和 Qwen）"""
+    """获取 LLM 客户端配置（不修改全局环境变量）"""
     import litellm
 
     if model_key not in MODEL_REGISTRY:
@@ -46,12 +46,8 @@ def get_llm_client(model_key: str = "DeepSeek-V3"):
 
     api_key = os.environ.get(api_key_env) if api_key_env else None
 
-    if model_key.startswith("Qwen") and base_url:
-        os.environ["OPENAI_API_KEY"] = api_key or ""
-        os.environ["OPENAI_API_BASE"] = base_url
-        return litellm, cfg["litellm_id"]
-    else:
-        return litellm, cfg["litellm_id"]
+    # [Fix #3] 不再修改全局 os.environ，避免污染其他代码
+    return litellm, cfg["litellm_id"], api_key, base_url
 
 
 class RAGPipeline:
@@ -62,7 +58,8 @@ class RAGPipeline:
         self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
         self.qdrant = QdrantClient(path=QDRANT_PATH)
 
-        self.llm_client, self.model_name = get_llm_client(model_key)
+        # [Fix #3] 显式获取 api_key 和 base_url，避免污染全局环境变量
+        self.llm_client, self.model_name, self.llm_api_key, self.llm_base_url = get_llm_client(model_key)
         print(f"✅ LLM 模型：{model_key} ({self.model_name})")
 
     def retrieve(self, question: str) -> list[RetrievedChunk]:
@@ -178,6 +175,8 @@ class RAGPipeline:
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
             max_tokens=1024,
+            api_key=self.llm_api_key,
+            api_base=self.llm_base_url,
         )
 
         return RAGAnswer(

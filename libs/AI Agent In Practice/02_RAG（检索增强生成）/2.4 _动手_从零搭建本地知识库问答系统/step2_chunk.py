@@ -17,6 +17,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from step1_parse import ParsedDocument
 
+# [Fix #15] 模块级缓存 tiktoken encoder，避免每次调用重复初始化
+_ENCODER = tiktoken.get_encoding("cl100k_base")
+
 
 @dataclass
 class Chunk:
@@ -43,12 +46,10 @@ def chunk_fixed_size(
 
     chunk_overlap 保证跨块的句子不会完全割裂语义。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
-
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        length_function=lambda text: len(enc.encode(text)),  # 按 Token 计长度
+        length_function=lambda text: len(_ENCODER.encode(text)),  # 按 Token 计长度
         separators=["\n\n", "\n", "。", "！", "？", ".", "!", "?", " ", ""],
     )
 
@@ -59,7 +60,7 @@ def chunk_fixed_size(
             source=doc.source,
             chunk_index=i,
             strategy="fixed",
-            metadata={**doc.metadata, "token_count": len(enc.encode(t))},
+            metadata={**doc.metadata, "token_count": len(_ENCODER.encode(t))},
         )
         for i, t in enumerate(texts)
     ]
@@ -79,8 +80,6 @@ def chunk_by_section(
 
     超过 max_chunk_size 的节会用固定大小策略二次切分。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
-
     # 匹配所有级别的 Markdown 标题（# ~ ######）
     heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
     matches = list(heading_pattern.finditer(doc.content))
@@ -101,7 +100,7 @@ def chunk_by_section(
     chunks: list[Chunk] = []
     for heading, body in sections:
         section_text = f"{heading}\n\n{body}"
-        token_count = len(enc.encode(section_text))
+        token_count = len(_ENCODER.encode(section_text))
 
         if token_count <= max_chunk_size:
             chunks.append(
@@ -118,7 +117,7 @@ def chunk_by_section(
             sub_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=max_chunk_size,
                 chunk_overlap=50,
-                length_function=lambda t: len(enc.encode(t)),
+                length_function=lambda t: len(_ENCODER.encode(t)),
             )
             for sub_text in sub_splitter.split_text(body):
                 chunks.append(

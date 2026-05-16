@@ -96,10 +96,17 @@ class DashScopeReranker:
             print(f"⚠️ Reranker API 调用失败，回退到向量检索分数排序: {e}")
             return sorted(chunks, key=lambda c: c.score, reverse=True)[:n]
 
-        # 将 reranker 分值回写到 RetrievedChunk
-        for chunk, score in zip(chunks, scores):
-            chunk.score = score
+        # [Fix #10] 创建新 RetrievedChunk 对象，避免污染调用方原始数据
+        reranked = [
+            RetrievedChunk(
+                text=chunk.text,
+                score=score,
+                chunk_id=chunk.chunk_id,
+                source=chunk.source,
+            )
+            for chunk, score in zip(chunks, scores)
+        ]
 
         # 按分值降序，取 Top-N
-        reranked = sorted(chunks, key=lambda c: c.score, reverse=True)
+        reranked.sort(key=lambda c: c.score, reverse=True)
         return reranked[:n]

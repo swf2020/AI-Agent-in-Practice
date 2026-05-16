@@ -21,7 +21,7 @@ load_dotenv()
 class RetrievedChunk:
     """检索结果的数据结构，贯穿整条链路。"""
     text: str
-    score: float
+    score: float | None  # [Fix #17] None 表示未评分（如压缩后的上下文）
     chunk_id: str
     source: str = ""
 

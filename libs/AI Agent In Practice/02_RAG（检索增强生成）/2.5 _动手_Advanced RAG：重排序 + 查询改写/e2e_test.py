@@ -63,6 +63,19 @@ def run_experiment() -> None:
         print(f"  优化步骤：{' → '.join(adv_result['steps'])}")
         print(f"  使用查询数：{len(adv_result['queries_used'])}")
 
+        # [Fix #14] 添加质量断言，确保结果非空且有一定长度
+        assert naive_result["answer"], f"Naive RAG 对问题 '{q[:20]}...' 返回了空答案"
+        assert adv_result["answer"], f"Advanced RAG 对问题 '{q[:20]}...' 返回了空答案"
+        assert len(naive_result["answer"]) >= 10, (
+            f"Naive RAG 答案过短（{len(naive_result['answer'])} 字符）"
+        )
+        assert len(adv_result["answer"]) >= 10, (
+            f"Advanced RAG 答案过短（{len(adv_result['answer'])} 字符）"
+        )
+        # 验证检索结果不为空
+        assert len(naive_result["retrieved_chunks"]) > 0, "Naive RAG 检索结果为空"
+        assert len(adv_result["retrieved_chunks"]) > 0, "Advanced RAG 检索结果为空"
+
 
 if __name__ == "__main__":
     run_experiment()

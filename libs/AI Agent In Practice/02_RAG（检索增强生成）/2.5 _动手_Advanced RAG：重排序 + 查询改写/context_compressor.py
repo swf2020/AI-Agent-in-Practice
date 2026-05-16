@@ -86,4 +86,7 @@ class SummaryCompressor:
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
-        return resp.choices[0].message.content.strip()
+        result = resp.choices[0].message.content.strip()
+        # [Fix #13] 截断保护，防止 LLM 忽略 "不超过 N 字" 限制
+        max_chars = max_words * 2  # 中文每字约 1-2 字符，留一倍余量
+        return result[:max_chars]

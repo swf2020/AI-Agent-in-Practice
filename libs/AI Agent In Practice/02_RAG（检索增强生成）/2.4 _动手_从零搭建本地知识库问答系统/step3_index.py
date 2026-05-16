@@ -3,6 +3,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import time
 from pathlib import Path
 from typing import Iterator
@@ -70,6 +71,21 @@ def batch_iter(items: list, size: int) -> Iterator[list]:
         yield items[i : i + size]
 
 
+def _chunk_id(source: str, chunk_index: int) -> int:
+    """
+    [Fix #4] 基于 source + chunk_index 生成唯一 Point ID（MD5 哈希）。
+
+    为什么不用递增 ID？
+    - 递增 ID 多次索引同一文档会产生重复数据
+    - 哈希 ID 天然支持幂等：同一 chunk 不会重复写入
+    - 更新文档时，相同 chunk 的 ID 不变，upsert 自动替换
+    """
+    raw = f"{source}::{chunk_index}"
+    # 取 MD5 前 16 个十六进制字符转为 64 位整数，足够存储
+    digest = hashlib.md5(raw.encode("utf-8")).hexdigest()[:16]
+    return int(digest, 16) & 0x7FFFFFFFFFFFFFFF  # 转为正数
+
+
 def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: QdrantClient) -> int:
     """
     批量向量化并写入 Qdrant。
@@ -77,10 +93,6 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
     返回写入的 Chunk 总数。
     """
     ensure_collection(client)
-
-    # 获取当前最大 ID，避免覆盖已有数据
-    count_result = client.count(collection_name=COLLECTION_NAME)
-    start_id = count_result.count
 
     total = 0
     for batch in batch_iter(chunks, BATCH_SIZE):
@@ -91,7 +103,7 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
 
         points = [
             PointStruct(
-                id=start_id + i,
+                id=_chunk_id(chunk.source, chunk.chunk_index),
                 vector=vector.tolist(),
                 payload={
                     "text": chunk.text,
@@ -101,11 +113,10 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
                     **chunk.metadata,
                 },
             )
-            for i, (chunk, vector) in enumerate(zip(batch, vectors))
+            for chunk, vector in zip(batch, vectors)
         ]
 
         client.upsert(collection_name=COLLECTION_NAME, points=points)
-        start_id += len(batch)
         total += len(batch)
         print(f"  已写入 {total}/{len(chunks)} 块")
 
