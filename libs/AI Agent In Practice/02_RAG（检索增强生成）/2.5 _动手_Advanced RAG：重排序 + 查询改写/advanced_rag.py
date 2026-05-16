@@ -101,7 +101,7 @@ class AdvancedRAG(NaiveRAG):
             # 将压缩结果包装为单个 chunk，保持 generate 接口统一
             candidates = [
                 RetrievedChunk(
-                    text=compressed_ctx, score=1.0, chunk_id="compressed"
+                    text=compressed_ctx, score=None, chunk_id="compressed"  # [Fix #16] 压缩后无真实评分
                 )
             ]
             steps_log.append("上下文压缩完成")

@@ -37,7 +37,9 @@ class QueryRewriter:
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,  # 稍高温度增加多样性，但不宜过高
         )
-        return resp.choices[0].message.content.strip()
+        # [Fix #12] 截断保护，防止 LLM 不遵守 "100字以内" 限制
+        result = resp.choices[0].message.content.strip()
+        return result[:200]
 
     def multi_query(self, query: str, n: int = 3) -> list[str]:
         """
@@ -66,8 +68,9 @@ class QueryRewriter:
         except (json.JSONDecodeError, StopIteration):
             variants = []
 
+        # [Fix #11] 过滤非字符串元素，防止 LLM 返回异常类型导致下游崩溃
         # 原始查询始终放第一位，保证召回的下界
-        return [query] + [v for v in variants if v != query]
+        return [query] + [v for v in variants if isinstance(v, str) and v != query]
 
     def rrf_merge(
         self,
