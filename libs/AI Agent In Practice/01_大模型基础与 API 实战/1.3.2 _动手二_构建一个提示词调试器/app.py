@@ -7,11 +7,12 @@ Prompt 调试器主程序
 """
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 import gradio as gr
 import pandas as pd
 
+import core  # [Fix #6] 触发 dotenv 加载，确保所有 API Key 在后续导入前就绪
 from core.caller import call_all, CallResult, MODEL_REGISTRY
 from core.history import (
     export_comparison_report,
@@ -97,7 +98,7 @@ def save_scores_and_notes(
     record = {
         "type": "score_update",
         "target_run_id": run_id_input.strip(),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),  # [Fix #3] utcnow() 已弃用，改用 timezone.utc
         "scores": {
             "DeepSeek-V3": score_deepseek,
             "Qwen-Max": score_qwen,
@@ -122,16 +123,16 @@ def fill_from_history(evt: gr.SelectData, df: pd.DataFrame):
     我们通过行号找到 run_id，再从文件读取完整记录。
     """
     if evt.index is None or df.empty:
-        return gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
+        return gr.skip(), gr.skip(), gr.skip(), gr.skip(), gr.skip()  # [Fix #7] gr.skip() 语义更清晰
 
     row_idx = evt.index[0]
     if row_idx >= len(df):
-        return gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
+        return gr.skip(), gr.skip(), gr.skip(), gr.skip(), gr.skip()
 
     run_id = df.iloc[row_idx]["run_id"]
     record = get_run_by_id(run_id)
     if not record:
-        return gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
+        return gr.skip(), gr.skip(), gr.skip(), gr.skip(), gr.skip()
 
     p = record["params"]
     return (

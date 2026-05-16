@@ -23,7 +23,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "base_url": None,
     },
     "Qwen-Max": {
-        "litellm_id": "openai/qwen-plus",
+        "litellm_id": "openai/qwen-plus",  # [Fix #5] 通过 DashScope 端点调用，qwen-plus 是 LiteLLM 兼容 ID
         "price_in": 0.001,
         "price_out": 0.004,
         "max_tokens_limit": 4096,

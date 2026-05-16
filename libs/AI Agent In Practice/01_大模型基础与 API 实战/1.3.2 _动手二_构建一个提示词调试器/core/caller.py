@@ -41,7 +41,7 @@ async def call_single(
     调用单个模型并返回结构化结果。
 
     Args:
-        model_key: MODEL_REGISTRY 中的键名（如 "gpt-4o"）
+        model_key: MODEL_REGISTRY 中的键名（如 "DeepSeek-V3"）  # [Fix #2]
         system_prompt: 系统提示词
         user_prompt: 用户输入
         temperature: 采样温度 [0, 2]
@@ -105,7 +105,7 @@ def _friendly_error(exc: Exception) -> str:
     msg = str(exc).lower()
     if "rate limit" in msg or "429" in msg:
         return "❌ API 限流，请稍后重试（建议降低并发频率）"
-    if "auth" in msg or "401" in msg or "invalid api key" in msg:
+    if "auth" in msg or "401" in msg or "invalid api key" in msg or "incorrect api key" in msg:  # [Fix #8]
         return "❌ API Key 无效，请检查 .env 配置"
     if "timeout" in msg:
         return "❌ 请求超时，模型响应过慢"
@@ -126,8 +126,8 @@ async def call_all(
 
     关键设计：asyncio.gather 让所有请求同时发出，
     总耗时 ≈ max(各模型耗时)，而非 sum(各模型耗时)。
-    例如：GPT-4o 需 3s，Claude 需 4s，DeepSeek 需 2s
-          串行总计 9s，并发只需约 4s。
+    例如：DeepSeek-V3 需 2s，Qwen-Max 需 3s  # [Fix #1]
+          串行总计 5s，并发只需约 3s。
     """
     tasks = [
         call_single(m, system_prompt, user_prompt, temperature, max_tokens)
