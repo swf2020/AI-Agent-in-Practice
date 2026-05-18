@@ -8,13 +8,23 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from dotenv import load_dotenv
-from core_config import ACTIVE_MODEL_KEY, get_router_model_name
+from core_config import ACTIVE_MODEL_KEY, get_router_model_name, MODEL_REGISTRY
 from llm_gateway_gateway import LLMGateway
 
 load_dotenv()
 
 
 async def main():
+    # [Fix #4] 启动前检查 API Key，给出友好错误提示
+    from core_config import get_api_key, ACTIVE_MODEL_KEY
+    if not get_api_key():
+        model_cfg = MODEL_REGISTRY[ACTIVE_MODEL_KEY]
+        env_var = model_cfg["api_key_env"]
+        print(f"❌ 未检测到 {ACTIVE_MODEL_KEY} 的 API Key")
+        print(f"   请复制 .env.example 为 .env 并设置 {env_var}")
+        print(f"   当前激活模型: {ACTIVE_MODEL_KEY}，可通过修改 core_config.py 中 ACTIVE_MODEL_KEY 切换")
+        return
+
     gateway = LLMGateway()
 
     print("=== 单次调用测试 ===")

@@ -55,6 +55,8 @@ class CostTracker:
             self._usage[key].total_cost_usd += cost
         except Exception:
             # 部分自托管模型无定价数据，静默跳过
+            # 教学中可取消注释下一行来观察：  # [Fix #6]
+            # print(f"⚠️  无法计算模型 {model} 的费用")
             pass
 
     def report(self) -> dict:
