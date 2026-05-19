@@ -3,6 +3,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import time
 from pathlib import Path
 from typing import Iterator
@@ -70,17 +71,24 @@ def batch_iter(items: list, size: int) -> Iterator[list]:
         yield items[i : i + size]
 
 
+def _chunk_id(source: str, chunk_index: int) -> int:
+    """根据来源和块索引生成稳定的唯一 ID（12 位十六进制转整数）
+
+    使用 MD5 hash 避免多文档索引或重复索引时 ID 冲突。
+    相比累加 ID，hash 方案在多次运行同一文档时不会重复写入，
+    实现幂等索引。
+    """  # [Fix #1]
+    h = hashlib.md5(f"{source}:{chunk_index}".encode()).hexdigest()[:12]
+    return int(h, 16)
+
+
 def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: QdrantClient) -> int:
     """
-    批量向量化并写入 Qdrant。
+    批量向量化并写入 Qdrant（幂等索引：重复运行不会产生重复数据）。
 
     返回写入的 Chunk 总数。
-    """
+    """  # [Fix #1]
     ensure_collection(client)
-
-    # 获取当前最大 ID，避免覆盖已有数据
-    count_result = client.count(collection_name=COLLECTION_NAME)
-    start_id = count_result.count
 
     total = 0
     for batch in batch_iter(chunks, BATCH_SIZE):
@@ -91,7 +99,7 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
 
         points = [
             PointStruct(
-                id=start_id + i,
+                id=_chunk_id(chunk.source, chunk.chunk_index),  # [Fix #1] 幂等 ID
                 vector=vector.tolist(),
                 payload={
                     "text": chunk.text,
@@ -101,11 +109,10 @@ def index_chunks(chunks: list[Chunk], model: SentenceTransformer, client: Qdrant
                     **chunk.metadata,
                 },
             )
-            for i, (chunk, vector) in enumerate(zip(batch, vectors))
+            for chunk, vector in zip(batch, vectors)
         ]
 
         client.upsert(collection_name=COLLECTION_NAME, points=points)
-        start_id += len(batch)
         total += len(batch)
         print(f"  已写入 {total}/{len(chunks)} 块")
 

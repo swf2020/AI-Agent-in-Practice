@@ -1,12 +1,13 @@
 """
 RAG 本地知识库问答系统 — 统一入口
 用法：
-  python main.py index <url_or_file>    # 索引文档
-  python main.py ask "你的问题"          # 问答查询
-  python main.py chainlit               # 启动 Chainlit Web 界面
-"""
+  python main.py index <url_or_file> [--strategy section|fixed]  # 索引文档
+  python main.py ask "你的问题" [--top_k 5] [--threshold 0.5]   # 问答查询
+  python main.py chainlit                                        # 启动 Chainlit Web 界面
+"""  # [Fix #6] 使用 argparse 提供更好的帮助和参数校验
 from __future__ import annotations
 
+import argparse
 import sys
 
 
@@ -37,29 +38,51 @@ def launch_chainlit() -> None:
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        print(__doc__)
-        return
+    parser = argparse.ArgumentParser(
+        description="RAG 本地知识库问答系统 — 支持索引、查询和 Web 界面",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+示例：
+  python main.py index https://example.com/doc.html
+  python main.py index paper.pdf --strategy fixed
+  python main.py ask "什么是 RAG？"
+  python main.py ask "如何调优？" --top_k 3 --threshold 0.6
+  python main.py chainlit
+        """,
+    )  # [Fix #6]
 
-    cmd = sys.argv[1]
+    subparsers = parser.add_subparsers(dest="command", help="可用命令")
 
-    if cmd == "index":
-        source = sys.argv[2] if len(sys.argv) > 2 else "https://docs.python.org/3/library/pathlib.html"
-        strategy = sys.argv[3] if len(sys.argv) > 3 else "section"
-        index(source, strategy)
+    # index 子命令
+    parser_index = subparsers.add_parser("index", help="索引文档到本地知识库")
+    parser_index.add_argument(
+        "source", nargs="?", default="https://docs.python.org/3/library/pathlib.html",
+        help="文档 URL 或本地文件路径"
+    )
+    parser_index.add_argument(
+        "--strategy", choices=["section", "fixed"], default="section",
+        help="切块策略（默认: section）"
+    )
 
-    elif cmd == "ask":
-        if len(sys.argv) < 3:
-            print("用法：python main.py ask \"你的问题\"")
-            return
-        ask(sys.argv[2])
+    # ask 子命令
+    parser_ask = subparsers.add_parser("ask", help="对知识库提问")
+    parser_ask.add_argument("question", help="你的问题")
+    parser_ask.add_argument("--top_k", type=int, default=5, help="检索返回的文档块数量（默认: 5）")
+    parser_ask.add_argument("--threshold", type=float, default=0.5, help="相似度阈值（默认: 0.5）")
 
-    elif cmd == "chainlit":
+    # chainlit 子命令
+    subparsers.add_parser("chainlit", help="启动 Chainlit Web 界面")
+
+    args = parser.parse_args()
+
+    if args.command == "index":
+        index(args.source, strategy=args.strategy)
+    elif args.command == "ask":
+        ask(args.question, top_k=args.top_k, score_threshold=args.threshold)
+    elif args.command == "chainlit":
         launch_chainlit()
-
     else:
-        print(f"未知命令：{cmd}")
-        print(__doc__)
+        parser.print_help()
 
 
 if __name__ == "__main__":

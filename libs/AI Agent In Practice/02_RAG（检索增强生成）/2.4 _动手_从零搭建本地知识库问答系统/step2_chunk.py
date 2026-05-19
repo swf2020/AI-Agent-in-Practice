@@ -17,6 +17,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from step1_parse import ParsedDocument
 
+# 模块级别缓存 encoder，避免重复初始化开销  # [Fix #9]
+_ENCODER = tiktoken.get_encoding("cl100k_base")
+
 
 @dataclass
 class Chunk:
@@ -43,7 +46,7 @@ def chunk_fixed_size(
 
     chunk_overlap 保证跨块的句子不会完全割裂语义。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #9] 使用模块级缓存
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -79,7 +82,7 @@ def chunk_by_section(
 
     超过 max_chunk_size 的节会用固定大小策略二次切分。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #9] 使用模块级缓存
 
     # 匹配所有级别的 Markdown 标题（# ~ ######）
     heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)

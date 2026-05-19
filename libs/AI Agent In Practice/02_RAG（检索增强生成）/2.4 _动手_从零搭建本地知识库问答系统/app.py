@@ -30,22 +30,37 @@ async def on_start() -> None:
 
 @cl.on_message
 async def on_message(message: cl.Message) -> None:
-    """处理用户消息"""
-    pipeline = get_pipeline()
-    question = message.content.strip()
+    """处理用户消息"""  # [Fix #5] 添加异常处理
+    try:
+        pipeline = get_pipeline()
+        question = message.content.strip()
 
-    # 显示思考中状态
-    async with cl.Step(name="🔍 检索知识库") as step:
-        result = pipeline.ask(question)
-        step.output = f"找到 {len(result.sources)} 条相关内容"
+        # 显示思考中状态
+        async with cl.Step(name="🔍 检索知识库") as step:
+            result = pipeline.ask(question)
+            step.output = f"找到 {len(result.sources)} 条相关内容"
 
-    # 构建引用来源的展示文本
-    source_text = ""
-    if result.sources:
-        source_lines = [
-            f"- [{c.score:.2f}] `{c.source.split('/')[-1]}`"
-            for c in result.sources
-        ]
-        source_text = "\n\n**参考来源：**\n" + "\n".join(source_lines)
+        # 构建引用来源的展示文本
+        source_text = ""
+        if result.sources:
+            source_lines = [
+                f"- [{c.score:.2f}] `{c.source.split('/')[-1]}`"
+                for c in result.sources
+            ]
+            source_text = "\n\n**参考来源：**\n" + "\n".join(source_lines)
 
-    await cl.Message(content=result.answer + source_text).send()
+        await cl.Message(content=result.answer + source_text).send()
+    except ValueError as e:
+        await cl.Message(
+            content=f"❌ 配置错误：{e}\n\n请检查：\n"
+                    "1. .env 文件是否存在并填写了 API Key\n"
+                    "2. 模型名称是否在 MODEL_REGISTRY 中注册"
+        ).send()
+    except Exception as e:
+        await cl.Message(
+            content=f"❌ 系统错误：{type(e).__name__}: {e}\n\n"
+                    "可能原因：\n"
+                    "1. 未运行 `python main.py index <文档>` 构建索引\n"
+                    "2. 模型 API 调用失败，请检查网络和 Key\n"
+                    "3. 依赖包版本不兼容，请重新安装 requirements.txt"
+        ).send()
