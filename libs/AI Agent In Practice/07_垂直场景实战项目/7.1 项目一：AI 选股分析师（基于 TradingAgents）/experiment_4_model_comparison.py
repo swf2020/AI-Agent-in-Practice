@@ -14,6 +14,7 @@ from typing import Literal
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.config import TradingAgentsConfig
+from core_config import normalize_decision  # [Fix #3]
 from rich.console import Console
 from rich.table import Table
 
@@ -111,21 +112,15 @@ def run_with_model(
     state, decision = graph.propagate(ticker, analysis_date)
     elapsed = time.time() - start_time
 
-    # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
-    if isinstance(decision, str):
-        decision_dict = {
-            "action": decision.lower(),
-            "reasoning": "分析完成",
-            "confidence": 0.8,
-        }
-    else:
-        decision_dict = decision
+    # 统一 decision 格式（兼容新旧版本返回值） [Fix #3]
+    decision_dict = normalize_decision(decision)
 
     reasoning = decision_dict.get("reasoning", "")
 
-    # 粗略估算成本（token 数基于字符数估算，1 token ≈ 4 字符）
-    estimated_tokens = len(reasoning) / 4
-    estimated_cost = (estimated_tokens / 1_000_000) * mc.cost_per_1m_output
+    # 粗略估算输出 token 成本（仅统计 reasoning 字段，不含 input tokens） [Fix #6]
+    # 注意：真实成本中 input tokens 通常占 80%+，此估算严重偏低，仅用于模型间相对比较
+    estimated_output_tokens = len(reasoning) / 4  # 1 token ≈ 4 字符
+    estimated_cost = (estimated_output_tokens / 1_000_000) * mc.cost_per_1m_output
 
     return AnalysisResult(
         model_name=mc.name,
@@ -182,16 +177,17 @@ def display_comparison(results: list[AnalysisResult]) -> None:
         ("目标价", "white"),
         ("推理深度（字符）", "white"),
         ("耗时（秒）", "yellow"),
-        ("估算成本（USD）", "green"),
+        ("输出 Token 估算成本（USD）*", "green"),  # [Fix #6] 更准确的列名
     ]
     for col_name, style in columns:
         table.add_column(col_name, style=style)
 
     for r in results:
+        conf_str = "未知" if r.confidence is None else f"{r.confidence:.0%}"  # [Fix #3]
         table.add_row(
             r.model_name,
             r.action.upper(),
-            f"{r.confidence:.0%}",
+            conf_str,
             f"${r.target_price:.2f}" if r.target_price else "N/A",
             str(r.reasoning_length),
             f"{r.elapsed_seconds:.1f}s",
@@ -199,6 +195,7 @@ def display_comparison(results: list[AnalysisResult]) -> None:
         )
 
     console.print(table)
+    console.print("[dim]* 仅基于输出 reasoning 字符数估算，不含 input tokens，真实费用约为显示的 5-10 倍[/dim]")  # [Fix #6]
 
     # 评级一致性分析
     actions = [r.action.lower() for r in results]
