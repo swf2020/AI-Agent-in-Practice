@@ -4,24 +4,11 @@ import logging
 from datetime import datetime, timezone
 from typing import Any
 
-from arq.connections import RedisSettings
-
 from agent import run_agent
-from config import get_settings
+from config import get_settings, get_redis_settings  # [Fix #5]
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
-
-
-def _redis_settings() -> RedisSettings:
-    """从 REDIS_URL 解析 ARQ 需要的 RedisSettings 对象。"""
-    from urllib.parse import urlparse
-    parsed = urlparse(settings.redis_url)
-    return RedisSettings(
-        host=parsed.hostname or "localhost",
-        port=parsed.port or 6379,
-        password=parsed.password,
-    )
 
 
 async def execute_agent_task(
@@ -95,7 +82,7 @@ class WorkerSettings:
     functions = [execute_agent_task]
 
     # Redis 连接配置
-    redis_settings = _redis_settings()
+    redis_settings = get_redis_settings()  # [Fix #5] 使用 config 统一解析
 
     # 并发控制：同时最多执行 5 个 Agent 任务
     # 核心考量：LLM API 有速率限制，并发过高会触发 429
