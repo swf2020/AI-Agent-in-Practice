@@ -61,7 +61,10 @@ def get_api_key(model_key: str | None = None) -> str | None:
     """从环境变量读取指定模型的 API Key"""
     key = model_key or ACTIVE_MODEL_KEY
     env_var = MODEL_REGISTRY[key].get("api_key_env")
-    return os.environ.get(env_var) if env_var else None
+    # [Fix #4] 防止 env_var 为 None 时 os.environ.get(None) 抛出 TypeError
+    if not env_var:
+        return None
+    return os.environ.get(env_var)
 
 
 def get_base_url(model_key: str | None = None) -> str | None:
