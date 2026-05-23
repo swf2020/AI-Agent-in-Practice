@@ -31,12 +31,6 @@ def should_continue(state: AgentState) -> Literal["tools", "end"]:
     return "end"
 
 
-def check_approval(state: AgentState) -> Literal["approved", "pending"]:
-    """人工审批卡点路由函数（用于高风险操作场景）。
-    
-    当 requires_approval=True 时，Agent 会在此节点暂停（interrupt），
-    等待外部系统修改 state 后再继续执行。
-    """
-    if state.get("requires_approval", False):
-        return "pending"
-    return "approved"
+# [Fix #2] check_approval 已移除。
+# LangGraph 内置的 interrupt_before 机制是实现人工审批卡点的推荐方式，
+# 参见 checkpoint_demo.py 中的 demo_human_approval()。

@@ -72,7 +72,7 @@ def get_litellm_id(model_key: str | None = None) -> str:
 
 
 def get_chat_model_id(model_key: str | None = None) -> str:
-    """获取 OpenAI/Anthropic SDK 直连时使用的模型名（无前缀，如 deepseek-v4-flash）"""
+    """获取 OpenAI/Anthropic SDK 直连时使用的模型名（无前缀，如 deepseek-chat）"""
     key = model_key or ACTIVE_MODEL_KEY
     cfg = MODEL_REGISTRY[key]
     return cfg.get("chat_model_id", cfg["litellm_id"].split("/")[-1])
