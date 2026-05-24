@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from core_config import get_litellm_id, get_api_key, get_base_url, DB_PATH
+from core_config import get_litellm_id, DB_PATH  # [Fix #8] 移除未使用的 get_api_key/get_base_url 导入
 from schema_manager import SchemaManager
 from sql_generator import SQLGenerator, Dialect
 from sql_executor import SQLExecutor, SelfCorrectingExecutor
@@ -17,8 +17,7 @@ def main():
 
     schema_manager = SchemaManager(db_path)
     sql_generator = SQLGenerator(
-        model=get_litellm_id(), dialect=Dialect.SQLITE,
-        api_key=get_api_key(), base_url=get_base_url(),
+        model=get_litellm_id(), dialect=Dialect.SQLITE,  # [Fix #8] api_key/base_url 由 core_config 自动注入，无需显式传入
     )
     executor = SQLExecutor(db_path)
     visualizer = DataVisualizer()

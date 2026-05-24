@@ -130,10 +130,15 @@ class SchemaManager:
         table_names = list(self.tables.keys())
 
         client = _get_embedding_client()
-        response = client.embeddings.create(
-            model=self.embed_model,
-            input=descriptions,
-        )
+        try:
+            response = client.embeddings.create(
+                model=self.embed_model,
+                input=descriptions,
+            )
+        except Exception as e:  # [Fix #5] 网络/认证异常时给出友好提示
+            print(f"❌ Embedding 构建失败：{e}")
+            print("   请检查：1) API Key 是否已正确设置  2) 网络是否可达")
+            return
         for i, item in enumerate(response.data):
             self.tables[table_names[i]].embedding = item.embedding
 
@@ -184,7 +189,7 @@ class SchemaManager:
 
             if include_samples and table.sample_rows:
                 part += "\n**样例数据（前3行）：**\n"
-                for row in table.sample_rows[:3]:
+                for row in table.sample_rows:  # [Fix #10] _load_schemas 已 LIMIT 3，无需再切片
                     row_str = ", ".join(
                         f"{k}={repr(v)}" for k, v in list(row.items())[:6]
                     )

@@ -49,8 +49,7 @@ def _parse_json_response(text: str) -> dict:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
-    # 尝试提取 JSON 块
-    import re
+    # 尝试提取 JSON 块（re 已在文件顶部导入）
     match = re.search(r'\{.*\}', text, re.DOTALL)
     if match:
         try:
@@ -137,9 +136,10 @@ class SQLGenerator:
             result = response.choices[0].message.parsed
             result.sql = self._clean_sql(result.sql)
             return result
-        except Exception:
-            # 结构化输出失败时，回退到普通 completion + JSON 手动解析
-            print("⚠️  结构化输出解析失败，回退到普通模式...")
+        except Exception as e:  # [Fix #6] 打印异常类型，方便定位原因
+            error_type = type(e).__name__
+            print(f"⚠️  结构化输出失败（{error_type}），回退到普通 JSON 模式...")
+            print(f"   提示：如持续失败，请检查当前模型是否支持 Structured Output")
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
