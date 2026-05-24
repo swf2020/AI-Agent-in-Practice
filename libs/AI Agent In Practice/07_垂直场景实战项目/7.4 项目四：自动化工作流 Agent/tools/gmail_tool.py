@@ -53,7 +53,8 @@ def gmail_read_email(message_id: str) -> str:
         message_id=message_id,
         subject=headers.get("Subject", "(无主题)"),
         sender=headers.get("From", "未知发件人"),
-        body=body[:4000],
+        MAX_BODY_LENGTH = 4000  # [Fix #6] 约 1000 tokens，为 system prompt 和后续处理留足空间
+    body=body[:MAX_BODY_LENGTH],
         received_at=received_at,
     )
     return email.model_dump_json()
