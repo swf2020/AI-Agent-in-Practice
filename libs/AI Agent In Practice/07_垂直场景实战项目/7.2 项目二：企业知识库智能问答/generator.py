@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from openai import OpenAI
+from openai import APIError, AuthenticationError, OpenAI, RateLimitError  # [Fix #5] 异常类型导入
 
 from core_config import CONFIDENCE_THRESHOLD as _CONFIDENCE_THRESHOLD, get_api_key, get_base_url, get_litellm_id
 from retriever import RetrievedChunk
@@ -30,7 +30,16 @@ def _build_context(chunks: list[RetrievedChunk]) -> str:
     return "\n\n---\n\n".join(parts)
 
 
-def _build_prompt(query: str, context: str) -> str:
+def _build_prompt(query: str, context: str) -> tuple[str, str]:  # [Fix #2] 返回类型应为 tuple[str, str]
+    """构建包含系统指令和用户问题的 Prompt 对。
+
+    Args:
+        query: 用户的原始问题文本
+        context: 格式化的参考文档上下文（由 _build_context 生成）
+
+    Returns:
+        (system_prompt, user_content) 元组
+    """  # [Fix #14] 添加 docstring
     system_prompt = """你是一个严谨的企业知识库助手。请严格遵守以下规则：
 
 1. **仅基于提供的参考文档**回答问题，不得引用参考文档以外的知识。
@@ -91,15 +100,35 @@ class AnswerGenerator:
         context = _build_context(valid_chunks)
         system_prompt, user_content = _build_prompt(query, context)
 
-        response = self._client.chat.completions.create(
-            model=self._model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content},
-            ],
-            max_tokens=max_tokens,
-            temperature=0.1,
-        )
+        # [Fix #5] 添加 OpenAI API 异常处理，提供教学友好的错误信息
+        try:
+            response = self._client.chat.completions.create(
+                model=self._model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_content},
+                ],
+                max_tokens=max_tokens,
+                temperature=0.1,
+            )
+        except AuthenticationError:
+            return GeneratedAnswer(
+                answer="❌ API Key 无效，请检查 core_config.py 中的 ACTIVE_MODEL_KEY 及对应环境变量是否设置正确。",
+                is_abstained=True,
+                top_rerank_score=top_score,
+            )
+        except RateLimitError:
+            return GeneratedAnswer(
+                answer="⚠️ 请求频率过高，请稍后重试。",
+                is_abstained=True,
+                top_rerank_score=top_score,
+            )
+        except APIError as e:
+            return GeneratedAnswer(
+                answer=f"❌ LLM 调用失败: {e}",
+                is_abstained=True,
+                top_rerank_score=top_score,
+            )
 
         answer_text = response.choices[0].message.content or ""
 

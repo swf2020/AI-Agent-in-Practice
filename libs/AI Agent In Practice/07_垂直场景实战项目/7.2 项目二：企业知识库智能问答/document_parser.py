@@ -62,6 +62,11 @@ class DocumentParser:
         extra_metadata: dict | None = None,
     ) -> ParsedDocument:
         source = Path(source) if not str(source).startswith("http") else str(source)
+        
+        # [Fix #10] 检查本地文件是否存在，提供友好的错误提示
+        if isinstance(source, Path) and not source.exists():
+            raise FileNotFoundError(f"文档不存在: {source}")
+        
         doc_type = _detect_type(source)
         file_hash = _compute_hash(source)
 

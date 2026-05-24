@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
         bm25_index_path=Path("bm25_index.pkl") if Path("bm25_index.pkl").exists() else None,
     )
 
-    if _retriever._bm25 is None:
+    if not _retriever.is_bm25_ready:  # [Fix #7] 使用封装后的属性访问
         print("构建 BM25 索引中...")
         _retriever.build_bm25_from_qdrant()
         _retriever.save_bm25("bm25_index.pkl")
@@ -96,4 +96,4 @@ async def query_knowledge_base(request: QueryRequest) -> JSONResponse:
 
 @app.get("/health")
 async def health_check() -> dict:
-    return {"status": "ok", "bm25_ready": _retriever is not None and _retriever._bm25 is not None}
+    return {"status": "ok", "bm25_ready": _retriever is not None and _retriever.is_bm25_ready}  # [Fix #7]

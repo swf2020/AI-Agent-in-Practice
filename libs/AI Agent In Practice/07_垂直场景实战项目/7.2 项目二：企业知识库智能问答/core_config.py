@@ -98,7 +98,9 @@ VECTOR_DIM = 512
 TOP_K_PER_SOURCE = 20
 FINAL_TOP_N = 5
 RRF_K = 60
-CONFIDENCE_THRESHOLD = 0.0
+# BGE-Reranker 的 predict() 方法默认施加 sigmoid 激活，输出 [0,1] 概率值
+# 0.2 表示模型认为仅有 20% 概率相关——属于低置信度，触发拒答  [Fix #3][Fix #13]
+CONFIDENCE_THRESHOLD: float = 0.2
 
 # 分块配置
 CHUNK_SIZE = 512
