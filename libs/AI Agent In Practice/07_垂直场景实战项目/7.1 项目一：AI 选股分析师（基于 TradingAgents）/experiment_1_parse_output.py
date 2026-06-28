@@ -52,14 +52,24 @@ def display_decision(result: dict) -> None:
     table.add_column("指标", style="cyan", width=20)
     table.add_column("值", width=30)
 
+    # 安全提取 risk_tolerance：兼容 dict 和对象两种 state 格式 [Fix #1]
+    risk_tol_raw = "neutral"
+    state_raw = result.get("state", {})
+    if hasattr(state_raw, "risk_tolerance"):
+        risk_tol_raw = state_raw.risk_tolerance  # 对象属性访问
+    elif isinstance(state_raw, dict):
+        risk_tol_raw = state_raw.get("risk_tolerance", "neutral")  # 字典键访问
+
+    # 置信度展示：None 表示未获取到有效值 [Fix #3]
+    conf_val = decision.get('confidence', 0)
+    conf_str = "未知" if conf_val is None else f"{conf_val:.0%}"
+
     metrics = [
         ("目标买入价", decision.get("target_price", "N/A")),
         ("止损价", decision.get("stop_loss", "N/A")),
         ("止盈价", decision.get("take_profit", "N/A")),
-        ("置信度", f"{decision.get('confidence', 0):.0%}"),
-        ("风险偏好", RISK_LABELS.get(
-            getattr(result["state"], "risk_tolerance", "neutral"), "未知"
-        )),
+        ("置信度", conf_str),
+        ("风险偏好", RISK_LABELS.get(risk_tol_raw, "未知")),
     ]
     for name, value in metrics:
         table.add_row(name, str(value))
@@ -79,7 +89,12 @@ def compare_risk_profiles(ticker: str, analysis_date: str) -> None:
     """
     用相同数据、三种风险偏好运行分析，对比评级差异。
     展示 Risk Manager 如何因风险阈值不同而给出不同建议。
+
+    注意：此函数依赖 experiment_1_basic_analysis.run_analysis，
+    函数内延迟导入以避免模块级循环依赖。
     """
+    from experiment_1_basic_analysis import run_analysis  # [Fix #1] 延迟导入避免调用时 NameError
+
     results = {}
     for risk in ["aggressive", "neutral", "conservative"]:
         console.print(f"\n[dim]运行 {risk} 模式...[/dim]")
@@ -95,10 +110,12 @@ def compare_risk_profiles(ticker: str, analysis_date: str) -> None:
         dec = result["decision"]
         rating = dec.get("action", "N/A").lower()
         color = RATING_COLORS.get(rating, "white")
+        c_val = dec.get('confidence', 0)
+        c_str = "未知" if c_val is None else f"{c_val:.0%}"  # [Fix #3]
         compare_table.add_row(
             RISK_LABELS[risk],
             Text(rating.upper(), style=color),
-            f"{dec.get('confidence', 0):.0%}",
+            c_str,
         )
 
     console.print(compare_table)

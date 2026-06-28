@@ -3,25 +3,12 @@
 """
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.config import TradingAgentsConfig
+from core_config import create_default_config, normalize_decision  # [Fix #3][Fix #4]
 from astock_adapter import AStockAdapter
 from rich.console import Console
 
 load_dotenv()
 console = Console()
-
-
-def _make_config() -> TradingAgentsConfig:
-    """创建 A 股分析配置"""
-    return TradingAgentsConfig(
-        llm_provider="litellm",
-        deep_think_llm="deepseek/deepseek-chat",
-        quick_think_llm="deepseek/deepseek-chat",
-        reasoning_effort="medium",
-        max_debate_rounds=3,
-        max_risk_discuss_rounds=3,
-        max_recur_limit=100,
-    )
 
 
 def patch_astock_tools(adapter: AStockAdapter) -> None:
@@ -46,7 +33,7 @@ def analyze_astock(ticker: str, analysis_date: str) -> dict:
         ticker: A 股代码，如 "600519"（贵州茅台）
         analysis_date: 分析日期，格式 "YYYY-MM-DD"
     """
-    config = _make_config()
+    config = create_default_config()  # [Fix #4] 复用 core_config 统一配置
 
     adapter = AStockAdapter()
 
@@ -71,15 +58,8 @@ def analyze_astock(ticker: str, analysis_date: str) -> dict:
     console.print(f"[bold cyan]开始分析 A 股 {ticker}...[/bold cyan]")
     state, decision = graph.propagate(ticker, analysis_date)
 
-    # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
-    if isinstance(decision, str):
-        decision_dict = {
-            "action": decision.lower(),
-            "reasoning": "分析完成",
-            "confidence": 0.8,
-        }
-    else:
-        decision_dict = decision
+    # 统一 decision 格式（兼容新旧版本返回值） [Fix #3]
+    decision_dict = normalize_decision(decision)
 
     return {"ticker": ticker, "date": analysis_date, "decision": decision_dict, "state": state}
 
@@ -90,5 +70,6 @@ if __name__ == "__main__":
 
     action = result["decision"].get("action", "N/A")
     confidence = result["decision"].get("confidence", 0)
-    console.print(f"\n[bold]茅台分析结论：{action.upper()} | 置信度：{confidence:.0%}[/bold]")
+    conf_str = "未知" if confidence is None else f"{confidence:.0%}"  # [Fix #3]
+    console.print(f"\n[bold]茅台分析结论：{action.upper()} | 置信度：{conf_str}[/bold]")
     console.print(result["decision"].get("reasoning", "")[:800])
