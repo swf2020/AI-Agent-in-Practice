@@ -4,6 +4,7 @@ RAG 查询链路：问题向量化 → 相似检索 → Prompt 构建 → LLM �
 from __future__ import annotations
 
 import os
+import time
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
@@ -34,7 +35,11 @@ class RAGAnswer:
 
 
 def get_llm_client(model_key: str = "DeepSeek-V3"):
-    """获取 LLM 客户端（支持 DeepSeek 和 Qwen）"""
+    """获取 LLM 客户端，返回 (litellm, model_id, api_key, api_base)
+
+    不再污染全局 os.environ，改为显式返回 api_key 和 api_base，
+    由调用方在 completion() 调用时显式传入。
+    """  # [Fix #2]
     import litellm
 
     if model_key not in MODEL_REGISTRY:
@@ -46,12 +51,7 @@ def get_llm_client(model_key: str = "DeepSeek-V3"):
 
     api_key = os.environ.get(api_key_env) if api_key_env else None
 
-    if model_key.startswith("Qwen") and base_url:
-        os.environ["OPENAI_API_KEY"] = api_key or ""
-        os.environ["OPENAI_API_BASE"] = base_url
-        return litellm, cfg["litellm_id"]
-    else:
-        return litellm, cfg["litellm_id"]
+    return litellm, cfg["litellm_id"], api_key, base_url  # [Fix #2] 显式返回，不污染环境变量
 
 
 class RAGPipeline:
@@ -62,7 +62,8 @@ class RAGPipeline:
         self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
         self.qdrant = QdrantClient(path=QDRANT_PATH)
 
-        self.llm_client, self.model_name = get_llm_client(model_key)
+        self.model_key = model_key  # [Fix #10] 保存 model_key 供异常处理使用
+        self.llm_client, self.model_name, self.api_key, self.api_base = get_llm_client(model_key)  # [Fix #2, #10]
         print(f"✅ LLM 模型：{model_key} ({self.model_name})")
 
     def retrieve(self, question: str) -> list[RetrievedChunk]:
@@ -98,42 +99,57 @@ class RAGPipeline:
         ]
 
     def _retrieve_full_scan(self, query_vector: list[float]) -> list[RetrievedChunk]:
-        """全量扫描检索（当索引未就绪时使用）"""
+        """全量扫描检索（当索引未就绪时使用）
+
+        使用分页 scroll 遍历所有数据点，避免大数据量遗漏。
+        通过 FULL_SCAN_LIMIT 环境变量控制安全上限。
+        """  # [Fix #4]
         import numpy as np
 
-        # 获取所有数据
-        scroll_result = self.qdrant.scroll(
-            collection_name=COLLECTION_NAME,
-            limit=1000,
-            with_vectors=True,
-        )
+        full_scan_limit = int(os.getenv("RAG_FULL_SCAN_LIMIT", "5000"))  # [Fix #4]
 
-        points = scroll_result[0]
-        if not points:
-            return []
-
-        # 计算余弦相似度
         query_np = np.array(query_vector)
-        scores = []
-        for point in points:
-            if point.vector:
-                vector_np = np.array(point.vector)
-                # 余弦相似度
-                score = float(np.dot(query_np, vector_np) / 
-                            (np.linalg.norm(query_np) * np.linalg.norm(vector_np)))
-                if score >= self.score_threshold:
-                    scores.append((score, point))
+        all_scores: list[tuple[float, int, dict]] = []  # (score, id, payload)
 
-        # 按相似度排序并取top_k
-        scores.sort(key=lambda x: x[0], reverse=True)
-        top_results = scores[:self.top_k]
+        offset = None
+        total_scanned = 0
+        while total_scanned < full_scan_limit:
+            batch = self.qdrant.scroll(
+                collection_name=COLLECTION_NAME,
+                limit=500,
+                offset=offset,
+                with_vectors=True,
+                with_payload=True,
+            )
+            points, next_offset = batch[0], batch[1]
+            if not points:
+                break
+
+            for point in points:
+                if point.vector and point.payload:
+                    vector_np = np.array(point.vector)
+                    score = float(
+                        np.dot(query_np, vector_np)
+                        / (np.linalg.norm(query_np) * np.linalg.norm(vector_np))
+                    )
+                    if score >= self.score_threshold:
+                        all_scores.append((score, point.id, point.payload))
+
+            total_scanned += len(points)
+            offset = next_offset
+            if next_offset is None:
+                break
+
+        # 按相似度排序并取 top_k
+        all_scores.sort(key=lambda x: x[0], reverse=True)
+        top_results = all_scores[: self.top_k]
 
         return [
             RetrievedChunk(
-                text=r[1].payload["text"],
-                source=r[1].payload["source"],
+                text=r[2]["text"],
+                source=r[2]["source"],
                 score=r[0],
-                metadata={k: v for k, v in r[1].payload.items() if k not in {"text", "source"}},
+                metadata={k: v for k, v in r[2].items() if k not in {"text", "source"}},
             )
             for r in top_results
         ]
@@ -169,16 +185,44 @@ class RAGPipeline:
 请用中文回答："""
 
     def ask(self, question: str) -> RAGAnswer:
-        """端到端问答：检索 → 构建 Prompt → 生成回答"""
+        """端到端问答：检索 → 构建 Prompt → LLM 生成"""  # [Fix #2, #7, #10]
         chunks = self.retrieve(question)
         prompt = self.build_prompt(question, chunks)
 
-        response = self.llm_client.completion(
-            model=self.model_name,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,
-            max_tokens=1024,
-        )
+        # 显式传入 api_key 和 api_base，避免依赖环境变量
+        completion_kwargs: dict = {
+            "model": self.model_name,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.1,
+            "max_tokens": 1024,
+        }
+        if self.api_key:
+            completion_kwargs["api_key"] = self.api_key
+        if self.api_base:
+            completion_kwargs["api_base"] = self.api_base
+
+        try:
+            response = self.llm_client.completion(**completion_kwargs)  # [Fix #7]
+        except self.llm_client.exceptions.AuthenticationError:
+            return RAGAnswer(
+                question=question,
+                answer=(
+                    "❌ API Key 无效，请检查：\n"
+                    "   1. 是否已将正确的 Key 填入 .env 文件\n"
+                    f"   2. 当前模型 {self.model_key} 对应的环境变量是否正确设置"
+                ),
+                sources=chunks,
+            )
+        except self.llm_client.exceptions.RateLimitError:
+            print("⚠️  触发速率限制，等待 60 秒后重试...")
+            time.sleep(60)
+            response = self.llm_client.completion(**completion_kwargs)
+        except Exception as e:
+            return RAGAnswer(
+                question=question,
+                answer=f"❌ LLM 调用失败：{type(e).__name__}: {e}\n请检查网络连接和 API 配额。",
+                sources=chunks,
+            )
 
         return RAGAnswer(
             question=question,
