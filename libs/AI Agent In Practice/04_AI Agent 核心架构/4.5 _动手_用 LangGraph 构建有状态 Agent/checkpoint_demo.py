@@ -46,27 +46,16 @@ def demo_human_approval():
     核心机制：compile(interrupt_before=["tools"]) 让 Agent 在即将执行工具前暂停，
     将控制权交还给调用方。调用方检查 pending tool_calls，决定是否批准继续执行。
     """
-    # 创建带中断点的图：在执行 tools 节点前暂停
-    from state import AgentState
-    from agent import agent_node
-    from router import should_continue
-    from tools import TOOLS
-    from langgraph.prebuilt import ToolNode
-    from langgraph.graph import StateGraph, START, END
-
-    graph_builder = StateGraph(AgentState)
-    graph_builder.add_node("agent", agent_node)
-    graph_builder.add_node("tools", ToolNode(TOOLS))
-    graph_builder.add_edge(START, "agent")
-    graph_builder.add_conditional_edges("agent", should_continue, {"tools": "tools", "end": END})
-    graph_builder.add_edge("tools", "agent")
-    
-    checkpointer = MemorySaver()
+    # [Fix #7] 复用 build_graph() 而非重复构建图结构
     # interrupt_before=["tools"] 是关键：Agent 决策后、工具执行前暂停
-    approval_graph = graph_builder.compile(
-        checkpointer=checkpointer,
+    checkpointer = MemorySaver()
+    approval_graph = build_graph(
+        use_memory=False,
         interrupt_before=["tools"],
     )
+    # 手动注入 Checkpoint（build_graph 默认 use_memory=False 时不创建 Checkpoint，
+    # 此处显式注入我们自己的 MemorySaver 以确保状态持久化）
+    approval_graph.checkpointer = checkpointer
     
     config = {"configurable": {"thread_id": "approval_demo_001"}}
     

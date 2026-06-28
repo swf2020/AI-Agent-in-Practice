@@ -71,5 +71,17 @@ def calculate(expression: str) -> str:
         return f"计算错误: {e}"
 
 
-# 工具列表，后续绑定到 LLM 和 ToolNode
-TOOLS = [get_search_tool(), calculate]
+# [Fix #5] 改用惰性求值：每次调用时动态检查环境变量，
+# 而非模块导入时一次性锁定。支持运行时设置 API Key 后即时生效。
+def get_tools() -> list:
+    """返回当前环境下的工具列表。
+    
+    每次调用时重新执行 get_search_tool()，确保环境变量变更后
+    工具实例能立即反映最新配置（如 TAVILY_API_KEY）。
+    """
+    return [get_search_tool(), calculate]
+
+
+# 保留 TOOLS 供向后兼容（模块导入时锁定环境变量状态）
+# 推荐新代码使用 get_tools()
+TOOLS = get_tools()

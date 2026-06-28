@@ -1,9 +1,9 @@
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, AIMessage
 from state import AgentState
-from tools import TOOLS
-from core_config import get_litellm_id, get_chat_model_id, get_api_key, get_base_url
+from tools import get_tools
+from core_config import get_litellm_id, get_chat_model_id, get_api_key, get_base_url, ACTIVE_MODEL_KEY
 
 
 def create_llm(provider: str = "default"):
@@ -37,7 +37,7 @@ def create_llm(provider: str = "default"):
             temperature=0,
         )
 
-    return llm.bind_tools(TOOLS)
+    return llm.bind_tools(get_tools())  # [Fix #5]
 
 
 SYSTEM_PROMPT = """你是一个专业的研究助手，能够搜索最新信息并进行计算。
@@ -65,7 +65,26 @@ def agent_node(state: AgentState) -> dict:
     # 注入系统提示（每次调用都加，确保模型行为一致）
     messages = [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
 
-    response = llm_with_tools.invoke(messages)
+    # [Fix #4] 异常处理：将 SDK 原始异常转为教学友好的错误提示
+    try:
+        response = llm_with_tools.invoke(messages)
+    except Exception as e:
+        error_msg = str(e).lower()
+        if "api key" in error_msg or "authentication" in error_msg:
+            hint = (
+                "❌ API Key 无效或未设置，请检查：\n"
+                "   1. .env 文件中是否正确填写了 API Key\n"
+                f"   2. 当前激活模型：{ACTIVE_MODEL_KEY}（见 core_config.py）\n"
+                "   3. 环境变量名是否与 core_config.py 中的 api_key_env 一致"
+            )
+        elif "rate limit" in error_msg or "too many" in error_msg:
+            hint = (
+                "⚠️  API 调用频率过高，请稍后重试或降低 "
+                f"MAX_TOOL_CALLS（当前为 5，见 router.py）"
+            )
+        else:
+            hint = f"❌ LLM 调用失败: {e}"
+        return {"messages": [AIMessage(content=hint)]}
 
     # 只返回需要更新的字段，LangGraph 的 Reducer 负责合并
     return {
