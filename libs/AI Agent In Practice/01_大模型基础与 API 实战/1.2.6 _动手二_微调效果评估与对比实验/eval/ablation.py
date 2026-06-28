@@ -3,10 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
-import matplotlib
 import pandas as pd
-
-matplotlib.rcParams["font.family"] = "DejaVu Sans"   # Colab 字体兼容
 
 
 @dataclass
@@ -44,6 +41,8 @@ class AblationSuite:
         Args:
             variable: "rank" / "epoch" / "data_size"
         """
+        # [Fix #7] 字体配置移入方法内部，避免 import 时修改全局状态
+        plt.rcParams["font.family"] = "DejaVu Sans"   # Colab 字体兼容
         df = self.to_dataframe()
         subset = df[df["variable"] == variable].sort_values("value")
 

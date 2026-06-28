@@ -4,6 +4,7 @@ import json
 import time
 from dataclasses import dataclass
 
+import openai                         # [Fix #4] 用于捕获 API 异常类型
 from openai import OpenAI
 
 from core_config import get_litellm_id as _get_litellm_id
@@ -93,7 +94,7 @@ def batch_judge(
     client: OpenAI,
     model: str | None = None,
 ) -> list[JudgeScore]:
-    """批量评估，带速率限制保护。"""
+    """批量评估，带速率限制保护和异常处理。"""
     from tqdm import tqdm
 
     if model is None:
@@ -101,13 +102,35 @@ def batch_judge(
 
     results = []
     for sample, pred in tqdm(zip(samples, predictions), total=len(samples), desc="LLM Judge"):
-        score = llm_judge(
-            instruction=sample.instruction,
-            reference=sample.reference,
-            prediction=pred,
-            client=client,
-            model=model,
-        )
-        results.append(score)
-        time.sleep(0.1)    # 避免触发 API 速率限制（tier-1 约 500 RPM）
+        try:
+            score = llm_judge(
+                instruction=sample.instruction,
+                reference=sample.reference,
+                prediction=pred,
+                client=client,
+                model=model,
+            )
+            results.append(score)
+        except openai.AuthenticationError:  # [Fix #4] API Key 无效
+            print("❌ API Key 无效，请检查：")
+            print("   1. 确认已运行 export OPENAI_API_KEY='***' 或在 .env 中配置")
+            print("   2. Key 是否已过期或超出额度")
+            raise
+        except openai.RateLimitError:  # [Fix #4] 速率限制
+            print("⚠️  触发速率限制，等待 60 秒后重试...")
+            time.sleep(60)
+            score = llm_judge(
+                instruction=sample.instruction,
+                reference=sample.reference,
+                prediction=pred,
+                client=client,
+                model=model,
+            )
+            results.append(score)
+        except openai.APIError as e:  # [Fix #4] 其他 API 错误（网络超时等）
+            print(f"⚠️  API 调用失败 (第 {sample.idx} 条): {e}")
+            print("   可能的网络问题，或 API 服务暂时不可用，跳过该条")
+            # 跳过该条，不阻塞整个评估流程
+        else:
+            time.sleep(0.1)    # 避免触发 API 速率限制（tier-1 约 500 RPM）
     return results
