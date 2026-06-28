@@ -12,6 +12,7 @@
 import os
 import signal
 import subprocess
+import sys
 import time
 import argparse
 from typing import Optional
@@ -19,7 +20,7 @@ from typing import Optional
 # 配置参数
 FASTAPI_PORT = 8000
 WORK_DIR = os.path.dirname(os.path.abspath(__file__))
-PYTHON_BIN = "/opt/homebrew/anaconda3/bin/python"
+PYTHON_BIN = sys.executable  # [Fix #1] 自动获取当前 Python 解释器路径，避免硬编码
 
 # 进程 ID 文件路径
 PID_FILES = {
