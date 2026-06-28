@@ -17,7 +17,7 @@ class ModelConfig(TypedDict, total=False):
 MODEL_REGISTRY: dict[str, ModelConfig] = {
     "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
-        "chat_model_id": "deepseek-v4-flash",
+        "chat_model_id": "deepseek-chat",  # [Fix #1] 与键名 V3 保持一致
         "price_in": 0.00027,
         "price_out": 0.0011,
         "max_tokens_limit": 4096,
@@ -25,8 +25,8 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "base_url": "https://api.deepseek.com/v1",
     },
     "Qwen-Max": {
-        "litellm_id": "qwen/qwen-plus",
-        "chat_model_id": "qwen-plus",
+        "litellm_id": "openai/qwen-max",  # [Fix #1] Max 不再映射到 Plus
+        "chat_model_id": "qwen-max",
         "price_in": 0.001,
         "price_out": 0.004,
         "max_tokens_limit": 4096,
@@ -46,11 +46,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
 
 # ✅ 当前激活模型 key — 修改此处全局生效，必须是 MODEL_REGISTRY 中的 key
 ACTIVE_MODEL_KEY: str = "Claude-Max"
-
-
-def get_active_config() -> ModelConfig:
-    """获取当前激活模型的完整配置"""
-    return MODEL_REGISTRY[ACTIVE_MODEL_KEY]
 
 
 def get_litellm_id(model_key: str | None = None) -> str:

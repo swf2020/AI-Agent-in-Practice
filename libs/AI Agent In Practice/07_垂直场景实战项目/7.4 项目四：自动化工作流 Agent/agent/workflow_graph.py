@@ -143,7 +143,11 @@ def node_send_notification(state: WorkflowState) -> dict:
     )
     slack_send_notification.invoke({"message": msg})
 
-    gmail_mark_processed.invoke({"message_id": state.email_id})
+    # [Fix #4] Gmail 标记失败不应阻塞主流程（任务已创建，通知已发送）
+    try:
+        gmail_mark_processed.invoke({"message_id": state.email_id})
+    except Exception as e:
+        print(f"⚠️  邮件标记失败（不影响任务创建）: {e}，邮件可能被重复处理")
 
     return {}
 
@@ -152,8 +156,13 @@ def node_reject_and_notify(state: WorkflowState) -> dict:
     slack_send_notification.invoke({
         "message": f"⛔ 任务「{state.extracted_task.title if state.extracted_task else '未知'}」已被拒绝审批"
     })
-    gmail_mark_processed.invoke({"message_id": state.email_id})
-    return {}
+    # [Fix #4] Gmail 标记失败不应阻塞主流程
+    try:
+        gmail_mark_processed.invoke({"message_id": state.email_id})
+    except Exception as e:
+        print(f"⚠️  邮件标记失败（不影响工作流）: {e}，邮件可能被重复处理")
+    # [Fix #7] 回写拒绝原因到 WorkflowState
+    return {"rejection_reason": "任务已被审批人拒绝"}
 
 
 def route_by_risk(state: WorkflowState) -> Literal["request_approval", "write_task"]:
