@@ -31,6 +31,23 @@ MODEL_LIST: list[dict[str, Any]] = [
         },
         "model_info": {"id": "deepseek-primary"},
     },
+    {  # [Fix #2] 补充 Qwen-Max 配置，与 core_config.MODEL_REGISTRY 保持同步
+        "model_name": "qwen-max",
+        "litellm_params": {
+            "model": "qwen/qwen-plus",
+            "api_key": "os.environ/DASHSCOPE_API_KEY",
+            "api_base": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        },
+        "model_info": {"id": "qwen-max-primary"},
+    },
+    {  # [Fix #3] 补充 Gemini 配置，与教学文档保持一致性
+        "model_name": "gemini-flash",
+        "litellm_params": {
+            "model": "gemini/gemini-2.5-flash",
+            "api_key": "os.environ/GEMINI_API_KEY",
+        },
+        "model_info": {"id": "gemini-flash-primary"},
+    },
 ]
 
 # Fallback 策略：gpt-4o 失败时，依次尝试 claude-sonnet、deepseek-chat
