@@ -3,6 +3,7 @@
 所有函数均在独立进程中运行，与主进程隔离，防止恶意代码污染状态。
 """
 
+import re
 import subprocess
 import tempfile
 import textwrap
@@ -80,7 +81,7 @@ def execute_code_with_tests(implementation: str, test_code: str) -> ToolResult:
 
 def _parse_pytest_summary(output: str) -> tuple[int, int]:
     """从 pytest 输出解析通过数和总数，返回 (passed, total)。"""
-    import re
+    # [Fix #6] import re 已移至模块顶部
     # 匹配 "3 passed" / "2 passed, 1 failed" 等模式
     passed = sum(int(m) for m in re.findall(r"(\d+) passed", output))
     failed = sum(int(m) for m in re.findall(r"(\d+) failed", output))
@@ -112,7 +113,7 @@ def run_static_analysis(code: str) -> ToolResult:
         issues.append(f"[pylint]\n{pylint_output.strip()}")
 
         # 提取 pylint 评分："Your code has been rated at 8.50/10"
-        import re
+        # [Fix #6] import re 已移至模块顶部
         match = re.search(r"rated at ([\d.]+)/10", pylint_output)
         pylint_score = float(match.group(1)) if match else 5.0
 
@@ -138,6 +139,19 @@ def run_static_analysis(code: str) -> ToolResult:
             output="\n\n".join(issues) + f"\n\n综合评分: {combined_score:.2f}/1.00",
             score=combined_score,
         )
+    except FileNotFoundError as e:
+        # [Fix #3] 工具未安装时给出清晰提示
+        return ToolResult(
+            success=False,
+            output=f"[错误] 静态分析工具未安装: {e}\n💡 请运行: pip install pylint flake8",
+            score=0.0,
+        )
+    except subprocess.TimeoutExpired:
+        # [Fix #5] 子进程超时处理
+        return ToolResult(success=False, output="[错误] 静态分析超时（>15s）", score=0.0)
+    except Exception as e:
+        # [Fix #3] 通用异常兜底
+        return ToolResult(success=False, output=f"[错误] 静态分析异常: {e}", score=0.0)
     finally:
         code_path.unlink(missing_ok=True)
 
@@ -158,7 +172,7 @@ def run_security_scan(code: str) -> ToolResult:
         )
         output = result.stdout + result.stderr
 
-        import re
+        # [Fix #6] import re 已移至模块顶部
         high_count = len(re.findall(r"Severity: High", output, re.IGNORECASE))
         medium_count = len(re.findall(r"Severity: Medium", output, re.IGNORECASE))
 
@@ -172,5 +186,18 @@ def run_security_scan(code: str) -> ToolResult:
             output=f"[bandit 安全扫描]\n{output.strip()}\n{summary}",
             score=score,
         )
+    except FileNotFoundError as e:
+        # [Fix #3] 工具未安装时给出清晰提示
+        return ToolResult(
+            success=False,
+            output=f"[错误] 安全扫描工具未安装: {e}\n💡 请运行: pip install bandit",
+            score=0.0,
+        )
+    except subprocess.TimeoutExpired:
+        # [Fix #5] 子进程超时处理
+        return ToolResult(success=False, output="[错误] 安全扫描超时（>15s）", score=0.0)
+    except Exception as e:
+        # [Fix #3] 通用异常兜底
+        return ToolResult(success=False, output=f"[错误] 安全扫描异常: {e}", score=0.0)
     finally:
         code_path.unlink(missing_ok=True)

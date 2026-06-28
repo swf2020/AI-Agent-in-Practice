@@ -9,6 +9,14 @@ from core_config import get_litellm_id, get_chat_model_id, ACTIVE_MODEL_KEY
 
 
 def main() -> None:
+    # [Fix #9] 入口处预检 API Key，提供清晰的操作指引
+    from core_config import get_api_key
+    if not get_api_key():
+        model_env = MODEL_REGISTRY[ACTIVE_MODEL_KEY].get("api_key_env", "API_KEY")
+        print(f"⚠️  {ACTIVE_MODEL_KEY} 的 API Key 未设置（环境变量 {model_env}）")
+        print("   请复制 .env.example 为 .env，并填入你的 API Key")
+        return
+
     print(f"当前模型: {ACTIVE_MODEL_KEY} (LiteLLM: {get_litellm_id()}, 直连: {get_chat_model_id()})")
 
     # 示例需求：实现一个带缓存的斐波那契计算函数

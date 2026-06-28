@@ -9,7 +9,7 @@ Reviewer Agent：审查代码质量，给出修改建议。
 import re
 import litellm
 
-from core_config import get_litellm_id, get_api_key, get_base_url
+from core_config import get_active_config, get_litellm_id, get_api_key, get_base_url
 from tools import execute_code_with_tests, run_static_analysis, run_security_scan, ToolResult
 
 
@@ -94,15 +94,25 @@ def _call_llm(messages: list[dict], temperature: float = 0.7) -> str:
     """
     调用 LiteLLM 完成一次对话，返回 assistant 消息内容。
     """
-    response = litellm.completion(
-        model=get_litellm_id(),
-        api_key=get_api_key(),
-        api_base=get_base_url(),
-        messages=messages,
-        temperature=temperature,
-        max_tokens=4096,
-    )
-    return response.choices[0].message.content
+    try:
+        # [Fix #2] 从配置中读取 max_tokens，而非硬编码 4096
+        response = litellm.completion(
+            model=get_litellm_id(),
+            api_key=get_api_key(),
+            api_base=get_base_url(),
+            messages=messages,
+            temperature=temperature,
+            max_tokens=get_active_config()["max_tokens_limit"],
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        # [Fix #1] 教学友好的 LLM 调用异常处理
+        error_msg = f"LLM 调用失败: {e}"
+        if "auth" in str(e).lower() or "401" in str(e):
+            error_msg += "\n💡 请检查 .env 文件中是否正确配置了 API Key"
+        elif "rate" in str(e).lower() or "429" in str(e):
+            error_msg += "\n💡 触发速率限制，请稍后重试"
+        raise RuntimeError(error_msg) from e
 
 
 # ── 双 Agent 主循环 ────────────────────────────────────────────────

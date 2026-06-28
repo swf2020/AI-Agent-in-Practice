@@ -99,7 +99,8 @@ class TestTools:
         code = "def add(a: int, b: int) -> int:\n    return a + b\n"
         result = run_static_analysis(code)
         assert isinstance(result.score, float)
-        assert result.score >= 0
+        # [Fix #8] 提升断言阈值，良好代码评分应 >= 0.7
+        assert result.score >= 0.7, f"良好代码的静态分析评分应 >= 0.7，实际: {result.score}"
 
     def test_run_security_scan_safe_code(self):
         """安全代码应通过扫描"""
