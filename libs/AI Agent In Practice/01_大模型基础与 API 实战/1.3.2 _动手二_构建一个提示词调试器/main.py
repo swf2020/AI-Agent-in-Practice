@@ -51,7 +51,8 @@ def run_ui():
 
 def run_test():
     """运行冒烟测试"""
-    os.execl(sys.executable, sys.executable, "smoke_test.py")
+    import subprocess  # [Fix #9] subprocess.run 比 os.execl 更直观，保留父进程控制权
+    subprocess.run([sys.executable, "smoke_test.py"], check=False)
 
 
 if __name__ == "__main__":
