@@ -107,26 +107,31 @@ def create_demo_database(db_path: str = "ecommerce.db") -> None:
         items_count = random.randint(1, 4)
         total = 0.0
 
-        cur.execute(
-            "INSERT OR IGNORE INTO orders VALUES (?,?,?,?,?,?)",
-            (order_id, user_id, status, 0,
-             created_at.isoformat(), created_at.isoformat() if status != "pending" else None),
-        )
-
+        # [Fix #1] 先计算 items 和 total，再一次性插入 orders
+        # 避免先插入 total_amount=0 再 UPDATE 造成的脏数据风险
+        items_for_order = []
         for _ in range(items_count):
             prod = random.choice(products_data)
             qty = random.randint(1, 3)
             price = prod[3]
             disc = round(price * random.uniform(0, 0.15), 2)
             total += (price - disc) * qty
-            cur.execute(
-                "INSERT OR IGNORE INTO order_items VALUES (?,?,?,?,?,?)",
-                (item_id, order_id, prod[0], qty, price, disc),
-            )
+            items_for_order.append((item_id, order_id, prod[0], qty, price, disc))
             item_id += 1
 
-        cur.execute("UPDATE orders SET total_amount=? WHERE order_id=?",
-                    (round(total, 2), order_id))
+        # [Fix #2] paid_at 仅在 completed/shipped 状态时赋值
+        cur.execute(
+            "INSERT OR IGNORE INTO orders VALUES (?,?,?,?,?,?)",
+            (order_id, user_id, status, round(total, 2),
+             created_at.isoformat(), created_at.isoformat() if status in ("completed", "shipped") else None),
+        )
+
+        for item in items_for_order:
+            cur.execute(
+                "INSERT OR IGNORE INTO order_items VALUES (?,?,?,?,?,?)",
+                item,
+            )
+
         order_id += 1
 
     conn.commit()
