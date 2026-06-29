@@ -1,7 +1,7 @@
 openai>=1.0.0
 python-dotenv>=1.0.0
 litellm>=1.40.0
-fastapi>=0.100.0
-uvicorn>=0.20.0
 pydantic>=2.0.0
-pandas>=2.0.0
+# fastapi>=0.100.0   # [Fix #7] 后续章节需要，本节暂不依赖
+# uvicorn>=0.20.0
+# pandas>=2.0.0

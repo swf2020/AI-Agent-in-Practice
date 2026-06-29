@@ -127,6 +127,7 @@ class LLMGateway:
             cost_usd = round(litellm.completion_cost(completion_response=raw), 6)
         except Exception:
             cost_usd = 0.0
+            print(f"⚠️  无法计算 {raw.model or model} 的调用费用（可能为自托管/新模型），已计为 $0.00")  # [Fix #6]
 
         return LLMResponse(
             content=raw.choices[0].message.content or "",
@@ -183,7 +184,7 @@ class LLMGateway:
                 # 生产中这里应该打 error log + 上报 metrics
                 final.append(LLMResponse(
                     content=f"[ERROR] prompt[{i}] failed: {type(r).__name__}: {r}",
-                    model="error",
+                    model=model,  # [Fix #8] 保留原始请求的模型名，而非 "error"
                     prompt_tokens=0,
                     completion_tokens=0,
                     cost_usd=0.0,

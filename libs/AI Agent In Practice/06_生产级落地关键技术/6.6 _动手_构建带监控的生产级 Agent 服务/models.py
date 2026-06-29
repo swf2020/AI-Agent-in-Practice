@@ -20,9 +20,9 @@ class ChatRequest(BaseModel):
 
 class TaskRequest(BaseModel):
     """异步任务请求体。"""
-    message: str = Field(..., min_length=1, max_length=2000)
-    session_id: str = "default"
-    user_id: str | None = None
+    message: str = Field(..., min_length=1, max_length=2000, description="用户输入")
+    session_id: str = Field(default="default", description="会话 ID，用于结果分组和追溯")
+    user_id: str | None = Field(default=None, description="用户标识，用于成本归因")
 
 
 class TaskResponse(BaseModel):

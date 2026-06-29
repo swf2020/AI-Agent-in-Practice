@@ -28,6 +28,8 @@ class AStockAdapter:
 
     # AKShare 返回字段 → TradingAgents 标准字段映射
     # 东方财富接口返回中文列名，需要转换
+    # 注：以下 "Amount" / "Amplitude" / "Change" / "ChangeAmt" / "Turnover"
+    # 映射项预留用于自定义分析，当前 get_price_history() 默认只保留 OHLCV 核心字段 [Fix #7]
     COLUMN_MAP = {
         "日期": "Date",
         "开盘": "Open",
@@ -35,11 +37,11 @@ class AStockAdapter:
         "最低": "Low",
         "收盘": "Close",
         "成交量": "Volume",
-        "成交额": "Amount",   # TradingAgents 可选字段
-        "振幅": "Amplitude",
-        "涨跌幅": "Change",
-        "涨跌额": "ChangeAmt",
-        "换手率": "Turnover",
+        "成交额": "Amount",   # 预留：交易金额（TradingAgents 可选字段）
+        "振幅": "Amplitude",   # 预留：日内波动幅度
+        "涨跌幅": "Change",     # 预留：日涨跌幅百分比
+        "涨跌额": "ChangeAmt",  # 预留：日涨跌绝对值
+        "换手率": "Turnover",   # 预留：换手率
     }
 
     def get_price_history(

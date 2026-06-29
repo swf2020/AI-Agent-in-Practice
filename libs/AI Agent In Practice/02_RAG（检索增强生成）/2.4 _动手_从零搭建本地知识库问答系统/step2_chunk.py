@@ -1,8 +1,10 @@
 """
-三种切块策略的实现与对比：
+两种切块策略的实现与对比：
 1. 固定大小切块（按 Token 数）
-2. 语义切块（按句子边界 + 相似度聚合）
-3. 章节切块（利用 Markdown 标题层级）
+2. 章节切块（利用 Markdown 标题层级）
+
+注：语义切块（按句子边界 + 相似度聚合）效果最好但耗时显著，
+教学版暂不收录，留作扩展练习。
 """
 from __future__ import annotations
 
@@ -14,6 +16,9 @@ import tiktoken
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from step1_parse import ParsedDocument
+
+# 模块级别缓存 encoder，避免重复初始化开销  # [Fix #9]
+_ENCODER = tiktoken.get_encoding("cl100k_base")
 
 
 @dataclass
@@ -41,7 +46,7 @@ def chunk_fixed_size(
 
     chunk_overlap 保证跨块的句子不会完全割裂语义。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #9] 使用模块级缓存
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -77,7 +82,7 @@ def chunk_by_section(
 
     超过 max_chunk_size 的节会用固定大小策略二次切分。
     """
-    enc = tiktoken.get_encoding("cl100k_base")
+    enc = _ENCODER  # [Fix #9] 使用模块级缓存
 
     # 匹配所有级别的 Markdown 标题（# ~ ######）
     heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)

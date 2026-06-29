@@ -73,7 +73,7 @@ class SQLExecutor:
 
         conn = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
         conn.row_factory = sqlite3.Row
-        conn.execute(f"PRAGMA busy_timeout = {self.timeout * 1000}")
+        conn.execute("PRAGMA busy_timeout = ?", (self.timeout * 1000,))  # [Fix #3] 使用参数化查询，避免 f-string 拼接 SQL 的不良示范
 
         try:
             def _timeout_handler(signum, frame):

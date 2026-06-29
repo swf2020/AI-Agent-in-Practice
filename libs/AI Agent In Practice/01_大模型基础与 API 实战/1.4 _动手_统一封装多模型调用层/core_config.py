@@ -46,6 +46,14 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "api_key_env": "DASHSCOPE_API_KEY",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
     },
+    "Gemini-Flash": {  # [Fix #3] 补充 Gemini 配置，与教学文档保持一致性
+        "litellm_id": "gemini/gemini-2.5-flash",
+        "price_in": 0.00015,
+        "price_out": 0.0006,
+        "max_tokens_limit": 4096,
+        "api_key_env": "GEMINI_API_KEY",
+        "base_url": None,
+    },
 }
 
 # 当前激活模型 key — 修改此处全局生效，必须是 MODEL_REGISTRY 中的 key
@@ -91,11 +99,13 @@ def estimate_cost(model_key: str, input_tokens: int, output_tokens: int) -> floa
 
 
 # Router model_name 别名映射（对应 llm_gateway_config_models.py 中的 model_name）
+# ⚠️ 新增模型时需同步更新此表，否则 get_router_model_name() 回退到原始 key  # [Fix #5]
 ROUTER_MODEL_ALIAS: dict[str, str] = {
     "GPT-4o": "gpt-4o",
     "Claude-Sonnet": "claude-sonnet",
     "DeepSeek-V3": "deepseek-chat",
     "Qwen-Max": "qwen-max",
+    "Gemini-Flash": "gemini-flash",
 }
 
 

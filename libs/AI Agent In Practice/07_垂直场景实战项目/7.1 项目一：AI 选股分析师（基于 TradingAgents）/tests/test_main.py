@@ -87,39 +87,20 @@ class TestModuleImports:
         assert isinstance(RATING_COLORS, dict)
         assert "buy" in RATING_COLORS
 
-    def test_model_comparison_importable(self):
-        """实验四的 MODEL_CONFIGS 定义可被解析（跳过 tradingagents 依赖导入）"""
-        # tradingagents v0.3.1 没有 default_config 模块，项目代码依赖的接口可能来自
-        # 未发布版本或本地开发分支。此处仅验证项目内的配置定义逻辑正确。
-        from dataclasses import dataclass
-        from typing import Literal
+    def test_model_comparison_config_from_module(self):
+        """验证实验四的 MODEL_CONFIGS 定义正确 — 直接从业务模块导入 [Fix #2]"""
+        try:
+            from experiment_4_model_comparison import MODEL_CONFIGS, ModelConfig
+        except ImportError as e:
+            pytest.skip(f"tradingagents 依赖未安装，跳过导入测试: {e}")
 
-        ModelProvider = Literal["openai", "deepseek", "ollama"]
-
-        @dataclass
-        class ModelConfig:
-            name: str
-            provider: ModelProvider
-            deep_model: str
-            quick_model: str
-            cost_per_1m_input: float
-            cost_per_1m_output: float
-
-        MODEL_CONFIGS = {
-            "gpt4o": ModelConfig(
-                name="GPT-4o", provider="openai",
-                deep_model="gpt-4o", quick_model="gpt-4o-mini",
-                cost_per_1m_input=5.0, cost_per_1m_output=15.0,
-            ),
-            "deepseek": ModelConfig(
-                name="DeepSeek-V3", provider="deepseek",
-                deep_model="deepseek-chat", quick_model="deepseek-chat",
-                cost_per_1m_input=0.27, cost_per_1m_output=1.10,
-            ),
-        }
         assert "gpt4o" in MODEL_CONFIGS
         assert "deepseek" in MODEL_CONFIGS
+        # DeepSeek 通过 LiteLLM 代理调用，provider 应为 "litellm"
+        assert MODEL_CONFIGS["deepseek"].provider == "litellm"
+        # 验证成本对比关系：DeepSeek 单价应远低于 GPT-4o
         assert MODEL_CONFIGS["deepseek"].cost_per_1m_input < MODEL_CONFIGS["gpt4o"].cost_per_1m_input
+        assert MODEL_CONFIGS["deepseek"].cost_per_1m_output < MODEL_CONFIGS["gpt4o"].cost_per_1m_output
 
 
 # ── 测试 AStockAdapter 数据结构（Mock AKShare）────────
@@ -171,8 +152,8 @@ class TestAStockAdapter:
 
 # ── 测试 display_decision 不崩溃 ──────────────────────
 class TestDisplayDecision:
-    def test_display_decision_mock(self, capsys):
-        """验证 display_decision 能正确处理 mock 数据"""
+    def test_display_decision_dict_state(self, capsys):
+        """验证 display_decision 正确处理 dict 格式的 state（常见场景） [Fix #1]"""
         from experiment_1_parse_output import display_decision
 
         mock_result = {
@@ -186,7 +167,35 @@ class TestDisplayDecision:
                 "confidence": 0.75,
                 "reasoning": "This is a test reasoning text.",
             },
+            "state": {"risk_tolerance": "aggressive"},  # 不应退回默认值
+        }
+        display_decision(mock_result)
+        captured = capsys.readouterr()
+        # 验证风险偏好正确显示为"激进型"而非默认的"中性型"
+        assert "激进型" in captured.out, (
+            f"风险偏好应为'激进型'，实际输出: {captured.out[:500]}"
+        )
+
+    def test_display_decision_none_confidence(self, capsys):
+        """验证 display_decision 正确处理 confidence=None 的情况 [Fix #3]"""
+        from experiment_1_parse_output import display_decision
+
+        mock_result = {
+            "ticker": "TEST",
+            "date": "2025-01-10",
+            "decision": {
+                "action": "hold",
+                "target_price": None,
+                "stop_loss": None,
+                "take_profit": None,
+                "confidence": None,
+                "reasoning": "Mixed signals.",
+            },
             "state": {"risk_tolerance": "neutral"},
         }
-        # Should not raise
+        # Should not raise TypeError when formatting None as percentage
         display_decision(mock_result)
+        captured = capsys.readouterr()
+        assert "未知" in captured.out, (
+            f"confidence=None 时应显示'未知'，实际输出: {captured.out[:500]}"
+        )

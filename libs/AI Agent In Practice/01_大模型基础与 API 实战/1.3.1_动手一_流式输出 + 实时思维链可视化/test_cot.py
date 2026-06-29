@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""完整验证 CoT 流式输出功能"""
+"""CoT 流式输出快速演示（仅打印，不做断言）。
+如需完整验证（含断言），请运行 smoke_test.py。"""
 
 from core import stream_cot_prompt, ChunkType
 

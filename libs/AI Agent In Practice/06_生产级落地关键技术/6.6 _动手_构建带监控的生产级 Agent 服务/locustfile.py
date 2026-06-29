@@ -1,6 +1,7 @@
 from __future__ import annotations
 import time
 import random
+import uuid
 from locust import HttpUser, task, between, events
 
 
@@ -17,6 +18,10 @@ class AgentUser(HttpUser):
 
     # 每个虚拟用户在两次请求之间等待 1-3 秒，模拟真实用户节奏
     wait_time = between(1, 3)
+
+    def on_start(self):
+        """每个虚拟用户启动时生成唯一标识。"""
+        self.user_id = uuid.uuid4().hex[:8]
 
     @task(3)
     def test_sync_chat(self):

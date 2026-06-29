@@ -84,9 +84,9 @@ def _generate_summary(
     client: Optional[OpenAI] = None,
     model: Optional[str] = None,
 ) -> str:
-    summary_stats = df.describe(include="all").to_string() if len(df) <= 20 else (
-        f"共 {len(df)} 行数据。"
-        f"主要数值列统计：{df.select_dtypes(include='number').describe().to_string()}"
+    summary_stats = df.head(20).to_string() if len(df) <= 20 else (  # [Fix #7] 限制统计维度，控制 token 消耗
+        f"共 {len(df)} 行 {len(df.columns)} 列数据。\n"
+        f"数值列统计（前3列）：\n{df.select_dtypes(include='number').describe().to_string()[:500]}"
     )
 
     llm = client or get_openai_client()

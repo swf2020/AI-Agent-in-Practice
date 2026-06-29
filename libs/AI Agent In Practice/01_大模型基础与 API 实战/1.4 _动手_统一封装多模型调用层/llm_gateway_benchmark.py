@@ -31,7 +31,8 @@ async def benchmark_serial_vs_concurrent(n_requests: int = 5) -> None:
         r = await gateway.chat(p, model=model_name, feature="benchmark_serial")
         serial_results.append(r)
     serial_time = time.perf_counter() - start
-    print(f"\n[串行]  总耗时：{serial_time:.2f}s  |  均摊：{serial_time/n_requests:.2f}s/req")
+    serial_cost = sum(r.cost_usd for r in serial_results)
+    print(f"\n[串行]  总耗时：{serial_time:.2f}s  |  均摊：{serial_time/n_requests:.2f}s/req  |  总成本：${serial_cost:.6f}")  # [Fix #9]
 
     # 重置统计，区分两次测试
     gateway.tracker.reset()

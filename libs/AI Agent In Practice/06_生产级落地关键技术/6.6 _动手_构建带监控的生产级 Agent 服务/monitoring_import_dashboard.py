@@ -66,10 +66,19 @@ dashboard_config = {
     "folderId": 0,
 }
 
-resp = httpx.post(
-    f"{GRAFANA_URL}/api/dashboards/db",
-    json=dashboard_config,
-    auth=AUTH,
-    timeout=10,
-)
-print(f"Dashboard 导入结果：{resp.status_code} - {resp.json()}")
+try:
+    resp = httpx.post(
+        f"{GRAFANA_URL}/api/dashboards/db",
+        json=dashboard_config,
+        auth=AUTH,
+        timeout=10,
+    )
+    resp.raise_for_status()
+    print(f"✅ Dashboard 导入成功：{resp.json()}")
+except httpx.ConnectError:
+    print("❌ 无法连接 Grafana，请确认已启动：")
+    print("   docker-compose -f docker-compose.monitoring.yml up -d")
+except httpx.HTTPStatusError as e:
+    print(f"❌ Grafana 返回错误（{e.response.status_code}）：{e.response.text[:200]}")
+except Exception as e:
+    print(f"❌ Dashboard 导入失败：{e}")

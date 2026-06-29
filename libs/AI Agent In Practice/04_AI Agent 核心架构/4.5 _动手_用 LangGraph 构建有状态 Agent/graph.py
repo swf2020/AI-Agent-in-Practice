@@ -6,15 +6,17 @@ from langgraph.checkpoint.memory import MemorySaver
 from state import AgentState
 from agent import agent_node
 from router import should_continue
-from tools import TOOLS
+from tools import get_tools
 
 
-def build_graph(use_memory: bool = True):
+def build_graph(use_memory: bool = True, interrupt_before: list[str] | None = None):
     """构建并编译 Agent 图。
     
     Args:
         use_memory: 是否启用内存 Checkpoint（开发调试用）
                    生产环境建议切换为 SqliteSaver 或 PostgresSaver
+        interrupt_before: 在指定节点前暂停（用于人工审批卡点），
+                         如 interrupt_before=["tools"] 可在工具执行前暂停
     
     Returns:
         编译后的图，可直接调用 .invoke() / .stream()
@@ -29,7 +31,7 @@ def build_graph(use_memory: bool = True):
     # ToolNode 是 LangGraph 预置的工具执行节点：
     # 自动解析 AIMessage 中的 tool_calls，执行对应工具，
     # 将结果包装成 ToolMessage 追加到 messages
-    graph_builder.add_node("tools", ToolNode(TOOLS))
+    graph_builder.add_node("tools", ToolNode(get_tools()))  # [Fix #5]
     
     # 3. 定义边（控制流）
     # 入口：START → agent
@@ -52,4 +54,11 @@ def build_graph(use_memory: bool = True):
     checkpointer = MemorySaver() if use_memory else None
     
     # 5. 编译图（compile 会做静态验证：检查孤立节点、死路等）
-    return graph_builder.compile(checkpointer=checkpointer)
+    return graph_builder.compile(
+        checkpointer=checkpointer,
+        interrupt_before=interrupt_before,
+    )
+
+
+# [Fix #1] 模块级别的图实例（单例，避免重复编译，供 LangGraph Studio 引用）
+agent_graph = build_graph(use_memory=True)

@@ -23,7 +23,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "base_url": None,
     },
     "Qwen-Max": {
-        "litellm_id": "qwen-plus",
+        "litellm_id": "qwen-max",  # [Fix #9] 统一命名：显示名 Qwen-Max 对应模型 id qwen-max
         "price_in": 0.001,
         "price_out": 0.004,
         "max_tokens_limit": 4096,

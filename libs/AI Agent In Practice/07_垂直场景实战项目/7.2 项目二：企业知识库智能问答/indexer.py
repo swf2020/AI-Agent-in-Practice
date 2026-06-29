@@ -118,6 +118,7 @@ class VectorIndexer:
     @staticmethod
     def _chunk_to_payload(chunk: DocumentChunk) -> dict[str, Any]:
         return {
+            "chunk_id": chunk.chunk_id,  # [Fix #1] 写入 chunk_id，确保 BM25 / RRF 融合时同一 Chunk 的 ID 一致
             "content": chunk.content,
             "source": chunk.source,
             "title": chunk.title,

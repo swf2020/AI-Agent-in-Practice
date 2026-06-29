@@ -93,6 +93,12 @@ def parse_document(source: str) -> ParsedDocument:
         return parse_webpage(source)
 
     path = Path(source)
+    if not path.exists():
+        raise FileNotFoundError(  # [Fix #8] 友好的文件不存在提示
+            f"文件不存在：{source}\n"
+            "请检查路径是否正确，或确认文件是否在 docs/ 目录下。"
+        )
+
     suffix = path.suffix.lower()
 
     if suffix == ".pdf":

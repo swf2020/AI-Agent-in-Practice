@@ -116,10 +116,10 @@ def main() -> None:
     user_input = console.input("\n> ").strip()
     prompt = prompts.get(user_input, user_input)
 
-    use_et = console.input("\n使用 DeepSeek 推理模型？(y/N): ").strip().lower() == "y"
+    use_extended_thinking = console.input("\n使用 DeepSeek 推理模型？(y/N): ").strip().lower() == "y"
 
     console.print()
-    stats = run_terminal(prompt, use_extended_thinking=use_et)
+    stats = run_terminal(prompt, use_extended_thinking=use_extended_thinking)
 
     console.print()
     console.rule("📊 本次统计")

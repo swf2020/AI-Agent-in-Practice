@@ -13,7 +13,7 @@ import sqlite3
 import json
 from dotenv import load_dotenv
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.config import TradingAgentsConfig
+from core_config import create_default_config, normalize_decision  # [Fix #3][Fix #4]
 from rich.console import Console
 
 load_dotenv()
@@ -40,34 +40,28 @@ def _init_checkpoint_db() -> sqlite3.Connection:
     return conn
 
 
-def get_saver() -> sqlite3.Connection:
+def _get_checkpoint_connection() -> sqlite3.Connection:  # [Fix #5] 重命名以反映实际返回类型
     """
-    获取 Checkpoint 数据库连接。
+    获取 Checkpoint 手动数据库连接。
 
-    注：tradingagents 0.3.1 不支持 SqliteSaver 注入，
-    此处返回连接供手动保存结果使用。
+    注：tradingagents 0.3.1 不支持 LangGraph SqliteSaver 注入，
+    此处返回 sqlite3.Connection 供手动 save/load 使用。
+    待框架支持 memory/checkpoint 注入后，可替换为真正的 SqliteSaver。
     """
     return _init_checkpoint_db()
 
 
-def _make_config() -> TradingAgentsConfig:
-    """创建配置"""
-    return TradingAgentsConfig(
-        llm_provider="litellm",
-        deep_think_llm="deepseek/deepseek-chat",
-        quick_think_llm="deepseek/deepseek-chat",
-        reasoning_effort="medium",
-        max_debate_rounds=3,
-        max_risk_discuss_rounds=3,
-        max_recur_limit=100,
-    )
-
-
 def _save_checkpoint(conn, thread_id, ticker, analysis_date, status, result=None):
-    """手动保存 checkpoint"""
+    """
+    手动保存 checkpoint。
+
+    result=None 时写入空字符串而非 "null"，
+    避免下游 load 时混淆"无结果"与"JSON null 值"。 [Fix #5]
+    """
+    result_str = "" if result is None else json.dumps(result)
     conn.execute(
         "INSERT OR REPLACE INTO checkpoints (thread_id, ticker, analysis_date, status, result_json) VALUES (?, ?, ?, ?, ?)",
-        (thread_id, ticker, analysis_date, status, json.dumps(result) if result else None),
+        (thread_id, ticker, analysis_date, status, result_str),
     )
     conn.commit()
 
@@ -96,9 +90,9 @@ def analyze_with_checkpoint(
     task_id = thread_id or f"{ticker}_{analysis_date}_{uuid.uuid4().hex[:8]}"
     console.print(f"[dim]Task ID: {task_id}[/dim]  ← 保存此 ID，中断后用于续跑")
 
-    config = _make_config()
+    config = create_default_config()  # [Fix #4] 复用 core_config 统一配置
 
-    conn = get_saver()
+    conn = _get_checkpoint_connection()  # [Fix #5]
 
     # 检查是否已有 checkpoint
     row = conn.execute(
@@ -122,15 +116,8 @@ def analyze_with_checkpoint(
 
         state, decision = graph.propagate(ticker, analysis_date)
 
-        # 处理 decision 返回值：新版本返回字符串，旧版本返回字典
-        if isinstance(decision, str):
-            decision_dict = {
-                "action": decision.lower(),
-                "reasoning": "分析完成",
-                "confidence": 0.8,
-            }
-        else:
-            decision_dict = decision
+        # 统一 decision 格式（兼容新旧版本返回值） [Fix #3]
+        decision_dict = normalize_decision(decision)
 
         result = {
             "ticker": ticker,

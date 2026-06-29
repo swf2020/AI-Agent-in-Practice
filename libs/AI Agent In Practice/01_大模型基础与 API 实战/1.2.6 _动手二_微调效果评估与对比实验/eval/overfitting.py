@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import json                              # [Fix #6] 标准库置顶
 from dataclasses import dataclass
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import json
 
 
 @dataclass
@@ -63,12 +63,15 @@ def detect_divergence_point(curve: LossCurve, patience: int = 3) -> int | None:
     Returns:
         分叉起始 step，None 表示未检测到过拟合
     """
-    gaps = [v - t for t, v in zip(curve.train_loss, curve.val_loss)]
     rising_count = 0
     diverge_start = None
 
-    for i in range(1, len(gaps)):
-        if curve.val_loss[i] > curve.val_loss[i - 1]:
+    for i in range(1, len(curve.steps)):
+        # [Fix #3] 同时检查 val_loss 上升 AND train_loss 下降，避免欠拟合误判
+        # [Fix #5] 去掉未使用的 gaps 变量，直接比对原始 loss 值
+        val_rising = curve.val_loss[i] > curve.val_loss[i - 1]
+        train_falling = curve.train_loss[i] < curve.train_loss[i - 1]
+        if val_rising and train_falling:
             rising_count += 1
             if rising_count == patience and diverge_start is None:
                 diverge_start = curve.steps[i - patience + 1]

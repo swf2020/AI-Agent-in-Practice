@@ -18,7 +18,7 @@ from prometheus_client import (
 from starlette.responses import Response
 
 from agent import run_agent
-from config import get_settings
+from config import get_settings, get_redis_settings  # [Fix #5]
 from models import (
     ChatRequest,
     TaskRequest,
@@ -60,15 +60,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     global arq_pool
     logger.info("connecting_to_redis", extra={"url": settings.redis_url})
 
-    from urllib.parse import urlparse
-    parsed = urlparse(settings.redis_url)
-    arq_pool = await create_pool(
-        RedisSettings(
-            host=parsed.hostname or "localhost",
-            port=parsed.port or 6379,
-            password=parsed.password,
-        )
-    )
+    arq_pool = await create_pool(get_redis_settings())  # [Fix #5] 统一使用 config 中的 Redis URL 解析
     logger.info("redis_connected")
     yield
     # 关闭时释放连接池

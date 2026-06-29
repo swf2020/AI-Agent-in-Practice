@@ -11,6 +11,8 @@ from qdrant_client.http.models import FieldCondition, Filter, MatchValue
 from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
 
+from core_config import EMBED_MODEL, FINAL_TOP_N, RRF_K, TOP_K_PER_SOURCE  # [Fix #4] 集中配置管理
+
 
 @dataclass
 class RetrievedChunk:
@@ -25,8 +27,7 @@ class RetrievedChunk:
     rerank_score: float
 
 
-_RRF_K = 60
-_RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+_RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"  # [Fix #4] RRF_K 改为从 core_config 导入
 
 
 def _get_default_reranker() -> CrossEncoder:
@@ -43,7 +44,7 @@ class HybridRetriever:
     ) -> None:
         self.collection_name = collection_name
         self._client = qdrant_client
-        self._embedder = TextEmbedding(model_name="BAAI/bge-small-zh-v1.5")
+        self._embedder = TextEmbedding(model_name=EMBED_MODEL)  # [Fix #4] 从 core_config 统一导入
         self._reranker = CrossEncoder(_RERANKER_MODEL)
 
         self._bm25: BM25Okapi | None = None
@@ -79,6 +80,11 @@ class HybridRetriever:
         tokenized = [self._tokenize(c.get("content", "")) for c in all_chunks]
         self._bm25 = BM25Okapi(tokenized)
         self._bm25_corpus = all_chunks
+
+    @property
+    def is_bm25_ready(self) -> bool:  # [Fix #7] 封装私有属性访问
+        """BM25 索引是否已加载或构建完毕"""
+        return self._bm25 is not None
 
     def save_bm25(self, path: str | Path) -> None:
         with open(path, "wb") as f:
@@ -133,7 +139,7 @@ class HybridRetriever:
     def _rrf_fusion(
         dense_results: list[tuple],
         bm25_results: list[tuple],
-        k: int = _RRF_K,
+        k: int = RRF_K,  # [Fix #4] 从 core_config 导入
     ) -> list[tuple[str, float, dict]]:
         rrf_scores: dict[str, float] = {}
         payloads: dict[str, dict] = {}
@@ -166,7 +172,7 @@ class HybridRetriever:
             return []
 
         pairs = [(query, c[2].get("content", "")) for c in rerank_candidates]
-        rerank_scores: list[float] = self._reranker.predict(pairs).tolist()
+        rerank_scores: list[float] = self._reranker.predict(pairs, batch_size=16).tolist()  # [Fix #8] 限制 batch 大小防止 GPU OOM
 
         scored = sorted(
             zip(rerank_candidates, rerank_scores),

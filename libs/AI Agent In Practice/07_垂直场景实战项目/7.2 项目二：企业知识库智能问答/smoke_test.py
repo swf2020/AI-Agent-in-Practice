@@ -17,6 +17,7 @@ load_dotenv()
 
 def run_smoke_test():
     print("=== 企业知识库智能问答 - 冒烟测试 ===")
+    client = None  # [Fix #9] 预声明避免 finally 中依赖 locals() 检查
     
     test_content = """# 公司请假政策
 
@@ -67,7 +68,7 @@ def run_smoke_test():
         
     finally:
         os.unlink(test_file)
-        if "client" in locals():
+        if client is not None:  # [Fix #9] 使用预声明的 None 变量替代 locals() 检查
             client.delete_collection(collection_name="test_kb")
 
 

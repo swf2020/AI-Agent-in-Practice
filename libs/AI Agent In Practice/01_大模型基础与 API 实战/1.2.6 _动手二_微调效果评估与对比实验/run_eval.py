@@ -1,17 +1,12 @@
-# run_eval.py — 端到端冒烟测试，直接运行验证整个评估流水线
+# run_eval.py — 端到端冒烟测试，直接运行验证整个评估流水线  [Fix #2] 复用 pipeline.py
 from __future__ import annotations
 
 from pathlib import Path
 
 from dotenv import load_dotenv
-from openai import OpenAI
 
-from eval.inference import EvalSample, InferenceConfig, ModelInferencer
-from eval.metrics import compute_bert_score, compute_rouge
-from eval.llm_judge import batch_judge
-from eval.ablation import build_example_suite
-from eval.overfitting import load_trainer_state, plot_loss_curves
-from core_config import get_litellm_id, get_api_key
+from eval.inference import EvalSample
+from eval.pipeline import run_evaluation_pipeline
 
 load_dotenv()
 
@@ -30,80 +25,12 @@ TEST_SAMPLES = [
 ]
 
 # --------------------------------------------------------------------------- #
-# Step 1：三方推理
+# 运行评估流水线
 # --------------------------------------------------------------------------- #
-print("=" * 60)
-print("Step 1: 三方推理")
-
-configs = {
-    "base": InferenceConfig(
-        model_mode="base",
-        base_model_path=BASE_MODEL,
-        system_prompt="你是一个助手。",   # 最简 system prompt，体现基座原始能力
-    ),
-    "prompt_eng": InferenceConfig(
-        model_mode="prompt_eng",
-        base_model_path=BASE_MODEL,
-        system_prompt=(
-            "你是一位专业的电商客服，负责解答用户关于订单、物流、退款的问题。"
-            "回答要简洁（不超过80字）、友好、具体，不要使用模糊表述。"
-        ),
-    ),
-    "finetuned": InferenceConfig(
-        model_mode="finetuned",
-        base_model_path=BASE_MODEL,
-        lora_adapter_path=LORA_PATH,
-        system_prompt="你是一个专业的客服助手，请简洁、准确地回答用户问题。",
-    ),
-}
-
-predictions: dict[str, list[str]] = {}
-for name, cfg in configs.items():
-    inferencer = ModelInferencer(cfg)
-    predictions[name] = inferencer.batch_generate(TEST_SAMPLES)
-    del inferencer   # 释放显存，避免 OOM
-
-# --------------------------------------------------------------------------- #
-# Step 2：自动评估
-# --------------------------------------------------------------------------- #
-print("\nStep 2: 自动评估")
-references = [s.reference for s in TEST_SAMPLES]
-
-for name, preds in predictions.items():
-    rouge = compute_rouge(preds, references, lang="zh")
-    bert = compute_bert_score(preds, references)
-    print(f"\n[{name}]")
-    print(f"  ROUGE-L:         {rouge.rougeL:.4f}")
-    print(f"  BERTScore-F1:    {bert.f1:.4f}")
-
-# --------------------------------------------------------------------------- #
-# Step 3：LLM Judge
-# --------------------------------------------------------------------------- #
-print("\nStep 3: LLM Judge")
-client = OpenAI(api_key=get_api_key("GPT-4o-mini"))
-
-for name, preds in predictions.items():
-    scores = batch_judge(TEST_SAMPLES, preds, client, model=get_litellm_id("GPT-4o-mini"))
-    avg_total = sum(s.total for s in scores) / len(scores)
-    print(f"[{name}] LLM Judge 均分: {avg_total:.2f}/5.00")
-
-# --------------------------------------------------------------------------- #
-# Step 4：消融实验可视化
-# --------------------------------------------------------------------------- #
-print("\nStep 4: 消融实验可视化")
-suite = build_example_suite()   # 替换为你实际的训练结果
-suite.plot("rank", "ablation_rank.png")
-suite.plot("epoch", "ablation_epoch.png")
-suite.plot("data_size", "ablation_data_size.png")
-
-# --------------------------------------------------------------------------- #
-# Step 5：过拟合诊断
-# --------------------------------------------------------------------------- #
-print("\nStep 5: 过拟合诊断")
-if Path(CHECKPOINT_DIR).exists():
-    curve = load_trainer_state(CHECKPOINT_DIR)
-    plot_loss_curves(curve, CHECKPOINT_DIR, "loss_curves.png")
-else:
-    print(f"⚠️ 找不到 checkpoint 目录 {CHECKPOINT_DIR}，跳过过拟合诊断")
-
-print("\n✅ 评估流水线运行完成")
+if __name__ == "__main__":
+    run_evaluation_pipeline(
+        test_samples=TEST_SAMPLES,
+        base_model=BASE_MODEL,
+        lora_path=LORA_PATH,
+        checkpoint_dir=CHECKPOINT_DIR,
+    )
