@@ -56,8 +56,17 @@ def _parse_json_response(text: str) -> dict:
             return json.loads(match.group())
         except json.JSONDecodeError:
             pass
-    # 如果解析失败，返回默认值
-    return {"sql": "", "explanation": "解析失败", "confidence": 0.0, "ambiguities": []}
+    # JSON 解析失败，尝试直接从文本中提取 SQL
+    sql_match = re.search(
+        r'(SELECT|select)\s+.*?(?:;|$)', text, re.DOTALL | re.IGNORECASE
+    )
+    extracted_sql = sql_match.group(0).rstrip(";").strip() if sql_match else ""
+    return {
+        "sql": extracted_sql,
+        "explanation": "从文本中提取（JSON 解析失败）",
+        "confidence": 0.3,
+        "ambiguities": [],
+    }
 
 
 SYSTEM_PROMPT_TEMPLATE = """你是一个专业的数据分析 SQL 专家。你的任务是将用户的自然语言问题转换为正确的 {dialect} SQL 查询。
@@ -146,6 +155,7 @@ class SQLGenerator:
                 temperature=0.1,
             )
             content = response.choices[0].message.content or ""
+            print(f"   模型原始返回（前200字符）：{content[:200]}")
             data = _parse_json_response(content)
             result = SQLGenerationResult(**data)
             result.sql = self._clean_sql(result.sql)

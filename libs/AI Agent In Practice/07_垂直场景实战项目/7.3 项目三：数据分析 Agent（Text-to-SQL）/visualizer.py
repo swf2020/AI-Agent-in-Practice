@@ -67,13 +67,48 @@ def _infer_chart_type(
     llm = client or get_openai_client()
     model_name = model or get_litellm_id()
 
-    response = llm.beta.chat.completions.parse(
-        model=model_name,
-        messages=[{"role": "user", "content": prompt}],
-        response_format=ChartDecision,
-        temperature=0,
-    )
-    return response.choices[0].message.parsed
+    # 优先尝试结构化输出
+    try:
+        response = llm.beta.chat.completions.parse(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            response_format=ChartDecision,
+            temperature=0,
+        )
+        return response.choices[0].message.parsed
+    except Exception as e:
+        error_type = type(e).__name__
+        print(f"⚠️  图表决策结构化输出失败（{error_type}），回退到普通 JSON 模式...")
+        response = llm.chat.completions.create(
+            model=model_name,
+            messages=[{
+                "role": "user",
+                "content": prompt + "\n\n请以 JSON 格式返回结果，包含字段：chart_type, x_column, y_column, color_column, reasoning, title。"
+            }],
+            temperature=0,
+        )
+        content = response.choices[0].message.content or ""
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            import re
+            match = re.search(r'\{.*\}', content, re.DOTALL)
+            data = json.loads(match.group()) if match else {}
+        # 处理 JSON 解析后字段缺失或为 None 的情况
+        cols = list(df.columns)
+        if not data.get("chart_type"):
+            data["chart_type"] = "table"
+        if not data.get("x_column"):
+            data["x_column"] = cols[0] if cols else "未知"
+        if not data.get("y_column"):
+            data["y_column"] = cols[1] if len(cols) > 1 else (cols[0] if cols else "未知")
+        if "color_column" not in data or not data.get("color_column"):
+            data["color_column"] = None
+        if not data.get("reasoning"):
+            data["reasoning"] = "自动推断"
+        if not data.get("title"):
+            data["title"] = "数据图表"
+        return ChartDecision(**data)
 
 
 def _generate_summary(
@@ -155,6 +190,9 @@ class DataVisualizer:
         }
 
     def _render_chart(self, df: pd.DataFrame, decision: ChartDecision) -> go.Figure | None:
+        # 空字符串的 color_column 视为 None，避免 Plotly 报错
+        if decision.color_column is not None and not decision.color_column.strip():
+            decision.color_column = None
         required_cols = [decision.x_column, decision.y_column]
         for col in required_cols:
             if col not in df.columns:

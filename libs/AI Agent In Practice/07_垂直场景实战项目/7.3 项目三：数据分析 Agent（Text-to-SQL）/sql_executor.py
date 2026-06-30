@@ -61,6 +61,13 @@ class SQLExecutor:
         self.timeout = timeout_seconds
 
     def execute(self, sql: str) -> ExecutionResult:
+        if not sql or not sql.strip():
+            return ExecutionResult(
+                success=False, data=None,
+                error="SQL 为空，请检查 LLM 是否正确返回了查询语句",
+                execution_time_ms=0,
+            )
+
         try:
             _check_sql_safety(sql)
         except SQLSafetyError as e:
@@ -73,7 +80,7 @@ class SQLExecutor:
 
         conn = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
         conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA busy_timeout = ?", (self.timeout * 1000,))  # [Fix #3] 使用参数化查询，避免 f-string 拼接 SQL 的不良示范
+        conn.execute(f"PRAGMA busy_timeout = {self.timeout * 1000}")  # PRAGMA 不支持 ? 占位符，timeout 为 int，无注入风险
 
         try:
             def _timeout_handler(signum, frame):
