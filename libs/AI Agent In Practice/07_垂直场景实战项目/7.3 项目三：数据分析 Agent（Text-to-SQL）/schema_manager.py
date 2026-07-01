@@ -180,7 +180,6 @@ class SchemaManager:
     def format_schema_prompt(
         self, tables: list[TableSchema], include_samples: bool = True
     ) -> str:
-        enc = tiktoken.get_encoding("cl100k_base")
         parts = []
 
         for table in tables:
@@ -198,6 +197,10 @@ class SchemaManager:
             parts.append(part)
 
         full_prompt = "\n".join(parts)
-        token_count = len(enc.encode(full_prompt))
-        print(f"📊 Schema Prompt：{len(tables)} 张表，约 {token_count} Token")
+        try:
+            enc = tiktoken.get_encoding("cl100k_base")
+            token_count = len(enc.encode(full_prompt))
+            print(f"📊 Schema Prompt：{len(tables)} 张表，约 {token_count} Token")
+        except Exception:
+            print(f"📊 Schema Prompt：{len(tables)} 张表，约 {len(full_prompt)} 字符（tiktoken 不可用）")
         return full_prompt

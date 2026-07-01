@@ -10,3 +10,4 @@ test_charts/
 
 # Generated database files
 *.db
+.env
