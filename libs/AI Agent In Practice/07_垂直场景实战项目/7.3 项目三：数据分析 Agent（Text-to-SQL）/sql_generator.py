@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from core_config import get_litellm_id, get_api_key, get_base_url
+from core_config import get_litellm_id, get_api_key, get_base_url, supports_structured_output
 
 load_dotenv()
 
@@ -134,32 +134,33 @@ class SQLGenerator:
 
         messages.append({"role": "user", "content": question})
 
-        # 优先尝试使用结构化输出
-        try:
-            response = self.client.beta.chat.completions.parse(
-                model=self.model,
-                messages=messages,
-                response_format=SQLGenerationResult,
-                temperature=0.1,
-            )
-            result = response.choices[0].message.parsed
-            result.sql = self._clean_sql(result.sql)
-            return result
-        except Exception as e:  # [Fix #6] 打印异常类型，方便定位原因
-            error_type = type(e).__name__
-            print(f"⚠️  结构化输出失败（{error_type}），回退到普通 JSON 模式...")
-            print(f"   提示：如持续失败，请检查当前模型是否支持 Structured Output")
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                temperature=0.1,
-            )
-            content = response.choices[0].message.content or ""
-            print(f"   模型原始返回（前200字符）：{content[:200]}")
-            data = _parse_json_response(content)
-            result = SQLGenerationResult(**data)
-            result.sql = self._clean_sql(result.sql)
-            return result
+        # 优先尝试使用结构化输出（仅 OpenAI 官方端点支持）
+        if supports_structured_output():
+            try:
+                response = self.client.beta.chat.completions.parse(
+                    model=self.model,
+                    messages=messages,
+                    response_format=SQLGenerationResult,
+                    temperature=0.1,
+                )
+                result = response.choices[0].message.parsed
+                result.sql = self._clean_sql(result.sql)
+                return result
+            except Exception as e:  # [Fix #6] 打印异常类型，方便定位原因
+                error_type = type(e).__name__
+                print(f"⚠️  结构化输出失败（{error_type}），回退到普通 JSON 模式...")
+
+        # 普通 JSON 模式（非 OpenAI 端点或结构化输出失败时）
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=0.1,
+        )
+        content = response.choices[0].message.content or ""
+        data = _parse_json_response(content)
+        result = SQLGenerationResult(**data)
+        result.sql = self._clean_sql(result.sql)
+        return result
 
     @staticmethod
     def _clean_sql(sql: str) -> str:

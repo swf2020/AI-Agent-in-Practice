@@ -46,7 +46,8 @@ def run_smoke_test():
     print("\n3. SQL 生成测试（Mock LLM）...")
     mock_client = _make_mock_client()
 
-    with patch("sql_generator.get_openai_client", return_value=mock_client):
+    with patch("sql_generator.get_openai_client", return_value=mock_client), \
+         patch("sql_generator.supports_structured_output", return_value=True):
         sql_generator = SQLGenerator(
             model=get_litellm_id(), dialect=Dialect.SQLITE,
             api_key=get_api_key(), base_url=get_base_url(),
