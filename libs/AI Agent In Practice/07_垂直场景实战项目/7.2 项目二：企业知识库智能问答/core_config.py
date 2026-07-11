@@ -8,6 +8,7 @@ load_dotenv()
 
 class ModelConfig(TypedDict):
     litellm_id: str          # LiteLLM 识别的模型字符串
+    api_model_id: str        # 原生 API 的模型名（直连 DashScope / DeepSeek 等时使用，不含 provider 前缀）
     price_in: float          # 每 1K input tokens 价格（美元）
     price_out: float         # 每 1K output tokens 价格（美元）
     max_tokens_limit: int    # 模型支持的最大 max_tokens
@@ -19,6 +20,7 @@ class ModelConfig(TypedDict):
 MODEL_REGISTRY: dict[str, ModelConfig] = {
     "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
+        "api_model_id": "deepseek-chat",
         "price_in": 0.00027,
         "price_out": 0.0011,
         "max_tokens_limit": 4096,
@@ -27,6 +29,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     },
     "Qwen-Max": {
         "litellm_id": "qwen/qwen-plus",
+        "api_model_id": "qwen-plus",
         "price_in": 0.001,
         "price_out": 0.004,
         "max_tokens_limit": 4096,
@@ -35,6 +38,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     },
     "GPT-4o-mini": {
         "litellm_id": "gpt-4o-mini",
+        "api_model_id": "gpt-4o-mini",
         "price_in": 0.00015,
         "price_out": 0.0006,
         "max_tokens_limit": 4096,
@@ -56,6 +60,12 @@ def get_litellm_id(model_key: str | None = None) -> str:
     """获取指定模型（默认激活模型）的 LiteLLM ID"""
     key = model_key or ACTIVE_MODEL_KEY
     return MODEL_REGISTRY[key]["litellm_id"]
+
+
+def get_api_model_id(model_key: str | None = None) -> str:
+    """获取指定模型的原生 API 模型名（直连厂商 API 时使用，不含 provider 前缀）"""
+    key = model_key or ACTIVE_MODEL_KEY
+    return MODEL_REGISTRY[key]["api_model_id"]
 
 
 def get_api_key(model_key: str | None = None) -> str | None:

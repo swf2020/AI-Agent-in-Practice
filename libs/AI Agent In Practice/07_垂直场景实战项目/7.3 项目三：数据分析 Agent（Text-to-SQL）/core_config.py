@@ -10,6 +10,7 @@ class ModelConfig(TypedDict):
     max_tokens_limit: int    # 模型支持的最大 max_tokens
     api_key_env: str | None  # API Key 环境变量名
     base_url: str | None     # API 基础 URL（None 表示使用默认）
+    supports_structured_output: bool  # 是否支持 response_format {type: "json_schema"}
 
 
 # 注册表：key 是界面显示名，value 是调用配置
@@ -21,6 +22,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "max_tokens_limit": 16384,
         "api_key_env": "OPENAI_API_KEY",
         "base_url": None,
+        "supports_structured_output": True,
     },
     "Qwen-Max": {
         "litellm_id": "qwen-max",  # [Fix #9] 统一命名：显示名 Qwen-Max 对应模型 id qwen-max
@@ -29,6 +31,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "max_tokens_limit": 4096,
         "api_key_env": "DASHSCOPE_API_KEY",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "supports_structured_output": False,
     },
     "DeepSeek-V3": {
         "litellm_id": "deepseek/deepseek-chat",
@@ -37,6 +40,7 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         "max_tokens_limit": 4096,
         "api_key_env": "DEEPSEEK_API_KEY",
         "base_url": None,
+        "supports_structured_output": False,
     },
 }
 
@@ -79,6 +83,12 @@ def get_base_url(model_key: str | None = None) -> str | None:
 def get_model_list() -> list[str]:
     """获取所有已注册模型的显示名列表"""
     return list(MODEL_REGISTRY.keys())
+
+
+def supports_structured_output(model_key: str | None = None) -> bool:
+    """检查指定模型（默认激活模型）是否支持 Structured Output（response_format json_schema）"""
+    key = model_key or ACTIVE_MODEL_KEY
+    return MODEL_REGISTRY[key].get("supports_structured_output", False)
 
 
 def estimate_cost(model_key: str, input_tokens: int, output_tokens: int) -> float:

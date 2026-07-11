@@ -14,6 +14,8 @@ def main():
     print("=== 数据分析 Agent（Text-to-SQL）===")
 
     db_path = os.getenv("DB_PATH", DB_PATH)
+    if not os.path.isabs(db_path):
+        db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_path)
 
     schema_manager = SchemaManager(db_path)
     sql_generator = SQLGenerator(

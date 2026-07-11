@@ -107,16 +107,16 @@ class HybridRetriever:
     ) -> list[tuple[str, float, dict]]:
         query_vec = list(self._embedder.embed([query]))[0].tolist()
 
-        results = self._client.search(
+        response = self._client.query_points(
             collection_name=self.collection_name,
-            query_vector=query_vec,
+            query=query_vec,
             query_filter=Filter(
                 must=[FieldCondition(key="tenant_id", match=MatchValue(value=tenant_id))]
             ),
             limit=top_k,
             with_payload=True,
         )
-        return [(r.id, r.score, r.payload) for r in results]
+        return [(r.id, r.score, r.payload) for r in response.points]
 
     def _bm25_search(
         self, query: str, tenant_id: str, top_k: int

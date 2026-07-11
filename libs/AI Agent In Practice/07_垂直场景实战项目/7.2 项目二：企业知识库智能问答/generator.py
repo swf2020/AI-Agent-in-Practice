@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from openai import APIError, AuthenticationError, OpenAI, RateLimitError  # [Fix #5] 异常类型导入
 
-from core_config import CONFIDENCE_THRESHOLD as _CONFIDENCE_THRESHOLD, get_api_key, get_base_url, get_litellm_id
+from core_config import CONFIDENCE_THRESHOLD as _CONFIDENCE_THRESHOLD, get_api_key, get_api_model_id, get_base_url
 from retriever import RetrievedChunk
 
 _ABSTAIN_RESPONSE = (
@@ -71,7 +71,7 @@ class AnswerGenerator:
             api_key=get_api_key(),
             base_url=get_base_url(),
         )
-        self._model = model or get_litellm_id()
+        self._model = model or get_api_model_id()
         self._threshold = confidence_threshold
 
     def generate(
