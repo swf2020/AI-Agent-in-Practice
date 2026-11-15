@@ -64,6 +64,7 @@ nav:
   - Planning 策略（ToT-GoT-Plan-and-Execute）: AI Agent In Practice/04_AI Agent 核心架构/4.3 Planning 策略（ToT - GoT - Plan-and-Execute）.md
   - 记忆系统设计: AI Agent In Practice/04_AI Agent 核心架构/4.4 记忆系统设计.md
   - 【动手】用 LangGraph 构建有状态 Agent: AI Agent In Practice/04_AI Agent 核心架构/4.5 【动手】用 LangGraph 构建有状态 Agent.md
+  - 【动手】用 SkillNet 发现与校验技能: AI Agent In Practice/04_AI Agent 核心架构/4.6 【动手】用 SkillNet 发现与校验技能.md
 - 05_Multi-Agent 系统:
   - 多 Agent 协作模式（层级-对等-流水线）: AI Agent In Practice/05_Multi-Agent 系统/5.1 多 Agent 协作模式（层级 - 对等 - 流水线）.md
   - AutoGen 框架实战: AI Agent In Practice/05_Multi-Agent 系统/5.2 AutoGen 框架实战.md
