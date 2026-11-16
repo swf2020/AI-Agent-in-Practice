@@ -27,26 +27,7 @@
 
 ## 🗺️ 学习路线图
 
-### 通道一：工程实战快速通道（6–8 周）
-优先动手实验，快速产出可运行项目
-- **Week 1**：LLM API 调用 → Prompt 工程 → 统一调用层封装
-- **Week 2**：RAG 基础 → 从零搭建本地知识库问答系统
-- **Week 3**：Advanced RAG → 工具调用接入
-- **Week 4**：ReAct 范式 → LangGraph 有状态 Agent
-- **Week 5**：Multi-Agent → 代码生成+审查双 Agent 系统
-- **Week 6**：生产级监控 → 垂直项目实战
-- **Week 7–8**：Docker + 云端部署全流程
-
-### 通道二：求职面试深度通道（10–12 周）
-理论精读 + 动手实验 + 面试题集三线并进
-- **Week 1–2**：LLM 核心概念 + LoRA 原理 + Prompt/LLM 面试题
-- **Week 3–4**：RAG 全流程 + RAGAS 评估 + RAG 面试题
-- **Week 5**：Function Calling/MCP + 工具调用面试题
-- **Week 6–7**：Agent 架构 + Multi-Agent + Agent 设计面试题
-- **Week 8**：生产级落地 + 工程面试题
-- **Week 9**：4 个垂直项目实战
-- **Week 10**：技术演进史 + 视野类面试题
-- **Week 11–12**：模拟面试 + 系统设计题
+[学习路线图](docs/AI%20Agent%20In%20Practice/00_写给读者/学习路线图.md)包含工程实战与求职面试两条路径，以及按周安排和验收目标。
 
 ---
 
@@ -61,7 +42,7 @@
 | **04** | Agent 核心 | ReAct、Planning（ToT/GoT）、记忆系统、LangGraph |
 | **05** | Multi-Agent | 协作模式、AutoGen、CrewAI、代码审查双 Agent |
 | **06** | 生产级落地 | 流式输出、成本控制、缓存、安全、可观测性 |
-| **07** | 实战项目 | AI 选股分析师、知识库问答、Text-to-SQL、工作流 Agent、云端部署 |
+| **07** | 实战项目 | AI 选股分析师、知识库问答、Text-to-SQL、工作流 Agent |
 | **08** | 技术演进 | 大模型发展史、Agent 演进路线、关键技术专题 |
 | **09** | 面试真题 | 原理题、工程题、设计题、视野题、开放题 |
 | **10** | 附录 | 框架对比、学习资源、术语表 |
@@ -70,20 +51,25 @@
 
 ## 🚀 快速开始
 
+需要 Python 3.10+。在仓库根目录执行以下命令，用第 1.4 节现有的模型注册表做一次本地检查。
+
 ```bash
-# 克隆项目
-git clone https://github.com/swf2020/AI-Agent-in-Practice.git
-cd AI-Agent-in-Practice
-
-# 本地预览文档（推荐）
-pip install mkdocs mkdocs-material
-mkdocs serve
-# 访问 http://127.0.0.1:8000/AI-Agent-in-Practice/
-
-# 运行实战项目示例
-cd libs/AI\ Agent\ In\ Practice/第七章\ 垂直场景实战项目/7.1\ 项目一：AI\ 选股分析师（基于\ TradingAgents）/
-python main.py 1  # 运行实验一：美股分析
+cd "libs/AI Agent In Practice/01_大模型基础与 API 实战/1.4 _动手_统一封装多模型调用层"
+python3 -c 'from core_config import get_litellm_id; print(get_litellm_id("GPT-4o"))'
 ```
+
+预期输出为 `openai/gpt-4o`。这一步只读取本地配置，无需安装第三方依赖或配置模型密钥。若报 `ModuleNotFoundError: core_config`，确认当前目录包含 `core_config.py`。
+
+返回仓库根目录后，可以在虚拟环境中安装 MkDocs 并执行 `mkdocs serve`。
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install mkdocs mkdocs-material
+mkdocs serve
+```
+
+打开终端显示的本地地址。完整实验的依赖和密钥配置见各节正文。
 
 ---
 

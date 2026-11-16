@@ -26,6 +26,7 @@ markdown_extensions:
 nav:
 - 首页: index.md
 - 00_写给读者:
+  - 首次运行: AI Agent In Practice/00_写给读者/首次运行.md
   - 学习路线图: AI Agent In Practice/00_写给读者/学习路线图.md
 - 01_大模型基础与 API 实战:
   - LLM核心概念: AI Agent In Practice/01_大模型基础与 API 实战/1.1 LLM核心概念.md
@@ -54,7 +55,7 @@ nav:
   - MCP 协议详解: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2 MCP 协议详解.md
   - 【动手一】文件系统操作 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.1 【动手一】文件系统操作 MCP Server.md
   - 【动手二】数据库查询 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.2 【动手二】数据库查询 MCP Server.md
-  - 【动手三】代码执行沙箱 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md
+  - 【动手三】代码执行沙箱 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3 【动手三】代码执行沙箱 MCP Server.md
   - 【动手】给 LLM 接入搜索-计算器-数据库工具: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.3 【动手】给 LLM 接入搜索 - 计算器 - 数据库工具.md
   - 工具可靠性与错误处理: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.4 工具可靠性与错误处理.md
 - 04_AI Agent 核心架构:
@@ -63,6 +64,7 @@ nav:
   - Planning 策略（ToT-GoT-Plan-and-Execute）: AI Agent In Practice/04_AI Agent 核心架构/4.3 Planning 策略（ToT - GoT - Plan-and-Execute）.md
   - 记忆系统设计: AI Agent In Practice/04_AI Agent 核心架构/4.4 记忆系统设计.md
   - 【动手】用 LangGraph 构建有状态 Agent: AI Agent In Practice/04_AI Agent 核心架构/4.5 【动手】用 LangGraph 构建有状态 Agent.md
+  - 【动手】用 SkillNet 发现与校验技能: AI Agent In Practice/04_AI Agent 核心架构/4.6 【动手】用 SkillNet 发现与校验技能.md
 - 05_Multi-Agent 系统:
   - 多 Agent 协作模式（层级-对等-流水线）: AI Agent In Practice/05_Multi-Agent 系统/5.1 多 Agent 协作模式（层级 - 对等 - 流水线）.md
   - AutoGen 框架实战: AI Agent In Practice/05_Multi-Agent 系统/5.2 AutoGen 框架实战.md
