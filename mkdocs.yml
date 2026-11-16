@@ -54,7 +54,7 @@ nav:
   - MCP 协议详解: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2 MCP 协议详解.md
   - 【动手一】文件系统操作 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.1 【动手一】文件系统操作 MCP Server.md
   - 【动手二】数据库查询 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.2 【动手二】数据库查询 MCP Server.md
-  - 【动手三】代码执行沙箱 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3【动手三】代码执行沙箱 MCP Server.md
+  - 【动手三】代码执行沙箱 MCP Server: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.2.3 【动手三】代码执行沙箱 MCP Server.md
   - 【动手】给 LLM 接入搜索-计算器-数据库工具: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.3 【动手】给 LLM 接入搜索 - 计算器 - 数据库工具.md
   - 工具可靠性与错误处理: AI Agent In Practice/03_Function Calling MCP 与工具使用/3.4 工具可靠性与错误处理.md
 - 04_AI Agent 核心架构:
